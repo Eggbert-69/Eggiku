@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderBottomButton
@@ -376,7 +377,14 @@ object SettingsReaderScreen : SearchableSettings {
         val navModePref = readerPreferences.navigationModeWebtoon()
         val dualPageSplitPref = readerPreferences.dualPageSplitWebtoon()
         val rotateToFitPref = readerPreferences.dualPageRotateToFitWebtoon()
-        val webtoonSidePaddingPref = readerPreferences.webtoonSidePadding()
+        // KMK -->
+        val isUnfolded = LocalConfiguration.current.smallestScreenWidthDp >= 600
+        val webtoonSidePaddingPref = if (isUnfolded) {
+            readerPreferences.webtoonSidePaddingUnfolded()
+        } else {
+            readerPreferences.webtoonSidePaddingFolded()
+        }
+        // KMK <--
 
         val navMode by navModePref.collectAsState()
         val dualPageSplit by dualPageSplitPref.collectAsState()
@@ -425,7 +433,11 @@ object SettingsReaderScreen : SearchableSettings {
                     valueRange = ReaderPreferences.let {
                         it.WEBTOON_PADDING_MIN..it.WEBTOON_PADDING_MAX
                     },
-                    title = stringResource(MR.strings.pref_webtoon_side_padding),
+                    // KMK -->
+                    title = stringResource(
+                        if (isUnfolded) KMR.strings.pref_side_padding_unfolded else KMR.strings.pref_side_padding_folded,
+                    ),
+                    // KMK <--
                     valueString = numberFormat.format(webtoonSidePadding / 100f),
                     onValueChanged = { webtoonSidePaddingPref.set(it) },
                 ),

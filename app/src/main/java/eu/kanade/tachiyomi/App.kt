@@ -324,6 +324,9 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
 
     override fun onStop(owner: LifecycleOwner) {
         SecureActivityDelegate.onApplicationStopped()
+        // KMK -->
+        eu.kanade.tachiyomi.ui.library.EggikuCategoryLock.onAppStopped()
+        // KMK <--
 
         // AM (DISCORD) -->
         DiscordRPCService.stop(applicationContext)

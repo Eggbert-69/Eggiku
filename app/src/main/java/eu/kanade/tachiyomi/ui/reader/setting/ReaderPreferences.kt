@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.BlendMode
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import dev.icerock.moko.resources.StringResource
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerConfig
+import eu.kanade.tachiyomi.util.system.EggikuFoldState
 import tachiyomi.core.common.preference.PreferenceStore
 import tachiyomi.core.common.preference.getEnum
 import tachiyomi.i18n.MR
@@ -86,7 +87,26 @@ class ReaderPreferences(
 
     fun cropBordersWebtoon() = preferenceStore.getBoolean("crop_borders_webtoon", false)
 
-    fun webtoonSidePadding() = preferenceStore.getInt("webtoon_side_padding", WEBTOON_PADDING_MIN)
+    // KMK -->
+    /**
+     * Eggiku: side padding is saved separately for folded and unfolded, and this returns the one
+     * for the current screen. The reader is recreated when the phone folds or unfolds, so it picks
+     * up the right value by itself; the settings sliders edit the value for the current screen.
+     */
+    fun webtoonSidePadding() = if (EggikuFoldState.isUnfolded()) {
+        webtoonSidePaddingUnfolded()
+    } else {
+        webtoonSidePaddingFolded()
+    }
+
+    fun webtoonSidePaddingFolded() = preferenceStore.getInt("eggiku_side_padding_folded", WEBTOON_PADDING_MIN)
+
+    // Starts from the padding used before it was split, which was set on the big screen
+    fun webtoonSidePaddingUnfolded() = preferenceStore.getInt(
+        "eggiku_side_padding_unfolded",
+        preferenceStore.getInt("webtoon_side_padding", WEBTOON_PADDING_MIN).get(),
+    )
+    // KMK <--
 
     fun readerHideThreshold() = preferenceStore.getEnum("reader_hide_threshold", ReaderHideThreshold.LOW)
 

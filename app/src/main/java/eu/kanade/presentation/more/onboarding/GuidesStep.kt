@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
 
@@ -50,7 +51,9 @@ internal class GuidesStep(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onRestoreBackup,
             ) {
-                Text(stringResource(MR.strings.pref_restore_backup))
+                // KMK -->
+                Text(stringResource(KMR.strings.onboarding_restore_from_drive))
+                // KMK <--
             }
         }
     }

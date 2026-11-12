@@ -60,7 +60,9 @@ import eu.kanade.presentation.more.settings.widget.EditTextPreferenceWidget
 import eu.kanade.presentation.more.settings.widget.PrefsHorizontalPadding
 import eu.kanade.presentation.more.settings.widget.TrailingWidgetBuffer
 import eu.kanade.presentation.util.relativeTimeSpanString
+import eu.kanade.tachiyomi.data.backup.EggikuBackupHealth
 import eu.kanade.tachiyomi.data.backup.EggikuCloudBackup
+import eu.kanade.tachiyomi.extension.EggikuMissingExtensions
 import eu.kanade.tachiyomi.data.backup.create.BackupCreateJob
 import eu.kanade.tachiyomi.data.backup.restore.BackupRestoreJob
 import eu.kanade.tachiyomi.data.cache.ChapterCache
@@ -363,6 +365,8 @@ object SettingsDataScreen : SearchableSettings {
         val cloudUri by backupPreferences.cloudCopyUri().collectAsState()
         val cloudTime by backupPreferences.cloudCopyLastTime().collectAsState()
         val cloudError by backupPreferences.cloudCopyLastError().collectAsState()
+        val lastError by backupPreferences.lastBackupError().collectAsState()
+        val lastErrorTime by backupPreferences.lastBackupErrorTime().collectAsState()
 
         val folder = remember { EggikuCloudBackup.readablePath(Injekt.get<StorageManager>().getAutomaticBackupsDirectory()?.uri) }
 
@@ -430,10 +434,21 @@ object SettingsDataScreen : SearchableSettings {
         }
 
         return buildList {
+            val health = EggikuBackupHealth.level(lastTime, backupInterval, lastError, cloudError)
+            val healthText = when (health) {
+                EggikuBackupHealth.Level.GOOD -> stringResource(KMR.strings.backup_health_good)
+                EggikuBackupHealth.Level.WARNING -> stringResource(KMR.strings.backup_health_warning)
+                EggikuBackupHealth.Level.PROBLEM -> stringResource(KMR.strings.backup_health_problem)
+            }
+            val errorText = if (lastError.isNotEmpty()) {
+                "\n" + stringResource(KMR.strings.backup_last_failed, relativeTimeSpanString(lastErrorTime), lastError)
+            } else {
+                ""
+            }
             add(
                 Preference.PreferenceItem.TextPreference(
-                    title = stringResource(KMR.strings.backup_status_title),
-                    subtitle = lastBackupText + "\n" + nextBackupText,
+                    title = stringResource(KMR.strings.backup_status_title) + "  " + healthText,
+                    subtitle = lastBackupText + "\n" + nextBackupText + errorText,
                 ),
             )
             add(
@@ -453,6 +468,13 @@ object SettingsDataScreen : SearchableSettings {
             if (cloudParsed != null) {
                 add(
                     Preference.PreferenceItem.TextPreference(
+                        title = stringResource(KMR.strings.cloud_backup_restore),
+                        subtitle = stringResource(KMR.strings.cloud_backup_restore_summary),
+                        onClick = { navigator.push(RestoreBackupScreen(cloudParsed.toString())) },
+                    ),
+                )
+                add(
+                    Preference.PreferenceItem.TextPreference(
                         title = stringResource(KMR.strings.cloud_backup_stop),
                         onClick = {
                             try {
@@ -469,6 +491,45 @@ object SettingsDataScreen : SearchableSettings {
                     ),
                 )
             }
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.install_missing_extensions),
+                    subtitle = stringResource(KMR.strings.install_missing_extensions_summary),
+                    onClick = {
+                        scope.launchIO {
+                            val report = EggikuMissingExtensions.find()
+                            if (report.installable.isEmpty()) {
+                                withUIContext {
+                                    context.toast(
+                                        if (report.notFound > 0) {
+                                            context.stringResource(KMR.strings.missing_extensions_none_in_repos, report.notFound)
+                                        } else {
+                                            context.stringResource(KMR.strings.missing_extensions_none)
+                                        },
+                                    )
+                                }
+                                return@launchIO
+                            }
+                            withUIContext {
+                                context.toast(
+                                    context.stringResource(KMR.strings.missing_extensions_installing, report.installable.size),
+                                )
+                            }
+                            val done = EggikuMissingExtensions.installAll(report.installable)
+                            withUIContext {
+                                context.toast(
+                                    context.stringResource(
+                                        KMR.strings.missing_extensions_done,
+                                        done,
+                                        report.installable.size,
+                                        report.notFound,
+                                    ),
+                                )
+                            }
+                        }
+                    },
+                ),
+            )
             add(
                 Preference.PreferenceItem.ListPreference(
                     preference = backupPreferences.autoBackupsToKeep(),
