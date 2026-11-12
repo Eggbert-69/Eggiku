@@ -29,6 +29,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import logcat.LogPriority
+import mihon.domain.migration.usecases.EggikuMigrationSmarts
 import mihon.domain.migration.usecases.EggikuMigrationUndo
 import mihon.domain.migration.usecases.MigrateMangaUseCase
 import mihon.domain.source.interactor.UpdateMangaFromRemote
@@ -174,7 +175,12 @@ class MigrationListScreenModel(
                             }
                         }
                             .mapNotNull { it.await() }
-                            .maxByOrNull { it.second.latestChapter ?: 0.0 }
+                            // KMK -->
+                            // Best pick: keeps the most of your read chapters, then the furthest
+                            // along, then the most recently updated
+                            .let { found -> eggikuRankCandidates(manga, found) }
+                            .firstOrNull()
+                        // KMK <--
                     } else {
                         sources.forEach { source ->
                             val result = searchSource(manga.manga, source, deepSearchMode)
@@ -200,6 +206,9 @@ class MigrationListScreenModel(
             }
 
             manga.searchResult.value = result?.first?.toSuccessSearchResult() ?: SearchResult.NotFound
+            // KMK -->
+            eggikuCheckUnsure(manga)
+            // KMK <--
 
             if (result == null && hideUnmatched) {
                 removeManga(manga)
@@ -299,9 +308,64 @@ class MigrationListScreenModel(
             }
 
             migratingManga.searchResult.value = result.toSuccessSearchResult()
+            // KMK -->
+            // Picked by hand, so it's the right one
+            migratingManga.eggikuUnsure.value = false
+            // KMK <--
             updateMigrationProgress()
         }
     }
+
+    // KMK -->
+    private suspend fun eggikuRankCandidates(
+        item: MigratingManga,
+        found: List<Pair<Manga, ChapterInfo>>,
+    ): List<Pair<Manga, ChapterInfo>> {
+        val oldChapters = getChaptersByMangaId.await(item.manga.id)
+        val scored = found.map { (manga, info) ->
+            val newChapters = getChaptersByMangaId.await(manga.id)
+            val (carried, totalRead) = EggikuMigrationSmarts.carriedReadCount(oldChapters, newChapters)
+            val candidate = MigratingManga.EggikuCandidate(
+                manga = manga,
+                source = sourceManager.getOrStub(manga.source).getNameForMangaInfo(),
+                chapterCount = info.chapterCount,
+                latestChapter = info.latestChapter,
+                lastUploadMillis = newChapters.maxOfOrNull { it.dateUpload } ?: 0L,
+                carriedRead = carried,
+                totalRead = totalRead,
+            )
+            Triple(manga, info, candidate)
+        }.sortedWith(
+            compareByDescending<Triple<Manga, ChapterInfo, MigratingManga.EggikuCandidate>> { it.third.carriedRead }
+                .thenByDescending { it.second.latestChapter ?: 0.0 }
+                .thenByDescending { it.third.lastUploadMillis },
+        )
+        item.eggikuCandidates.value = scored.map { it.third }
+        return scored.map { it.first to it.second }
+    }
+
+    private fun eggikuCheckUnsure(item: MigratingManga) {
+        val result = item.searchResult.value as? SearchResult.Success
+        item.eggikuConfirmed.value = false
+        item.eggikuUnsure.value = result != null && EggikuMigrationSmarts.isUnsure(
+            currentTitle = item.manga.title,
+            currentChapters = item.chapterCount,
+            targetTitle = result.manga.title,
+            targetChapters = result.chapterCount,
+        )
+    }
+
+    /** True when this item will be left out of "migrate all" until it's confirmed */
+    private fun MigratingManga.eggikuHeldBack() = eggikuUnsure.value && !eggikuConfirmed.value
+
+    fun eggikuConfirm(mangaId: Long) {
+        items.find { it.manga.id == mangaId }?.eggikuConfirmed?.value = true
+    }
+
+    fun eggikuPickCandidate(mangaId: Long, targetId: Long) {
+        useMangaForMigration(mangaId, targetId) {}
+    }
+    // KMK <--
 
     fun migrateMangas() {
         migrateMangas(replace = true)
@@ -320,13 +384,19 @@ class MigrationListScreenModel(
             EggikuMigrationUndo.currentBatch = System.currentTimeMillis()
             var moved = 0
             var notFound = 0
+            var heldBack = 0
+            EggikuMigrationSmarts.offsetsApplied.set(0)
             // KMK <--
             try {
                 items.forEachIndexed { index, manga ->
                     try {
                         ensureActive()
+                        // KMK -->
+                        // Unsure matches wait until they're confirmed
+                        if (manga.eggikuHeldBack()) heldBack++
+                        // KMK <--
                         val target = manga.searchResult.value.let {
-                            if (it is SearchResult.Success) {
+                            if (it is SearchResult.Success /* KMK --> */ && !manga.eggikuHeldBack() /* KMK <-- */) {
                                 it.manga
                             } else {
                                 null
@@ -343,7 +413,7 @@ class MigrationListScreenModel(
                             )
                             // KMK -->
                             moved++
-                        } else {
+                        } else if (!manga.eggikuHeldBack()) {
                             notFound++
                             // KMK <--
                         }
@@ -359,10 +429,14 @@ class MigrationListScreenModel(
                 // KMK -->
                 // A short report of how the batch went
                 withUIContext {
-                    Injekt.get<Application>().toast(
-                        Injekt.get<Application>().stringResource(KMR.strings.migration_report, moved, notFound),
-                        Toast.LENGTH_LONG,
-                    )
+                    val app = Injekt.get<Application>()
+                    val report = buildString {
+                        append(app.stringResource(KMR.strings.migration_report, moved, notFound))
+                        if (heldBack > 0) append(" ").append(app.stringResource(KMR.strings.eggiku_migration_held_back, heldBack))
+                        val lined = EggikuMigrationSmarts.offsetsApplied.get()
+                        if (lined > 0) append(" ").append(app.stringResource(KMR.strings.eggiku_migration_lined_up, lined))
+                    }
+                    app.toast(report, Toast.LENGTH_LONG)
                 }
                 // KMK <--
                 navigateBack()
@@ -435,7 +509,9 @@ class MigrationListScreenModel(
                     copy = copy,
                     // KMK -->
                     totalCount = state.items.size,
-                    skippedCount = state.items.count { it.searchResult.value == SearchResult.NotFound },
+                    skippedCount = state.items.count {
+                        it.searchResult.value == SearchResult.NotFound || it.eggikuHeldBack()
+                    },
                     // KMK <--
                 ),
             )

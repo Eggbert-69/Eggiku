@@ -77,6 +77,7 @@ import eu.kanade.presentation.reader.appbars.NavBarType
 import eu.kanade.presentation.reader.appbars.ReaderAppBars
 import eu.kanade.presentation.reader.settings.ReaderSettingsDialog
 import eu.kanade.presentation.theme.TachiyomiTheme
+import eu.kanade.presentation.util.formatChapterNumber
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.coil.TachiyomiImageDecoder
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
@@ -93,6 +94,7 @@ import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.AddToLibraryFirst
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Error
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Success
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuSharpen
 import eu.kanade.tachiyomi.ui.reader.loader.HttpPageLoader
 import eu.kanade.tachiyomi.ui.reader.model.ReaderChapter
 import eu.kanade.tachiyomi.ui.reader.model.ReaderPage
@@ -237,6 +239,9 @@ class ReaderActivity : BaseActivity() {
         binding = ReaderActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.setComposeOverlay()
+        // KMK -->
+        EggikuSharpen.attach(binding.viewerContainer, lifecycleScope)
+        // KMK <--
 
         if (viewModel.needsInit()) {
             val manga = intent.extras?.getLong("manga", -1) ?: -1L
@@ -318,6 +323,15 @@ class ReaderActivity : BaseActivity() {
                     is ReaderViewModel.Event.SetCoverResult -> {
                         onSetAsCoverResult(event.result)
                     }
+                    // KMK -->
+                    is ReaderViewModel.Event.EggikuOpenChapter -> {
+                        val mangaId = viewModel.manga?.id
+                        if (mangaId != null) {
+                            startActivity(newIntent(this@ReaderActivity, mangaId, event.chapterId))
+                            finish()
+                        }
+                    }
+                    // KMK <--
                 }
             }
             .launchIn(lifecycleScope)
@@ -521,6 +535,35 @@ class ReaderActivity : BaseActivity() {
                     text = { Text(text = stringResource(SYMR.strings.eh_retry_all_help_message)) },
                 )
                 // SY <--
+                // KMK -->
+                is ReaderViewModel.Dialog.EggikuSkipped -> {
+                    val skipped = state.dialog as ReaderViewModel.Dialog.EggikuSkipped
+                    val number = formatChapterNumber(skipped.firstSkipped.chapterNumber)
+                    AlertDialog(
+                        onDismissRequest = onDismissRequest,
+                        title = { Text(text = stringResource(KMR.strings.eggiku_skipped_title)) },
+                        text = {
+                            Text(
+                                text = if (skipped.count == 1) {
+                                    stringResource(KMR.strings.eggiku_skipped_one, number)
+                                } else {
+                                    stringResource(KMR.strings.eggiku_skipped_many, skipped.count, number)
+                                },
+                            )
+                        },
+                        confirmButton = {
+                            TextButton(onClick = { viewModel.eggikuReadSkipped(skipped.firstSkipped) }) {
+                                Text(text = stringResource(KMR.strings.eggiku_read_chapter, number))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = onDismissRequest) {
+                                Text(text = stringResource(KMR.strings.eggiku_keep_going))
+                            }
+                        },
+                    )
+                }
+                // KMK <--
                 null -> {}
             }
         }

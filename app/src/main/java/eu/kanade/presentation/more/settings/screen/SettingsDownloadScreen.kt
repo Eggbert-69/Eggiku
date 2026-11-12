@@ -8,10 +8,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.util.fastMap
 import eu.kanade.presentation.category.visualName
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.widget.TriStateListDialog
+import eu.kanade.tachiyomi.data.smartdownload.EggikuSmartDownloads
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableMap
@@ -79,6 +81,7 @@ object SettingsDownloadScreen : SearchableSettings {
             ),
             getDownloadAheadGroup(downloadPreferences = downloadPreferences),
             // KMK -->
+            getEggikuSmartDownloadsGroup(),
             getDownloadCacheRenewInterval(downloadPreferences = downloadPreferences),
             // KMK <--
         )
@@ -218,6 +221,38 @@ object SettingsDownloadScreen : SearchableSettings {
     }
 
     // KMK -->
+    @Composable
+    private fun getEggikuSmartDownloadsGroup(): Preference.PreferenceGroup {
+        val context = LocalContext.current
+        return Preference.PreferenceGroup(
+            title = stringResource(KMR.strings.eggiku_smart_downloads),
+            preferenceItems = persistentListOf(
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = EggikuSmartDownloads.enabled(),
+                    title = stringResource(KMR.strings.eggiku_smart_downloads),
+                    subtitle = stringResource(KMR.strings.eggiku_smart_downloads_summary),
+                    onValueChanged = {
+                        EggikuSmartDownloads.enabled().set(it)
+                        EggikuSmartDownloads.setup(context)
+                        true
+                    },
+                ),
+                Preference.PreferenceItem.ListPreference(
+                    preference = EggikuSmartDownloads.chaptersAhead(),
+                    entries = listOf(1, 2, 3, 5, 10)
+                        .associateWith { pluralStringResource(MR.plurals.next_unread_chapters, count = it, it) }
+                        .toImmutableMap(),
+                    title = stringResource(KMR.strings.eggiku_smart_downloads_ahead),
+                ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = EggikuSmartDownloads.clearRead(),
+                    title = stringResource(KMR.strings.eggiku_smart_downloads_clear),
+                    subtitle = stringResource(KMR.strings.eggiku_smart_downloads_clear_summary),
+                ),
+            ),
+        )
+    }
+
     @Composable
     private fun getDownloadCacheRenewInterval(
         downloadPreferences: DownloadPreferences,

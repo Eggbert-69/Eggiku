@@ -9,6 +9,7 @@ import eu.kanade.tachiyomi.data.backup.models.backupChapterMapper
 import eu.kanade.tachiyomi.data.backup.models.backupMergedMangaReferenceMapper
 import eu.kanade.tachiyomi.data.backup.models.backupTrackMapper
 import eu.kanade.tachiyomi.data.music.EggikuMusicPreferences
+import eu.kanade.tachiyomi.data.rating.EggikuRatings
 import eu.kanade.tachiyomi.source.online.MetadataSource
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import exh.source.MERGED_SOURCE_ID
@@ -58,6 +59,7 @@ class MangaBackupCreator(
         val musicPreferences = Injekt.get<EggikuMusicPreferences>()
         mangaObject.eggikuPlaylist = musicPreferences.seriesPlaylist(manga.id).get().takeIf { it.isNotBlank() }
         mangaObject.eggikuPlaylistAutoStart = musicPreferences.seriesAutoStart(manga.id).get()
+        mangaObject.eggikuRating = EggikuRatings.get(manga.id)
         // KMK <--
 
         // SY -->

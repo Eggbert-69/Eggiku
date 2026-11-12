@@ -27,6 +27,7 @@ import eu.kanade.tachiyomi.data.LibraryUpdateStatus
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.duplicates.EggikuDuplicatesNotifier
+import eu.kanade.tachiyomi.data.eggikuhealth.EggikuHealthNudges
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
 import eu.kanade.tachiyomi.data.track.TrackStatus
@@ -396,6 +397,7 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
         val failedUpdates = CopyOnWriteArrayList<Pair<Manga, String?>>()
         // KMK -->
         val sourceResults = CopyOnWriteArrayList<Pair<Long, Boolean>>()
+        val seriesResults = CopyOnWriteArrayList<Pair<Manga, Boolean>>()
         // KMK <--
         val hasDownloads = AtomicBoolean(false)
         // SY -->
@@ -469,11 +471,13 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
                                         clearErrorFromDB(mangaId = manga.id)
                                         // KMK -->
                                         sourceResults.add(manga.source to true)
+                                        seriesResults.add(manga to true)
                                         // KMK <--
                                     } catch (e: Throwable) {
                                         // KMK -->
                                         if (e !is NoChaptersException && e !is SourceNotInstalledException) {
                                             sourceResults.add(manga.source to false)
+                                            seriesResults.add(manga to false)
                                         }
                                         // KMK <--
                                         val errorMessage = when (e) {
@@ -502,6 +506,12 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
 
         // KMK -->
         EggikuSourceHealth.record(sourceResults)
+        // Offer to move series (or whole sources) that keep failing
+        try {
+            EggikuHealthNudges.record(context, seriesResults)
+        } catch (_: Exception) {
+            // Never let this break the update
+        }
         // New chapters may finish "cook until X new chapters" timers
         try {
             EggikuCookTimer.checkDue(context)

@@ -1,8 +1,12 @@
 package eu.kanade.tachiyomi.ui.stats
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.SaveAlt
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
@@ -54,9 +59,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.more.stats.EggikuStatsFormat
 import eu.kanade.presentation.util.Screen
+import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
+import eu.kanade.tachiyomi.data.rating.EggikuRatings
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.library.EggikuCategoryLock
 import eu.kanade.tachiyomi.util.storage.getUriCompat
+import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.coroutines.launch
 import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.domain.category.interactor.GetCategories
@@ -77,6 +85,7 @@ import java.time.format.FormatStyle
 import java.time.format.TextStyle
 import java.time.temporal.TemporalAdjusters
 import java.util.Locale
+import tachiyomi.presentation.core.util.collectAsState as collectPrefAsState
 
 // KMK -->
 
@@ -126,7 +135,32 @@ class EggikuRecapScreen : Screen() {
         }
 
         val periodLabel = label(period, from, to)
+        val ratingEntries by EggikuRatings.pref().collectPrefAsState()
+        val ratings = remember(ratingEntries) { EggikuRatings.parse(ratingEntries) }
+        val badgesEarned = remember(from, to, version) {
+            EggikuAchievements.earned().values.count { !it.isBefore(from) && !it.isAfter(to) }
+        }
         val pages = buildList<@Composable () -> Unit> {
+            // Wrapped: everything on one card, made for sharing
+            add {
+                RecapCard(periodLabel, stringResource(KMR.strings.recap_wrapped_title)) {
+                    BigNumber(total.chapters.toString(), stringResource(KMR.strings.stats_chapters))
+                    val (h, m) = EggikuStatsFormat.hoursAndMinutes(total.seconds)
+                    Line("⏱️ " + stringResource(KMR.strings.recap_wrapped_time, stringResource(KMR.strings.stats_duration, h, m)))
+                    total.series.entries.filter { it.key in titles }.maxByOrNull { it.value }?.let { most ->
+                        Line("📚 " + stringResource(KMR.strings.recap_wrapped_most_read, titles[most.key].orEmpty()))
+                    }
+                    total.series.keys.filter { it in titles && (ratings[it] ?: 0) > 0 }
+                        .maxWithOrNull(compareBy<Long> { ratings[it] ?: 0 }.thenBy { total.series[it] ?: 0 })
+                        ?.let { fav ->
+                            Line("⭐ " + stringResource(KMR.strings.recap_wrapped_favourite, titles[fav].orEmpty(), "★".repeat(ratings[fav] ?: 0)))
+                        }
+                    Line("🔥 " + stringResource(KMR.strings.recap_longest_streak, streak.longest))
+                    Line("👍 " + stringResource(KMR.strings.recap_wrapped_swiped, EggikuStatsFormat.distance(total.swipeMm)))
+                    if (newSeries > 0) Line("🆕 " + pluralStringResource(KMR.plurals.recap_new_series, newSeries, newSeries))
+                    if (badgesEarned > 0) Line("🏅 " + stringResource(KMR.strings.recap_wrapped_badges, badgesEarned))
+                }
+            }
             add {
                 RecapCard(periodLabel, stringResource(KMR.strings.recap_total_title)) {
                     BigNumber(total.chapters.toString(), stringResource(KMR.strings.stats_chapters))
@@ -210,6 +244,21 @@ class EggikuRecapScreen : Screen() {
                             },
                         ) {
                             Icon(Icons.Outlined.Share, contentDescription = stringResource(KMR.strings.recap_share))
+                        }
+                        IconButton(
+                            onClick = {
+                                val layer = layers.getOrNull(pagerState.currentPage) ?: return@IconButton
+                                scope.launch {
+                                    val bitmap = layer.toImageBitmap().asAndroidBitmap()
+                                    val saved = withIOContext { saveImage(context, bitmap) }
+                                    context.toast(
+                                        if (saved) KMR.strings.recap_saved else KMR.strings.recap_save_failed,
+                                    )
+                                    if (!saved) shareImage(context, bitmap)
+                                }
+                            },
+                        ) {
+                            Icon(Icons.Outlined.SaveAlt, contentDescription = stringResource(KMR.strings.recap_save))
                         }
                     },
                 )
@@ -299,6 +348,23 @@ class EggikuRecapScreen : Screen() {
             }
             Period.MONTH -> from.format(DateTimeFormatter.ofPattern("LLLL yyyy", locale))
             Period.YEAR -> from.year.toString()
+        }
+    }
+
+    /** Saves the card to Pictures/Eggiku so it shows up in the gallery */
+    private fun saveImage(context: Context, bitmap: Bitmap): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return false
+        return try {
+            val values = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, "eggiku-wrapped-${System.currentTimeMillis()}.png")
+                put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Eggiku")
+            }
+            val resolver = context.contentResolver
+            val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values) ?: return false
+            resolver.openOutputStream(uri)?.use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) } != null
+        } catch (_: Exception) {
+            false
         }
     }
 

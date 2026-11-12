@@ -84,6 +84,8 @@ fun MigrationListScreenContent(
     // KMK -->
     onCancel: (Long) -> Unit,
     openOptionsDialog: () -> Unit,
+    onConfirmMatch: (Long) -> Unit = {},
+    onPickCandidate: (Long, Long) -> Unit = { _, _ -> },
     // KMK <--
 ) {
     Scaffold(
@@ -125,58 +127,71 @@ fun MigrationListScreenContent(
     ) { contentPadding ->
         FastScrollLazyColumn(contentPadding = contentPadding + topSmallPaddingValues) {
             items(items, key = { it.manga.id }) { item ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .animateItemFastScroll()
-                        .padding(
-                            start = MaterialTheme.padding.medium,
-                            end = MaterialTheme.padding.small,
+                // KMK -->
+                Column(modifier = Modifier.animateItemFastScroll()) {
+                    // KMK <--
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            // KMK -->
+                            // .animateItemFastScroll()
+                            // KMK <--
+                            .padding(
+                                start = MaterialTheme.padding.medium,
+                                end = MaterialTheme.padding.small,
+                            )
+                            .height(IntrinsicSize.Min),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        MigrationListItem(
+                            modifier = Modifier
+                                .weight(1f)
+                                .align(Alignment.Top)
+                                .fillMaxHeight(),
+                            manga = item.manga,
+                            source = item.source,
+                            chapterCount = item.chapterCount,
+                            latestChapter = item.latestChapter,
+                            onClick = { onItemClick(item.manga) },
                         )
-                        .height(IntrinsicSize.Min),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    MigrationListItem(
-                        modifier = Modifier
-                            .weight(1f)
-                            .align(Alignment.Top)
-                            .fillMaxHeight(),
-                        manga = item.manga,
-                        source = item.source,
-                        chapterCount = item.chapterCount,
-                        latestChapter = item.latestChapter,
-                        onClick = { onItemClick(item.manga) },
-                    )
 
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
-                        contentDescription = null,
-                        modifier = Modifier.weight(0.2f),
-                    )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowForward,
+                            contentDescription = null,
+                            modifier = Modifier.weight(0.2f),
+                        )
 
-                    val result by item.searchResult.collectAsState()
-                    MigrationListItemResult(
-                        modifier = Modifier
-                            .weight(1f)
-                            .align(Alignment.Top)
-                            .fillMaxHeight(),
-                        result = result,
-                        onItemClick = onItemClick,
-                    )
+                        val result by item.searchResult.collectAsState()
+                        MigrationListItemResult(
+                            modifier = Modifier
+                                .weight(1f)
+                                .align(Alignment.Top)
+                                .fillMaxHeight(),
+                            result = result,
+                            onItemClick = onItemClick,
+                        )
 
-                    MigrationListItemAction(
-                        modifier = Modifier.weight(0.2f),
-                        result = result,
-                        onSearchManually = { onSearchManually(item) },
-                        onSkip = { onSkip(item.manga.id) },
-                        onMigrate = { onMigrate(item.manga.id) },
-                        onCopy = { onCopy(item.manga.id) },
-                        // KMK -->
-                        onCancel = { onCancel(item.manga.id) },
-                        // KMK <--
+                        MigrationListItemAction(
+                            modifier = Modifier.weight(0.2f),
+                            result = result,
+                            onSearchManually = { onSearchManually(item) },
+                            onSkip = { onSkip(item.manga.id) },
+                            onMigrate = { onMigrate(item.manga.id) },
+                            onCopy = { onCopy(item.manga.id) },
+                            // KMK -->
+                            onCancel = { onCancel(item.manga.id) },
+                            // KMK <--
+                        )
+                    }
+                    // KMK -->
+                    EggikuMatchExtras(
+                        item = item,
+                        onConfirm = { onConfirmMatch(item.manga.id) },
+                        onPick = { targetId -> onPickCandidate(item.manga.id, targetId) },
                     )
                 }
+                // KMK <--
             }
         }
     }

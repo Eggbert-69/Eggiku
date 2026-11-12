@@ -19,6 +19,7 @@ import eu.kanade.domain.track.interactor.TrackChapter
 import eu.kanade.domain.track.service.TrackPreferences
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.manga.components.ChapterDownloadAction
+import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.database.models.toDomainChapter
 import eu.kanade.tachiyomi.data.download.DownloadManager
@@ -65,6 +66,7 @@ import exh.util.mangaType
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -563,8 +565,65 @@ class ReaderViewModel @JvmOverloads constructor(
                 )
             }
         }
+        // KMK -->
+        eggikuCheckSkipped(newChapters.currChapter)
+        // KMK <--
         return newChapters
     }
+
+    // KMK -->
+    private val eggikuSkipChecked = mutableSetOf<Long>()
+
+    /**
+     * Eggiku: when a chapter opens and there are unread chapters between it and the last one read,
+     * ask before reading on. Only fires once per chapter per reading session, and only when the
+     * series has been read in order before (so starting a series midway doesn't trigger it).
+     */
+    private fun eggikuCheckSkipped(current: ReaderChapter) {
+        if (!readerPreferences.eggikuSkipWarning().get()) return
+        val manga = manga ?: return
+        val currentChapter = current.chapter.toDomainChapter() ?: return
+        val number = currentChapter.chapterNumber
+        if (number <= 0.0 || currentChapter.read || !eggikuSkipChecked.add(currentChapter.id)) return
+
+        viewModelScope.launchIO {
+            val all = if (manga.source == MERGED_SOURCE_ID) {
+                getMergedChaptersByMangaId.await(manga.id)
+            } else {
+                getChaptersByMangaId.await(manga.id)
+            }.filter { it.chapterNumber > 0.0 }
+            val readNumbers = all.filter { it.read }.map { it.chapterNumber }.toSet()
+            val lastReadBefore = readNumbers.filter { it < number }.maxOrNull() ?: return@launchIO
+            val skipped = all
+                .filter { it.chapterNumber > lastReadBefore && it.chapterNumber < number }
+                .filter { it.chapterNumber !in readNumbers }
+                .distinctBy { it.chapterNumber }
+                .sortedBy { it.chapterNumber }
+            val first = skipped.firstOrNull() ?: return@launchIO
+
+            // Let the chapter finish opening (and any loading dialog close) first
+            delay(EGGIKU_SKIP_DIALOG_DELAY)
+            withUIContext {
+                if (state.value.dialog == null) {
+                    mutableState.update { it.copy(dialog = Dialog.EggikuSkipped(first, skipped.size)) }
+                }
+            }
+        }
+    }
+
+    fun eggikuReadSkipped(chapter: Chapter) {
+        closeDialog()
+        viewModelScope.launchIO {
+            val target = chapterList.firstOrNull { it.chapter.id == chapter.id }
+            if (target != null) {
+                loadAdjacent(target)
+            } else {
+                // Not in the reader's list (filtered out), so reopen the reader on it
+                eventChannel.send(Event.EggikuOpenChapter(chapter.id))
+            }
+        }
+    }
+    // KMK <--
 
     /**
      * Called when the user changed to the given [chapter] when changing pages from the viewer.
@@ -957,6 +1016,13 @@ class ReaderViewModel @JvmOverloads constructor(
             }
             EggikuReadingLog.timeRead(sessionReadDuration / 1000, paddingKey)
             EggikuReadingLog.flush()
+            viewModelScope.launchIO {
+                try {
+                    EggikuAchievements.checkAndNotify(Injekt.get<Application>())
+                } catch (_: Exception) {
+                    // Badges are a bonus, never a crash
+                }
+            }
             // KMK <--
         }
     }
@@ -1572,6 +1638,10 @@ class ReaderViewModel @JvmOverloads constructor(
         data object RetryAllHelp : Dialog
         data object BoostPageHelp : Dialog
         // SY <--
+
+        // KMK -->
+        data class EggikuSkipped(val firstSkipped: Chapter, val count: Int) : Dialog
+        // KMK <--
     }
 
     sealed interface Event {
@@ -1589,5 +1659,13 @@ class ReaderViewModel @JvmOverloads constructor(
             // SY <--
         ) : Event
         data class CopyImage(val uri: Uri) : Event
+
+        // KMK -->
+        data class EggikuOpenChapter(val chapterId: Long) : Event
+        // KMK <--
     }
 }
+
+// KMK -->
+private const val EGGIKU_SKIP_DIALOG_DELAY = 700L
+// KMK <--

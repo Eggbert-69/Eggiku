@@ -106,6 +106,27 @@ class ReaderPreferences(
         "eggiku_side_padding_unfolded",
         preferenceStore.getInt("webtoon_side_padding", WEBTOON_PADDING_MIN).get(),
     )
+
+    // Live sharpening strength (0 = off), saved per screen like side padding
+    fun eggikuSharpen() = if (EggikuFoldState.isUnfolded()) eggikuSharpenUnfolded() else eggikuSharpenFolded()
+
+    fun eggikuSharpenFolded() = preferenceStore.getInt("eggiku_sharpen_folded", 0)
+
+    fun eggikuSharpenUnfolded() = preferenceStore.getInt("eggiku_sharpen_unfolded", 0)
+
+    // Long strip pages kept at full resolution so pinch-zoom stays sharp. On by default unfolded,
+    // where pages are most often zoomed; costs more memory on very long strips.
+    fun eggikuFullResPages() = if (EggikuFoldState.isUnfolded()) eggikuFullResUnfolded() else eggikuFullResFolded()
+
+    fun eggikuFullResFolded() = preferenceStore.getBoolean("eggiku_full_res_folded", false)
+
+    fun eggikuFullResUnfolded() = preferenceStore.getBoolean("eggiku_full_res_unfolded", true)
+
+    // Title bar and chapter slider moved to the bottom of the screen
+    fun eggikuOneHandMode() = preferenceStore.getBoolean("eggiku_one_hand_mode", false)
+
+    // Ask before reading on when an earlier chapter was skipped
+    fun eggikuSkipWarning() = preferenceStore.getBoolean("eggiku_skip_warning", true)
     // KMK <--
 
     fun readerHideThreshold() = preferenceStore.getEnum("reader_hide_threshold", ReaderHideThreshold.LOW)

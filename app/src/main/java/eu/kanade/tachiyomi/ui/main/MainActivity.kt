@@ -82,6 +82,7 @@ import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.download.DownloadCache
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
+import eu.kanade.tachiyomi.data.smartdownload.EggikuSmartDownloads
 import eu.kanade.tachiyomi.data.stats.EggikuStatsWorker
 import eu.kanade.tachiyomi.data.updater.AppUpdateChecker
 import eu.kanade.tachiyomi.data.updater.AppUpdateJob
@@ -540,6 +541,7 @@ class MainActivity : BaseActivity() {
                 try {
                     EggikuStatsWorker.setup(context)
                     EggikuCookTimer.checkDue(context)
+                    EggikuSmartDownloads.setup(context)
                 } catch (e: Exception) {
                     logcat(LogPriority.ERROR, e)
                 }
@@ -666,6 +668,12 @@ class MainActivity : BaseActivity() {
             )
         }
 
+        // KMK -->
+        if (EggikuOpen.handle(intent, navigator)) {
+            ready = true
+            return true
+        }
+        // KMK <--
         val tabToOpen = when (intent.action) {
             Constants.SHORTCUT_LIBRARY -> HomeScreen.Tab.Library()
             Constants.SHORTCUT_MANGA -> {

@@ -27,10 +27,12 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import eu.kanade.domain.manga.model.hasCustomCover
 import eu.kanade.domain.source.service.SourcePreferences
+import eu.kanade.presentation.util.formatChapterNumber
 import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import kotlinx.coroutines.flow.update
 import mihon.domain.migration.models.MigrationFlag
+import mihon.domain.migration.usecases.EggikuMigrationSmarts
 import mihon.domain.migration.usecases.MigrateMangaUseCase
 import mihon.feature.common.utils.getLabel
 import tachiyomi.core.common.i18n.stringResource
@@ -47,6 +49,7 @@ import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.screens.LoadingScreen
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import kotlin.math.abs
 
 @Composable
 internal fun Screen.MigrateMangaDialog(
@@ -91,7 +94,8 @@ internal fun Screen.MigrateMangaDialog(
                             val from = getChapters.await(current.id)
                             val to = getChapters.await(target.id)
                             val readNumbers = from.filter { it.read }.map { it.chapterNumber }.toSet()
-                            val carried = to.count { it.chapterNumber in readNumbers }
+                            val carried = EggikuMigrationSmarts.carriedReadCount(from, to).first
+                            val offset = EggikuMigrationSmarts.chapterOffset(from, to)
                             if (to.isEmpty()) {
                                 Injekt.get<Application>().stringResource(
                                     KMR.strings.migration_preview_unloaded,
@@ -105,7 +109,14 @@ internal fun Screen.MigrateMangaDialog(
                                     to.size,
                                     carried,
                                     readNumbers.size,
-                                )
+                                ) + if (offset != 0.0) {
+                                    " " + Injekt.get<Application>().stringResource(
+                                        KMR.strings.eggiku_migration_offset_note,
+                                        formatChapterNumber(abs(offset)),
+                                    )
+                                } else {
+                                    ""
+                                }
                             }
                         } catch (_: Exception) {
                             null

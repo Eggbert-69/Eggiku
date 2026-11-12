@@ -65,6 +65,8 @@ class BackupManga(
     // Eggiku: reading playlist link and whether it starts when the series opens
     @ProtoNumber(1100) var eggikuPlaylist: String? = null,
     @ProtoNumber(1101) var eggikuPlaylistAutoStart: Boolean = false,
+    // Eggiku: your own 1-5 star rating (0 = none)
+    @ProtoNumber(1102) var eggikuRating: Int = 0,
     // KMK <--
 
 ) {
