@@ -315,6 +315,11 @@ object SettingsAppearanceScreen : SearchableSettings {
                     title = stringResource(KMR.strings.pref_panorama_cover_flow),
                     subtitle = stringResource(KMR.strings.pref_panorama_cover_flow_summary),
                 ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = uiPreferences.eggikuIntroAnimation(),
+                    title = stringResource(KMR.strings.eggiku_pref_intro_animation),
+                    subtitle = stringResource(KMR.strings.eggiku_pref_intro_animation_summary),
+                ),
                 // KMK <--
                 Preference.PreferenceItem.SwitchPreference(
                     preference = uiPreferences.expandFilters(),

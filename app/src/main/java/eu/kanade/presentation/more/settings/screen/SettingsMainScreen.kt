@@ -132,6 +132,9 @@ object SettingsMainScreen : Screen() {
                     items.indexOfFirst { it.screen::class == navigator.items.first()::class }
                         .also {
                             LaunchedEffect(Unit) {
+                                // KMK -->
+                                if (it < 0) return@LaunchedEffect
+                                // KMK <--
                                 state.animateScrollToItem(it)
                                 if (it > 0) {
                                     // Lift scroll

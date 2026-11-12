@@ -752,7 +752,10 @@
 
     <!--== Splash Theme ==-->
     <style name="Theme.Tachiyomi.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <!-- KMK -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/eggiku_splash_egg</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <!-- KMK <-->
         <item name="windowSplashScreenBackground">@color/splash</item>
         <item name="postSplashScreenTheme">@style/Theme.Tachiyomi</item>
         <item name="android:statusBarColor">@android:color/transparent</item>

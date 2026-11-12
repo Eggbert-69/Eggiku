@@ -50,6 +50,9 @@ class UiPreferences(
         else -> theme.name in unlockedHiddenThemes().get()
     }
 
+    // Plays the egg-cracking intro all the way through when the app opens
+    fun eggikuIntroAnimation() = preferenceStore.getBoolean("eggiku_intro_animation", true)
+
     /** Set right before the rocket's smoke hands over to the new theme, so the smoke can clear on it */
     fun glibGlorbRevealPending() = preferenceStore.getBoolean(
         Preference.appStateKey("eggiku_glib_glorb_reveal"),
