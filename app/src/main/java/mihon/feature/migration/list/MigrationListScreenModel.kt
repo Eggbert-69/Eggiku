@@ -1,11 +1,14 @@
 package mihon.feature.migration.list
 
+import android.app.Application
+import android.widget.Toast
 import androidx.annotation.FloatRange
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.getNameForMangaInfo
+import eu.kanade.tachiyomi.util.system.toast
 import exh.source.MERGED_SOURCE_ID
 import exh.util.ThrottleManager
 import kotlinx.collections.immutable.ImmutableList
@@ -26,11 +29,13 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import logcat.LogPriority
+import mihon.domain.migration.usecases.EggikuMigrationUndo
 import mihon.domain.migration.usecases.MigrateMangaUseCase
 import mihon.domain.source.interactor.UpdateMangaFromRemote
 import mihon.feature.migration.list.models.MigratingManga
 import mihon.feature.migration.list.models.MigratingManga.SearchResult
 import mihon.feature.migration.list.search.SmartSourceSearchEngine
+import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.core.common.util.lang.withUIContext
 import tachiyomi.core.common.util.system.logcat
@@ -39,6 +44,7 @@ import tachiyomi.domain.manga.interactor.GetManga
 import tachiyomi.domain.manga.interactor.NetworkToLocalManga
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.source.service.SourceManager
+import tachiyomi.i18n.kmk.KMR
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -309,6 +315,12 @@ class MigrationListScreenModel(
         migrateJob = screenModelScope.launchIO {
             mutableState.update { it.copy(dialog = Dialog.Progress(0f)) }
             val items = items
+            // KMK -->
+            // One batch, so "Undo last migration" brings the whole batch back
+            EggikuMigrationUndo.currentBatch = System.currentTimeMillis()
+            var moved = 0
+            var notFound = 0
+            // KMK <--
             try {
                 items.forEachIndexed { index, manga ->
                     try {
@@ -329,6 +341,11 @@ class MigrationListScreenModel(
                                 throttleFunc = throttleManager::throttle,
                                 // SY <--
                             )
+                            // KMK -->
+                            moved++
+                        } else {
+                            notFound++
+                            // KMK <--
                         }
                     } catch (e: Exception) {
                         if (e is CancellationException) throw e
@@ -339,8 +356,20 @@ class MigrationListScreenModel(
                     }
                 }
 
+                // KMK -->
+                // A short report of how the batch went
+                withUIContext {
+                    Injekt.get<Application>().toast(
+                        Injekt.get<Application>().stringResource(KMR.strings.migration_report, moved, notFound),
+                        Toast.LENGTH_LONG,
+                    )
+                }
+                // KMK <--
                 navigateBack()
             } finally {
+                // KMK -->
+                EggikuMigrationUndo.currentBatch = 0L
+                // KMK <--
                 mutableState.update { it.copy(dialog = null) }
                 migrateJob = null
             }

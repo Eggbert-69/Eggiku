@@ -1,10 +1,12 @@
 package mihon.feature.migration.dialog
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -15,8 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.rememberScreenModel
@@ -29,10 +33,14 @@ import kotlinx.coroutines.flow.update
 import mihon.domain.migration.models.MigrationFlag
 import mihon.domain.migration.usecases.MigrateMangaUseCase
 import mihon.feature.common.utils.getLabel
+import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.util.lang.launchIO
+import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.core.common.util.lang.withUIContext
+import tachiyomi.domain.chapter.interactor.GetChaptersByMangaId
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.LabeledCheckbox
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
@@ -74,6 +82,45 @@ internal fun Screen.MigrateMangaDialog(
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
             ) {
+                // KMK -->
+                // What's moving: chapters on each side, and how many read chapters carry over
+                val preview by produceState<String?>(null, current.id, target.id) {
+                    value = withIOContext {
+                        try {
+                            val getChapters = Injekt.get<GetChaptersByMangaId>()
+                            val from = getChapters.await(current.id)
+                            val to = getChapters.await(target.id)
+                            val readNumbers = from.filter { it.read }.map { it.chapterNumber }.toSet()
+                            val carried = to.count { it.chapterNumber in readNumbers }
+                            if (to.isEmpty()) {
+                                Injekt.get<Application>().stringResource(
+                                    KMR.strings.migration_preview_unloaded,
+                                    from.size,
+                                    readNumbers.size,
+                                )
+                            } else {
+                                Injekt.get<Application>().stringResource(
+                                    KMR.strings.migration_preview,
+                                    from.size,
+                                    to.size,
+                                    carried,
+                                    readNumbers.size,
+                                )
+                            }
+                        } catch (_: Exception) {
+                            null
+                        }
+                    }
+                }
+                preview?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                }
+                // KMK <--
                 state.applicableFlags.fastForEach { flag ->
                     LabeledCheckbox(
                         label = stringResource(flag.getLabel()),

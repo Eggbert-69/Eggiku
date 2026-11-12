@@ -313,7 +313,9 @@ private val settingScreens = listOf(
     SettingsDataScreen,
     SettingsSecurityScreen,
     // SY -->
-    SettingsEhScreen,
+    // KMK -->
+    // SettingsEhScreen removed in Eggiku
+    // KMK <--
     SettingsMangadexScreen,
     // SY <--
     SettingsAdvancedScreen,

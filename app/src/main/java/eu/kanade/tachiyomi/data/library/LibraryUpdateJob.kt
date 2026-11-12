@@ -26,6 +26,7 @@ import eu.kanade.domain.track.model.toDomainTrack
 import eu.kanade.tachiyomi.data.LibraryUpdateStatus
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.download.DownloadManager
+import eu.kanade.tachiyomi.data.duplicates.EggikuDuplicatesNotifier
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
 import eu.kanade.tachiyomi.data.track.TrackStatus
@@ -504,6 +505,12 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
         // New chapters may finish "cook until X new chapters" timers
         try {
             EggikuCookTimer.checkDue(context)
+        } catch (_: Exception) {
+            // Never let this break the update
+        }
+        // Let you know when duplicates show up (once per new count)
+        try {
+            EggikuDuplicatesNotifier.check(context)
         } catch (_: Exception) {
             // Never let this break the update
         }

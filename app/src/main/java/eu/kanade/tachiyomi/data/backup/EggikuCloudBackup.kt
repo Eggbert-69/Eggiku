@@ -1,6 +1,8 @@
 package eu.kanade.tachiyomi.data.backup
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.provider.OpenableColumns
@@ -63,6 +65,32 @@ object EggikuCloudBackup {
         copy(context, latest)
         return backupPreferences.cloudCopyLastError().get().isEmpty()
     }
+
+    /**
+     * Sends the newest backup straight to the Google Drive app ("Save to Drive"), for phones
+     * where Drive doesn't show up in Android's save screen. Falls back to the share sheet.
+     */
+    fun sendLatestToDrive(context: Context): Boolean {
+        val latest = Injekt.get<StorageManager>().getAutomaticBackupsDirectory()
+            ?.listFiles()
+            ?.filter { it.name?.endsWith(".tachibk") == true }
+            ?.maxByOrNull { it.lastModified() }
+            ?: return false
+        val send = Intent(Intent.ACTION_SEND).apply {
+            type = "application/octet-stream"
+            putExtra(Intent.EXTRA_STREAM, latest.uri)
+            putExtra(Intent.EXTRA_TITLE, latest.name)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        try {
+            context.startActivity(Intent(send).setPackage(DRIVE_PACKAGE))
+        } catch (_: ActivityNotFoundException) {
+            context.startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        }
+        return true
+    }
+
+    private const val DRIVE_PACKAGE = "com.google.android.apps.docs"
 
     /** "Google Drive", "Dropbox"... from the document provider, or null when unknown. */
     fun providerName(uri: Uri): String? {
