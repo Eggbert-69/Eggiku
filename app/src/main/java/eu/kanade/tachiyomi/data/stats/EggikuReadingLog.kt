@@ -190,6 +190,7 @@ object EggikuReadingLog {
         }
         logPref().set(json.encodeToString(logSerializer, snapshot))
         _changes.value++
+        EggikuWidgetBridge.updateStats()
     }
 
     fun all(): Map<LocalDate, DayStats> = synchronized(lock) {

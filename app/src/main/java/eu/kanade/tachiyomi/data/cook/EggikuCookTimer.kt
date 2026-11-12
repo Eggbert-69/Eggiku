@@ -11,6 +11,7 @@ import eu.kanade.tachiyomi.util.system.notify
 import tachiyomi.core.common.Constants
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.preference.PreferenceStore
+import tachiyomi.domain.chapter.interactor.GetChaptersByMangaId
 import tachiyomi.domain.manga.interactor.GetManga
 import tachiyomi.i18n.kmk.KMR
 import uy.kohesive.injekt.Injekt
@@ -43,6 +44,35 @@ object EggikuCookTimer {
 
     fun dueAt(mangaId: Long): Long? = parse(timers().get())[mangaId]
 
+    /** "Cook until X new chapters". Entries look like "mangaId:goal:chapterCountWhenStarted" */
+    fun chapterGoalsPref() = preferenceStore.getStringSet("eggiku_cook_chapter_goals", emptySet())
+
+    /** mangaId -> (new chapters wanted, chapter count when started) */
+    fun chapterGoals(entries: Set<String> = chapterGoalsPref().get()): Map<Long, Pair<Int, Int>> =
+        entries.mapNotNull {
+            val parts = it.split(':')
+            if (parts.size != 3) return@mapNotNull null
+            val id = parts[0].toLongOrNull() ?: return@mapNotNull null
+            val goal = parts[1].toIntOrNull() ?: return@mapNotNull null
+            val base = parts[2].toIntOrNull() ?: return@mapNotNull null
+            id to (goal to base)
+        }.toMap()
+
+    private fun saveGoals(map: Map<Long, Pair<Int, Int>>) {
+        chapterGoalsPref().set(map.map { (id, v) -> "$id:${v.first}:${v.second}" }.toSet())
+    }
+
+    suspend fun chapterCount(mangaId: Long): Int =
+        Injekt.get<GetChaptersByMangaId>().await(mangaId).size
+
+    /** Starts a "until [newChapters] new chapters" timer, replacing any date timer */
+    suspend fun startChapters(mangaId: Long, newChapters: Int) {
+        val base = chapterCount(mangaId)
+        timers().set(parse(timers().get()).filterKeys { it != mangaId }.map { (id, at) -> "$id:$at" }.toSet())
+        saveGoals(chapterGoals() + (mangaId to (newChapters to base)))
+        ready().set(ready().get() - mangaId.toString())
+    }
+
     fun isReady(mangaId: Long): Boolean = mangaId.toString() in ready().get()
 
     /** Starts (or restarts) a timer; [weeks] counts from now */
@@ -52,6 +82,7 @@ object EggikuCookTimer {
             .atZone(ZoneId.systemDefault())
             .toInstant()
             .toEpochMilli()
+        saveGoals(chapterGoals() - mangaId)
         val map = parse(timers().get()).toMutableMap()
         map[mangaId] = due
         timers().set(map.map { (id, at) -> "$id:$at" }.toSet())
@@ -59,6 +90,7 @@ object EggikuCookTimer {
     }
 
     fun cancel(mangaId: Long) {
+        saveGoals(chapterGoals() - mangaId)
         timers().set(parse(timers().get()).filterKeys { it != mangaId }.map { (id, at) -> "$id:$at" }.toSet())
         ready().set(ready().get() - mangaId.toString())
     }
@@ -71,9 +103,20 @@ object EggikuCookTimer {
     /** Finishes any timers that are due: notifies and moves the series to Continue reading */
     suspend fun checkDue(context: Context, now: Long = System.currentTimeMillis()) {
         val timers = parse(timers().get())
-        val due = timers.filterValues { it <= now }.keys
+        val dueByDate = timers.filterValues { it <= now }.keys
+        // Chapter goals are done once enough new chapters have come in
+        val goals = chapterGoals()
+        val dueByChapters = goals.filter { (id, goal) ->
+            try {
+                chapterCount(id) - goal.second >= goal.first
+            } catch (_: Exception) {
+                false
+            }
+        }.keys
+        val due = dueByDate + dueByChapters
         if (due.isEmpty()) return
         timers().set(timers.filterKeys { it !in due }.map { (id, at) -> "$id:$at" }.toSet())
+        saveGoals(goals - dueByChapters)
         ready().set(ready().get() + due.map { it.toString() })
 
         val getManga = Injekt.get<GetManga>()

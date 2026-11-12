@@ -45,6 +45,7 @@ import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
 import eu.kanade.tachiyomi.data.connections.discord.DiscordScreen
 import eu.kanade.tachiyomi.data.download.DownloadCache
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
+import eu.kanade.tachiyomi.data.stats.EggikuWidgetBridge
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
 import eu.kanade.tachiyomi.ui.browse.source.SourcesScreen
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.GlobalSearchScreen
@@ -355,6 +356,11 @@ data object LibraryTab : Tab {
                         Injekt.get<LibraryPreferences>().showContinueReadingRow().changes()
                     }.collectAsState(initial = true)
                     // KMK <--
+                    // KMK -->
+                    LaunchedEffect(state.continueReading) {
+                        EggikuWidgetBridge.updateContinue(state.continueReading.map { it.libraryManga.id })
+                    }
+                    // KMK <--
                     LibraryContent(
                         categories = state.displayedCategories,
                         // KMK -->
@@ -389,6 +395,9 @@ data object LibraryTab : Tab {
                             showContinueReadingRow && state.searchQuery.isNullOrEmpty() && !state.selectionMode
                         }.orEmpty(),
                         onResumeReading = resumeReading,
+                        cookingItems = state.cooking.takeIf {
+                            showContinueReadingRow && state.searchQuery.isNullOrEmpty() && !state.selectionMode
+                        }.orEmpty(),
                         // KMK <--
                     )
                 }

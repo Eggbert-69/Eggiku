@@ -2,6 +2,7 @@ package eu.kanade.tachiyomi.ui.manga
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.BackHandler
@@ -80,6 +81,7 @@ import eu.kanade.tachiyomi.ui.manga.track.TrackInfoDialogHomeScreen
 import eu.kanade.tachiyomi.ui.reader.ReaderActivity
 import eu.kanade.tachiyomi.ui.setting.SettingsScreen
 import eu.kanade.tachiyomi.ui.webview.WebViewScreen
+import eu.kanade.tachiyomi.util.EggikuShare
 import eu.kanade.tachiyomi.util.system.copyToClipboard
 import eu.kanade.tachiyomi.util.system.toShareIntent
 import eu.kanade.tachiyomi.util.system.toast
@@ -691,8 +693,22 @@ class MangaScreen(
     private fun shareManga(context: Context, manga_: Manga?, source_: Source?) {
         try {
             getMangaUrl(manga_, source_)?.let { url ->
-                val intent = url.toUri().toShareIntent(context, type = "text/plain")
-                context.startActivity(intent)
+                // KMK -->
+                // Eggiku: a message a friend can tap (or share to Eggiku) to open the series directly
+                val title = manga_?.title.orEmpty()
+                val text = context.stringResource(
+                    KMR.strings.share_series_text,
+                    title,
+                    EggikuShare.link(url, title),
+                    url,
+                )
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, text)
+                    putExtra(Intent.EXTRA_TITLE, title)
+                }
+                context.startActivity(Intent.createChooser(intent, title))
+                // KMK <--
             }
         } catch (e: Exception) {
             context.toast(e.message)

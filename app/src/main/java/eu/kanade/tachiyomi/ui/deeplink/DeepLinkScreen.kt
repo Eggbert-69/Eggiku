@@ -21,6 +21,10 @@ import tachiyomi.presentation.core.screens.LoadingScreen
 
 class DeepLinkScreen(
     val query: String = "",
+    // KMK -->
+    /** What to search for when nothing opens the link directly, e.g. the shared series' title */
+    private val fallbackQuery: String? = null,
+    // KMK <--
 ) : Screen() {
 
     @Composable
@@ -46,7 +50,7 @@ class DeepLinkScreen(
                     LoadingScreen(Modifier.padding(contentPadding))
                 }
                 is DeepLinkScreenModel.State.NoResults -> {
-                    navigator.replace(GlobalSearchScreen(query))
+                    navigator.replace(GlobalSearchScreen(/* KMK --> */fallbackQuery ?: /* KMK <-- */query))
                 }
                 is DeepLinkScreenModel.State.Result -> {
                     val resultState = state as DeepLinkScreenModel.State.Result

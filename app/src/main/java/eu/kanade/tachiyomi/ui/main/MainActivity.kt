@@ -96,6 +96,7 @@ import eu.kanade.tachiyomi.ui.manga.MangaScreen
 import eu.kanade.tachiyomi.ui.more.NewUpdateScreen
 import eu.kanade.tachiyomi.ui.more.OnboardingScreen
 import eu.kanade.tachiyomi.ui.more.WhatsNewScreen
+import eu.kanade.tachiyomi.util.EggikuShare
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.isDebugBuildType
 import eu.kanade.tachiyomi.util.system.isNavigationBarNeedsScrim
@@ -682,9 +683,17 @@ class MainActivity : BaseActivity() {
 
                 // Get the search query provided in extras, and if not null, perform a global search with it.
                 val query = intent.getStringExtra(SearchManager.QUERY) ?: intent.getStringExtra(Intent.EXTRA_TEXT)
-                if (!query.isNullOrEmpty()) {
+                // KMK -->
+                val shared = EggikuShare.fromText(query)
+                if (shared != null) {
                     navigator.popUntilRoot()
-                    navigator.push(DeepLinkScreen(query))
+                    navigator.push(DeepLinkScreen(shared.url, shared.title))
+                } else {
+                    // KMK <--
+                    if (!query.isNullOrEmpty()) {
+                        navigator.popUntilRoot()
+                        navigator.push(DeepLinkScreen(query))
+                    }
                 }
                 null
             }
@@ -698,16 +707,25 @@ class MainActivity : BaseActivity() {
                 null
             }
             Intent.ACTION_VIEW -> {
-                // Handling opening of backup files
-                if (intent.data.toString().endsWith(".tachibk")) {
+                // KMK -->
+                // A series a friend shared from Eggiku
+                val shared = EggikuShare.fromUri(intent.data)
+                if (shared != null) {
                     navigator.popUntilRoot()
-                    navigator.push(RestoreBackupScreen(intent.data.toString()))
-                }
-                // Deep link to add extension store
-                else if (intent.isAddExtensionStoreIntent()) {
-                    intent.data?.getQueryParameter("url")?.let { repoUrl ->
+                    navigator.push(DeepLinkScreen(shared.url, shared.title))
+                } else {
+                    // KMK <--
+                    // Handling opening of backup files
+                    if (intent.data.toString().endsWith(".tachibk")) {
                         navigator.popUntilRoot()
-                        navigator.push(ExtensionStoresScreen(repoUrl))
+                        navigator.push(RestoreBackupScreen(intent.data.toString()))
+                    }
+                    // Deep link to add extension store
+                    else if (intent.isAddExtensionStoreIntent()) {
+                        intent.data?.getQueryParameter("url")?.let { repoUrl ->
+                            navigator.popUntilRoot()
+                            navigator.push(ExtensionStoresScreen(repoUrl))
+                        }
                     }
                 }
                 null

@@ -47,6 +47,12 @@ enum class AppTheme(val titleRes: StringResource?) {
 
     /** Hidden until unlocked: type "wyatt" in the settings search and launch the rocket */
     GLIB_GLORB(KMR.strings.theme_glibglorb),
+
+    /** Hidden until unlocked: tap the version in About 7 times */
+    SUNNY_SIDE_UP(KMR.strings.theme_sunnysideup),
+
+    /** Hidden until unlocked: search "insert coin" in settings */
+    MIDNIGHT_ARCADE(KMR.strings.theme_midnightarcade),
     // KMK <--
 
     // Deprecated
@@ -58,3 +64,8 @@ enum class AppTheme(val titleRes: StringResource?) {
     PURE_RED(null),
     // SY <--
 }
+
+// KMK -->
+/** Eggiku themes that stay out of the theme list until you find them */
+val HiddenAppThemes = setOf(AppTheme.GLIB_GLORB, AppTheme.SUNNY_SIDE_UP, AppTheme.MIDNIGHT_ARCADE)
+// KMK <--

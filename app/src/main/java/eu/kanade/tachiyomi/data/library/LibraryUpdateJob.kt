@@ -24,6 +24,7 @@ import eu.kanade.domain.sync.SyncPreferences
 import eu.kanade.domain.track.model.toDbTrack
 import eu.kanade.domain.track.model.toDomainTrack
 import eu.kanade.tachiyomi.data.LibraryUpdateStatus
+import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
@@ -500,6 +501,12 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
 
         // KMK -->
         EggikuSourceHealth.record(sourceResults)
+        // New chapters may finish "cook until X new chapters" timers
+        try {
+            EggikuCookTimer.checkDue(context)
+        } catch (_: Exception) {
+            // Never let this break the update
+        }
         // KMK <--
 
         if (newUpdates.isNotEmpty()) {

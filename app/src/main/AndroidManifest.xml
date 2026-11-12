@@ -154,6 +154,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
+            <!-- KMK -->
+            <!-- Eggiku: series shared by a friend -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="eggiku" android:host="open" />
+            </intent-filter>
+            <!-- KMK -->
 
             <meta-data
                 android:name="android.app.searchable"
