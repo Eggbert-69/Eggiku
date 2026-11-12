@@ -34,6 +34,8 @@ class UiPreferences(
     fun themeCoverBasedStyle() = preferenceStore.getEnum("pref_theme_cover_based_style_key", PaletteStyle.Vibrant)
 
     fun preloadLibraryColor() = preferenceStore.getBoolean("pref_preload_library_color_key", true)
+
+    fun glassEffect() = preferenceStore.getBoolean("pref_glass_effect_key", true)
     // KMK <--
 
     fun relativeTime() = preferenceStore.getBoolean("relative_time_v2", true)

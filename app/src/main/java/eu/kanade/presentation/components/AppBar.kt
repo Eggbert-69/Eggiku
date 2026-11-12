@@ -59,6 +59,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import tachiyomi.i18n.MR
+import tachiyomi.presentation.core.components.material.LocalGlassEnabled
+import tachiyomi.presentation.core.components.material.glass
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.util.clearFocusOnSoftKeyboardHide
 import tachiyomi.presentation.core.util.runOnEnterKeyPressed
@@ -138,8 +140,24 @@ fun AppBar(
 
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
+    // KMK -->
+    val glassEnabled = LocalGlassEnabled.current && backgroundColor == null
+    val barModifier = if (glassEnabled) modifier.glass(outlined = false) else modifier
+    val barColors = if (glassEnabled) {
+        TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Transparent,
+            scrolledContainerColor = Color.Transparent,
+        )
+    } else {
+        TopAppBarDefaults.topAppBarColors(
+            containerColor = backgroundColor ?: MaterialTheme.colorScheme.surfaceColorAtElevation(
+                elevation = if (isActionMode) 3.dp else 0.dp,
+            ),
+        )
+    }
+    // KMK <--
     Column(
-        modifier = modifier,
+        modifier = /* KMK --> */barModifier/* KMK <-- */,
     ) {
         TopAppBar(
             navigationIcon = {
@@ -171,11 +189,7 @@ fun AppBar(
             },
             title = titleContent,
             actions = actions,
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = backgroundColor ?: MaterialTheme.colorScheme.surfaceColorAtElevation(
-                    elevation = if (isActionMode) 3.dp else 0.dp,
-                ),
-            ),
+            colors = /* KMK --> */barColors/* KMK <-- */,
             scrollBehavior = scrollBehavior,
         )
     }
@@ -217,7 +231,7 @@ fun AppBarActions(
 
     actions.filterIsInstance<AppBar.Action>().map {
         TooltipBox(
-            positionProvider = rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+            positionProvider = rememberTooltipPositionProvider(/* KMK --> */TooltipAnchorPosition.Below/* KMK <-- */),
             tooltip = {
                 PlainTooltip {
                     Text(it.title)
@@ -242,7 +256,7 @@ fun AppBarActions(
     // KMK -->
     actions.filterIsInstance<AppBar.ActionCompose>().map {
         TooltipBox(
-            positionProvider = rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+            positionProvider = rememberTooltipPositionProvider(/* KMK --> */TooltipAnchorPosition.Below/* KMK <-- */),
             tooltip = {
                 PlainTooltip {
                     Text(it.title)
@@ -265,7 +279,7 @@ fun AppBarActions(
     val overflowActions = actions.filterIsInstance<AppBar.OverflowAction>()
     if (overflowActions.isNotEmpty()) {
         TooltipBox(
-            positionProvider = rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+            positionProvider = rememberTooltipPositionProvider(/* KMK --> */TooltipAnchorPosition.Below/* KMK <-- */),
             tooltip = {
                 PlainTooltip {
                     Text(stringResource(MR.strings.action_menu_overflow_description))
@@ -394,7 +408,7 @@ fun SearchToolbar(
                     // Don't show search action
                 } else if (searchQuery == null) {
                     TooltipBox(
-                        positionProvider = rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+                        positionProvider = rememberTooltipPositionProvider(/* KMK --> */TooltipAnchorPosition.Below/* KMK <-- */),
                         tooltip = {
                             PlainTooltip {
                                 Text(stringResource(MR.strings.action_search))
@@ -414,7 +428,7 @@ fun SearchToolbar(
                     }
                 } else if (searchQuery.isNotEmpty()) {
                     TooltipBox(
-                        positionProvider = rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+                        positionProvider = rememberTooltipPositionProvider(/* KMK --> */TooltipAnchorPosition.Below/* KMK <-- */),
                         tooltip = {
                             PlainTooltip {
                                 Text(stringResource(MR.strings.action_reset))

@@ -18,6 +18,7 @@
 
 package tachiyomi.presentation.core.components.material
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.MutableWindowInsets
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -38,6 +39,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -53,6 +55,8 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.util.fastMapNotNull
 import androidx.compose.ui.util.fastMaxBy
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import kotlin.math.max
 
 /**
@@ -121,6 +125,10 @@ fun Scaffold(
 ) {
     // Tachiyomi: Handle consumed window insets
     val remainingWindowInsets = remember { MutableWindowInsets() }
+    // KMK -->
+    val glassEnabled = LocalGlassEnabled.current
+    val hazeState = remember { HazeState() }
+    // KMK <--
     androidx.compose.material3.Surface(
         modifier = Modifier
             .nestedScroll(topBarScrollBehavior.nestedScrollConnection)
@@ -133,16 +141,31 @@ fun Scaffold(
         color = containerColor,
         contentColor = contentColor,
     ) {
-        ScaffoldLayout(
-            fabPosition = floatingActionButtonPosition,
-            topBar = { topBar(topBarScrollBehavior) },
-            startBar = startBar,
-            bottomBar = bottomBar,
-            content = content,
-            snackbar = snackbarHost,
-            contentWindowInsets = remainingWindowInsets,
-            fab = floatingActionButton,
-        )
+        // KMK -->
+        CompositionLocalProvider(LocalGlassHazeState provides hazeState.takeIf { glassEnabled }) {
+            // KMK <--
+            ScaffoldLayout(
+                fabPosition = floatingActionButtonPosition,
+                topBar = { topBar(topBarScrollBehavior) },
+                startBar = startBar,
+                bottomBar = bottomBar,
+                // KMK -->
+                content = { innerPadding ->
+                    // Glass bars blur whatever the content draws behind them
+                    Box(modifier = if (glassEnabled) Modifier.hazeSource(state = hazeState) else Modifier) {
+                        CompositionLocalProvider(LocalScaffoldExtraBottomInset provides 0.dp) {
+                            content(innerPadding)
+                        }
+                    }
+                },
+                // KMK <--
+                snackbar = snackbarHost,
+                contentWindowInsets = remainingWindowInsets,
+                fab = floatingActionButton,
+            )
+            // KMK -->
+        }
+        // KMK <--
     }
 }
 
@@ -169,6 +192,9 @@ private fun ScaffoldLayout(
     contentWindowInsets: WindowInsets,
     bottomBar: @Composable () -> Unit,
 ) {
+    // KMK -->
+    val extraBottomInset = LocalScaffoldExtraBottomInset.current
+    // KMK <--
     SubcomposeLayout { constraints ->
         val layoutWidth = constraints.maxWidth
         val layoutHeight = constraints.maxHeight
@@ -183,7 +209,9 @@ private fun ScaffoldLayout(
         layout(layoutWidth, layoutHeight) {
             val leftInset = contentWindowInsets.getLeft(this@SubcomposeLayout, layoutDirection)
             val rightInset = contentWindowInsets.getRight(this@SubcomposeLayout, layoutDirection)
-            val bottomInset = contentWindowInsets.getBottom(this@SubcomposeLayout)
+            // KMK -->
+            val bottomInset = contentWindowInsets.getBottom(this@SubcomposeLayout) + extraBottomInset.roundToPx()
+            // KMK <--
 
             // Tachiyomi: Add startBar slot for Navigation Rail
             val startBarPlaceables = subcompose(ScaffoldLayoutContent.StartBar, startBar).fastMap {
@@ -292,7 +320,9 @@ private fun ScaffoldLayout(
                     },
                     // Tachiyomi: Also take account of fab height when providing inner padding
                     bottom = if (bottomBarPlaceables.isEmpty() || bottomBarHeightPx == 0) {
-                        max(insets.calculateBottomPadding(), fabOffsetDp)
+                        // KMK -->
+                        max(insets.calculateBottomPadding() + extraBottomInset, fabOffsetDp)
+                        // KMK <--
                     } else {
                         max(bottomBarHeightPx.toDp(), fabOffsetDp)
                     },

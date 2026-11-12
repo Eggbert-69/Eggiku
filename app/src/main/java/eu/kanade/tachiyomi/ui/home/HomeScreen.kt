@@ -7,8 +7,11 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Badge
@@ -26,9 +29,11 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastFilter
 import androidx.compose.ui.util.fastForEach
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -57,6 +62,8 @@ import soup.compose.material.motion.animation.materialFadeThroughIn
 import soup.compose.material.motion.animation.materialFadeThroughOut
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.i18n.MR
+import tachiyomi.presentation.core.components.material.LocalGlassEnabled
+import tachiyomi.presentation.core.components.material.LocalScaffoldExtraBottomInset
 import tachiyomi.presentation.core.components.material.NavigationBar
 import tachiyomi.presentation.core.components.material.NavigationRail
 import tachiyomi.presentation.core.components.material.Scaffold
@@ -141,9 +148,24 @@ object HomeScreen : Screen() {
                     },
                     contentWindowInsets = WindowInsets(0),
                 ) { contentPadding ->
+                    // KMK -->
+                    // With glass on, tabs draw behind the floating navigation bar and keep its height clear
+                    val glassEnabled = LocalGlassEnabled.current
+                    val layoutDirection = LocalLayoutDirection.current
+                    val bodyPadding = if (glassEnabled) {
+                        PaddingValues(
+                            start = contentPadding.calculateStartPadding(layoutDirection),
+                            top = contentPadding.calculateTopPadding(),
+                            end = contentPadding.calculateEndPadding(layoutDirection),
+                        )
+                    } else {
+                        contentPadding
+                    }
+                    val extraBottomInset = if (glassEnabled) contentPadding.calculateBottomPadding() else 0.dp
+                    // KMK <--
                     Box(
                         modifier = Modifier
-                            .padding(contentPadding)
+                            .padding(/* KMK --> */bodyPadding/* KMK <-- */)
                             .consumeWindowInsets(contentPadding),
                     ) {
                         AnimatedContent(
@@ -156,7 +178,13 @@ object HomeScreen : Screen() {
                             contentKey = { it.key },
                         ) {
                             tabNavigator.saveableState(key = "currentTab", it) {
-                                it.Content()
+                                // KMK -->
+                                CompositionLocalProvider(LocalScaffoldExtraBottomInset provides extraBottomInset) {
+                                    // KMK <--
+                                    it.Content()
+                                    // KMK -->
+                                }
+                                // KMK <--
                             }
                         }
                     }

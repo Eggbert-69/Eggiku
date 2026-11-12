@@ -150,6 +150,17 @@ object SettingsAppearanceScreen : SearchableSettings {
                         true
                     },
                 ),
+                // KMK -->
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = uiPreferences.glassEffect(),
+                    title = stringResource(KMR.strings.pref_glass_effect),
+                    subtitle = stringResource(KMR.strings.pref_glass_effect_summary),
+                    onValueChanged = {
+                        (context as? Activity)?.let { ActivityCompat.recreate(it) }
+                        true
+                    },
+                ),
+                // KMK <--
             ),
         )
     }

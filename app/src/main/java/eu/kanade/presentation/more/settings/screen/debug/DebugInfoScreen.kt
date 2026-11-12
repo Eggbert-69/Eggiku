@@ -3,8 +3,6 @@ package eu.kanade.presentation.more.settings.screen.debug
 import android.os.Build
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Autorenew
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -30,6 +28,8 @@ import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 import mihon.core.common.FeatureFlags
 import tachiyomi.i18n.MR
+import tachiyomi.presentation.core.components.material.Icon
+import tachiyomi.presentation.core.components.material.IconButton
 import tachiyomi.presentation.core.util.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get

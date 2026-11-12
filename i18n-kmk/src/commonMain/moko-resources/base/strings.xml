@@ -80,6 +80,8 @@
     <string name="theme_kanagawa">Kanagawa</string>
     <string name="theme_onedark">One Dark</string>
     <string name="theme_solarized">Solarized</string>
+    <string name="pref_glass_effect">Glass look</string>
+    <string name="pref_glass_effect_summary">Translucent, blurred bars that take on the colors of your theme</string>
     <!-- Custom Color Picker -->
     <string name="pref_custom_color">Palette Personalizer</string>
     <string name="custom_color_description">Pick a seed color for the custom Theme</string>

@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +44,7 @@ import eu.kanade.presentation.theme.colorscheme.TidalWaveColorScheme
 import eu.kanade.presentation.theme.colorscheme.TokyoNightColorScheme
 import eu.kanade.presentation.theme.colorscheme.YinYangColorScheme
 import eu.kanade.presentation.theme.colorscheme.YotsubaColorScheme
+import tachiyomi.presentation.core.components.material.LocalGlassEnabled
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -56,7 +58,9 @@ fun TachiyomiTheme(
     BaseTachiyomiTheme(
         appTheme = appTheme ?: uiPreferences.appTheme().get(),
         isAmoled = amoled ?: uiPreferences.themeDarkAmoled().get(),
-        content = content,
+        // KMK -->
+        content = { GlassProvider(content) },
+        // KMK <--
     )
 }
 
@@ -81,9 +85,16 @@ fun TachiyomiTheme(
             style = uiPreferences.themeCoverBasedStyle().get(),
             typography = typography,
             animate = true,
-            content = content,
+            content = { GlassProvider(content) },
         )
     }
+}
+
+/** Turns the Eggiku glass look on or off for everything inside the theme */
+@Composable
+private fun GlassProvider(content: @Composable () -> Unit) {
+    val glassEnabled = remember { Injekt.get<UiPreferences>().glassEffect().get() }
+    CompositionLocalProvider(LocalGlassEnabled provides glassEnabled, content = content)
 }
 // KMK <--
 
