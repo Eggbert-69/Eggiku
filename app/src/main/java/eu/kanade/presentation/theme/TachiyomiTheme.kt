@@ -27,6 +27,7 @@ import eu.kanade.presentation.theme.colorscheme.CustomColorScheme
 import eu.kanade.presentation.theme.colorscheme.DoomColorScheme
 import eu.kanade.presentation.theme.colorscheme.DraculaColorScheme
 import eu.kanade.presentation.theme.colorscheme.EverforestColorScheme
+import eu.kanade.presentation.theme.colorscheme.GlibGlorbColorScheme
 import eu.kanade.presentation.theme.colorscheme.GreenAppleColorScheme
 import eu.kanade.presentation.theme.colorscheme.GruvboxColorScheme
 import eu.kanade.presentation.theme.colorscheme.KanagawaColorScheme
@@ -52,6 +53,7 @@ import eu.kanade.presentation.theme.colorscheme.YotsubaColorScheme
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.presentation.core.components.LocalLargeBadges
 import tachiyomi.presentation.core.components.material.LocalGlassEnabled
+import tachiyomi.presentation.core.components.material.LocalGlibGlorb
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -144,17 +146,25 @@ private fun BaseTachiyomiTheme(
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
-    val isDark = isSystemInDarkTheme()
+    // KMK -->
+    // Glib Glorb is always dark and always pure black
+    val isGlibGlorb = appTheme == AppTheme.GLIB_GLORB
+    val isDark = isSystemInDarkTheme() || isGlibGlorb
+    // KMK <--
     MaterialExpressiveTheme(
         colorScheme = remember(appTheme, isDark, isAmoled) {
             getThemeColorScheme(
                 context = context,
                 appTheme = appTheme,
                 isDark = isDark,
-                isAmoled = isAmoled,
+                isAmoled = isAmoled || isGlibGlorb,
             )
         },
-        content = content,
+        // KMK -->
+        content = {
+            CompositionLocalProvider(LocalGlibGlorb provides isGlibGlorb, content = content)
+        },
+        // KMK <--
     )
 }
 
@@ -220,5 +230,6 @@ private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(
     AppTheme.KANAGAWA to KanagawaColorScheme,
     AppTheme.ONE_DARK to OneDarkColorScheme,
     AppTheme.SOLARIZED to SolarizedColorScheme,
+    AppTheme.GLIB_GLORB to GlibGlorbColorScheme,
     // KMK <--
 )

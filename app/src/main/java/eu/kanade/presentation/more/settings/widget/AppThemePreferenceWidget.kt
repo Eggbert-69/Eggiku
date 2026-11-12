@@ -53,6 +53,7 @@ import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.util.secondaryItemAlpha
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.fullType
+import uy.kohesive.injekt.api.get
 
 @Composable
 internal fun AppThemePreferenceWidget(
@@ -81,6 +82,11 @@ private fun AppThemesList(
     val appThemes = remember {
         AppTheme.entries
             .filterNot { it.titleRes == null }
+            // KMK -->
+            .filterNot {
+                it == AppTheme.GLIB_GLORB && !Injekt.get<UiPreferences>().glibGlorbUnlocked().get()
+            }
+        // KMK <--
     }
     LazyRow(
         contentPadding = PaddingValues(horizontal = PrefsHorizontalPadding),

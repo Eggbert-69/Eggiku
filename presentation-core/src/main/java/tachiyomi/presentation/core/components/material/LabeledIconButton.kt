@@ -1,6 +1,10 @@
 package tachiyomi.presentation.core.components.material
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
@@ -15,11 +19,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -44,6 +50,15 @@ fun IconButton(
     content: @Composable () -> Unit,
 ) {
     val label = remember { mutableStateOf<String?>(null) }
+    // Squish a little while pressed, then spring back
+    val source = interactionSource ?: remember { MutableInteractionSource() }
+    val pressed by source.collectIsPressedAsState()
+    val reduceMotion = rememberReduceMotion()
+    val pressScale by animateFloatAsState(
+        targetValue = if (pressed && !reduceMotion) 0.86f else 1f,
+        animationSpec = spring(dampingRatio = 0.45f, stiffness = Spring.StiffnessMedium),
+        label = "iconButtonPress",
+    )
     TooltipBox(
         positionProvider = rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
         tooltip = {
@@ -54,14 +69,17 @@ fun IconButton(
             }
         },
         state = rememberTooltipState(),
-        modifier = modifier,
+        modifier = modifier.graphicsLayer {
+            scaleX = pressScale
+            scaleY = pressScale
+        },
         focusable = false,
     ) {
         androidx.compose.material3.IconButton(
             onClick = onClick,
             enabled = enabled,
             colors = colors,
-            interactionSource = interactionSource,
+            interactionSource = source,
         ) {
             CompositionLocalProvider(LocalIconLabelSink provides label, content = content)
         }

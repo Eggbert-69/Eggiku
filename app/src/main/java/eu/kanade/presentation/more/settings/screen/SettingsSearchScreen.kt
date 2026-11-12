@@ -140,6 +140,13 @@ class SettingsSearchScreen : Screen() {
                 }
             },
         ) { contentPadding ->
+            // KMK -->
+            if (isGlibGlorbSecret(textFieldState.text.toString())) {
+                focusManager.clearFocus()
+                EggikuSecretRocket(modifier = Modifier.padding(contentPadding))
+                return@Scaffold
+            }
+            // KMK <--
             SearchResult(
                 searchKey = textFieldState.text.toString(),
                 listState = listState,

@@ -10,6 +10,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 
 /**
@@ -40,14 +41,33 @@ fun PullRefresh(
     ) {
         content()
 
-        PullToRefreshDefaults.Indicator(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(indicatorPadding),
-            isRefreshing = refreshing,
-            state = state,
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        // KMK -->
+        if (LocalGlibGlorb.current) {
+            // Glib Glorb: a flying saucer drops in instead of the spinner
+            EggikuUfo(
+                spinning = refreshing,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(indicatorPadding)
+                    .graphicsLayer {
+                        val pulled = state.distanceFraction.coerceIn(0f, 1.3f)
+                        translationY = pulled * 72.dp.toPx() - 52.dp.toPx()
+                        alpha = if (pulled > 0.02f) 1f else 0f
+                    },
+            )
+        } else {
+            // KMK <--
+            PullToRefreshDefaults.Indicator(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(indicatorPadding),
+                isRefreshing = refreshing,
+                state = state,
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            // KMK -->
+        }
+        // KMK <--
     }
 }

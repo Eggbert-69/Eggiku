@@ -12,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import eu.kanade.presentation.more.settings.screen.EggikuSmokeReveal
 import eu.kanade.presentation.theme.TachiyomiTheme
 import eu.kanade.tachiyomi.R
 
@@ -33,7 +35,15 @@ inline fun ComponentActivity.setComposeContent(
                 LocalTextStyle provides MaterialTheme.typography.bodySmall,
                 LocalContentColor provides MaterialTheme.colorScheme.onBackground,
             ) {
-                content()
+                // KMK -->
+                Box {
+                    // KMK <--
+                    content()
+                    // KMK -->
+                    // Smoke clearing after the Glib Glorb rocket launch
+                    EggikuSmokeReveal()
+                }
+                // KMK <--
             }
         }
     }

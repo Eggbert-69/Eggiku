@@ -41,6 +41,11 @@ class SourcePreferences(
 
     fun showNsfwSource() = preferenceStore.getBoolean("show_nsfw_source", true)
 
+    // KMK -->
+    /** Eggiku: the egg button in Browse. Hides 18+ sources and extensions everywhere in Browse. */
+    fun eggikuHideNsfw() = preferenceStore.getBoolean("eggiku_hide_nsfw", false)
+    // KMK <--
+
     fun migrationSortingMode() = preferenceStore.getEnum("pref_migration_sorting", SetMigrateSorting.Mode.ALPHABETICAL)
 
     fun migrationSortingDirection() = preferenceStore.getEnum(

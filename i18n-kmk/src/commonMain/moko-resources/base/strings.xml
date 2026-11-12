@@ -472,4 +472,20 @@
     <string name="recap_year">Year</string>
     <string name="recap_previous">Earlier</string>
     <string name="recap_next">Later</string>
+    <string name="action_hide_nsfw_sources">Hide 18+ sources</string>
+    <string name="action_show_nsfw_sources">Show 18+ sources</string>
+    <string name="theme_glibglorb">Glib Glorb</string>
+    <string name="glib_glorb_rocket">Launch the rocket</string>
+    <string name="glib_glorb_rocket_hint">Hey Wyatt. Tap the rocket.</string>
+    <string name="cook_title">Cook timer</string>
+    <string name="cook_none">Let it cook while chapters pile up. You\'ll get a reminder and it\'ll show up in Continue reading.</string>
+    <string name="cook_until">Cooking until %1$s</string>
+    <string name="cook_ready">Done cooking! It\'s in Continue reading.</string>
+    <string name="cook_start">Let it cook</string>
+    <string name="cook_change">Change</string>
+    <string name="cook_dismiss">Dismiss</string>
+    <string name="cook_pick_title">Notify me in…</string>
+    <string name="cook_pick_hint">When the time\'s up, you\'ll get a notification and this series moves to Continue reading.</string>
+    <string name="cook_done_title">Done cooking 🍳</string>
+    <string name="cook_done_text">%1$s has been cooking long enough. It\'s waiting in Continue reading.</string>
 </resources>

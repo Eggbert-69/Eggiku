@@ -78,6 +78,7 @@ import eu.kanade.tachiyomi.data.backup.create.BackupCreateJob
 import eu.kanade.tachiyomi.data.cache.ChapterCache
 import eu.kanade.tachiyomi.data.coil.MangaCoverMetadata
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
+import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.download.DownloadCache
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
@@ -527,6 +528,7 @@ class MainActivity : BaseActivity() {
                 // KMK -->
                 try {
                     EggikuStatsWorker.setup(context)
+                    EggikuCookTimer.checkDue(context)
                 } catch (e: Exception) {
                     logcat(LogPriority.ERROR, e)
                 }

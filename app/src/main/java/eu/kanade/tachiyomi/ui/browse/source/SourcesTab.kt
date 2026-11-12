@@ -3,13 +3,13 @@ package eu.kanade.tachiyomi.ui.browse.source
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.TravelExplore
-import androidx.compose.material.icons.outlined._18UpRating
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -18,6 +18,7 @@ import eu.kanade.domain.source.model.installedExtension
 import eu.kanade.presentation.browse.SourceCategoriesDialog
 import eu.kanade.presentation.browse.SourceOptionsDialog
 import eu.kanade.presentation.browse.SourcesScreen
+import eu.kanade.presentation.browse.components.EggikuEggIcons
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.TabContent
 import eu.kanade.tachiyomi.ui.browse.extension.details.ExtensionDetailsScreen
@@ -56,10 +57,13 @@ fun Screen.sourcesTab(
                 onClick = { navigator.push(GlobalSearchScreen(smartSearchConfig?.origTitle ?: "")) },
             ),
             // KMK -->
+            // Eggiku: a whole egg while 18+ is hidden, a cracked one spilling its yolk while it's shown
             AppBar.Action(
-                title = stringResource(KMR.strings.action_toggle_nsfw_only),
-                icon = Icons.Outlined._18UpRating,
-                iconTint = if (state.nsfwOnly) MaterialTheme.colorScheme.error else LocalContentColor.current,
+                title = stringResource(
+                    if (state.hideNsfw) KMR.strings.action_show_nsfw_sources else KMR.strings.action_hide_nsfw_sources,
+                ),
+                icon = if (state.hideNsfw) EggikuEggIcons.Intact else EggikuEggIcons.Cracked,
+                iconTint = if (state.hideNsfw) LocalContentColor.current else Color.Unspecified,
                 onClick = { screenModel.toggleNsfwOnly() },
             ),
             // KMK <--

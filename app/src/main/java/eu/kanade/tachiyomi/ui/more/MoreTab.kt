@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.rememberScreenModel
@@ -20,6 +21,7 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import eu.kanade.core.preference.asState
 import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.presentation.components.EggikuTabIcons
 import eu.kanade.presentation.more.MoreScreen
 import eu.kanade.presentation.util.Tab
 import eu.kanade.tachiyomi.R
@@ -41,6 +43,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.i18n.MR
+import tachiyomi.presentation.core.components.material.LocalGlibGlorb
 import tachiyomi.presentation.core.i18n.stringResource
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -53,11 +56,19 @@ data object MoreTab : Tab {
         @Composable
         get() {
             val isSelected = LocalTabNavigator.current.current.key == key
-            val image = AnimatedImageVector.animatedVectorResource(R.drawable.anim_more_enter)
             return TabOptions(
                 index = 4u,
                 title = stringResource(MR.strings.label_more),
-                icon = rememberAnimatedVectorPainter(image, isSelected),
+                // KMK -->
+                icon = if (LocalGlibGlorb.current) {
+                    rememberVectorPainter(EggikuTabIcons.Alien.More)
+                } else {
+                    rememberAnimatedVectorPainter(
+                        AnimatedImageVector.animatedVectorResource(R.drawable.anim_more_enter),
+                        isSelected,
+                    )
+                },
+                // KMK <--
             )
         }
 

@@ -106,6 +106,7 @@ import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.components.material.DISABLED_ALPHA
 import tachiyomi.presentation.core.components.material.TextButton
+import tachiyomi.presentation.core.components.material.eggikuPop
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.pluralStringResource
 import tachiyomi.presentation.core.i18n.stringResource
@@ -1028,7 +1029,12 @@ private fun RowScope.MangaActionButton(
                 imageVector = icon,
                 contentDescription = null,
                 tint = color,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier
+                    .size(20.dp)
+                    // KMK -->
+                    // e.g. the heart bounces when added to the library
+                    .eggikuPop(icon, peak = 1.3f),
+                // KMK <--
             )
             Spacer(Modifier.height(4.dp))
             Text(
