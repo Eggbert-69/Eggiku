@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK --> <!-- Eggiku intro: the egg wobbles, cracks, the top shell pops off and a book rises out -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="288dp"
+            android:height="288dp"
+            android:viewportWidth="288"
+            android:viewportHeight="288">
+            <group
+                android:name="wobble"
+                android:pivotX="144"
+                android:pivotY="228">
+                <!-- Book, drawn first so it sits inside the shell until it rises -->
+                <group
+                    android:name="book"
+                    android:pivotX="144"
+                    android:pivotY="150"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    android:translateY="56">
+                    <path
+                        android:fillColor="#FFB81C"
+                        android:pathData="M96,122 L144,128 L192,122 L192,180 L144,186 L96,180 Z" />
+                    <path
+                        android:fillColor="#FFFFFF"
+                        android:pathData="M102,120 Q123,110 144,121 L144,176 Q123,165 102,174 Z" />
+                    <path
+                        android:fillColor="#F3EEE2"
+                        android:pathData="M144,121 Q165,110 186,120 L186,174 Q165,165 144,176 Z" />
+                    <path
+                        android:pathData="M144,121 L144,176"
+                        android:strokeWidth="2"
+                        android:strokeColor="#C9A44A" />
+                    <path
+                        android:pathData="M110,132 Q124,126 136,132 M110,144 Q124,138 136,144 M152,132 Q164,126 178,132 M152,144 Q164,138 178,144"
+                        android:strokeWidth="2.5"
+                        android:strokeColor="#D8CFBC"
+                        android:strokeLineCap="round" />
+                </group>
+                <!-- Bottom of the shell -->
+                <group android:name="bottom_shell">
+                    <clip-path android:pathData="M40,140 L84,140 L100,128 L116,148 L132,128 L148,148 L164,128 L180,148 L196,130 L248,140 L248,260 L40,260 Z" />
+                    <path
+                        android:fillColor="#FFF4DC"
+                        android:strokeWidth="4"
+                        android:strokeColor="#E8CFA0"
+                        android:pathData="M144,60 C180,60 204,120 204,165 C204,202 178,228 144,228 C110,228 84,202 84,165 C84,120 108,60 144,60 Z" />
+                    <path
+                        android:fillColor="#F2DDB2"
+                        android:pathData="M100,190 C112,214 132,222 150,222 C128,214 112,204 100,190 Z" />
+                </group>
+                <!-- Top of the shell, which pops off -->
+                <group
+                    android:name="top_shell"
+                    android:pivotX="196"
+                    android:pivotY="134">
+                    <clip-path android:pathData="M40,140 L84,140 L100,128 L116,148 L132,128 L148,148 L164,128 L180,148 L196,130 L248,140 L248,30 L40,30 Z" />
+                    <path
+                        android:name="top_shell_fill"
+                        android:fillColor="#FFF4DC"
+                        android:strokeWidth="4"
+                        android:strokeColor="#E8CFA0"
+                        android:pathData="M144,60 C180,60 204,120 204,165 C204,202 178,228 144,228 C110,228 84,202 84,165 C84,120 108,60 144,60 Z" />
+                    <path
+                        android:name="top_shell_shine"
+                        android:fillColor="#FFFFFF"
+                        android:fillAlpha="0.7"
+                        android:pathData="M118,92 C124,80 132,74 140,72 C132,82 126,94 124,106 C120,104 116,100 118,92 Z" />
+                </group>
+            </group>
+        </vector>
+    </aapt:attr>
+
+    <target android:name="wobble">
+        <aapt:attr name="android:animation">
+            <set android:ordering="sequentially">
+                <objectAnimator
+                    android:duration="110"
+                    android:propertyName="rotation"
+                    android:valueFrom="0"
+                    android:valueTo="-10"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator
+                    android:duration="120"
+                    android:propertyName="rotation"
+                    android:valueFrom="-10"
+                    android:valueTo="9"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator
+                    android:duration="110"
+                    android:propertyName="rotation"
+                    android:valueFrom="9"
+                    android:valueTo="-5"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator
+                    android:duration="110"
+                    android:propertyName="rotation"
+                    android:valueFrom="-5"
+                    android:valueTo="0"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+            </set>
+        </aapt:attr>
+    </target>
+
+    <target android:name="top_shell">
+        <aapt:attr name="android:animation">
+            <set android:ordering="together">
+                <objectAnimator
+                    android:duration="380"
+                    android:startOffset="460"
+                    android:propertyName="translateY"
+                    android:valueFrom="0"
+                    android:valueTo="-70"
+                    android:interpolator="@android:interpolator/decelerate_cubic" />
+                <objectAnimator
+                    android:duration="380"
+                    android:startOffset="460"
+                    android:propertyName="translateX"
+                    android:valueFrom="0"
+                    android:valueTo="34"
+                    android:interpolator="@android:interpolator/decelerate_cubic" />
+                <objectAnimator
+                    android:duration="380"
+                    android:startOffset="460"
+                    android:propertyName="rotation"
+                    android:valueFrom="0"
+                    android:valueTo="40"
+                    android:interpolator="@android:interpolator/decelerate_cubic" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="top_shell_fill">
+        <aapt:attr name="android:animation">
+            <set android:ordering="together">
+                <objectAnimator
+                    android:duration="200"
+                    android:startOffset="700"
+                    android:propertyName="fillAlpha"
+                    android:valueFrom="1"
+                    android:valueTo="0" />
+                <objectAnimator
+                    android:duration="200"
+                    android:startOffset="700"
+                    android:propertyName="strokeAlpha"
+                    android:valueFrom="1"
+                    android:valueTo="0" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="top_shell_shine">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="200"
+                android:startOffset="700"
+                android:propertyName="fillAlpha"
+                android:valueFrom="0.7"
+                android:valueTo="0" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="book">
+        <aapt:attr name="android:animation">
+            <set android:ordering="together">
+                <objectAnimator
+                    android:duration="420"
+                    android:startOffset="560"
+                    android:propertyName="translateY"
+                    android:valueFrom="56"
+                    android:valueTo="-6"
+                    android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator
+                    android:duration="420"
+                    android:startOffset="560"
+                    android:propertyName="scaleX"
+                    android:valueFrom="0.7"
+                    android:valueTo="1"
+                    android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator
+                    android:duration="420"
+                    android:startOffset="560"
+                    android:propertyName="scaleY"
+                    android:valueFrom="0.7"
+                    android:valueTo="1"
+                    android:interpolator="@android:interpolator/overshoot" />
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>
