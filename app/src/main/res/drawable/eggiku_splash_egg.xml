@@ -12,14 +12,21 @@
                 android:name="wobble"
                 android:pivotX="144"
                 android:pivotY="228">
+                <!-- Back wall of the shell, seen between the teeth once it cracks -->
+                <group android:name="inner_shell">
+                    <clip-path android:pathData="M40,126 L248,126 L248,260 L40,260 Z" />
+                    <path
+                        android:fillColor="#E6CC98"
+                        android:pathData="M144,60 C180,60 204,120 204,165 C204,202 178,228 144,228 C110,228 84,202 84,165 C84,120 108,60 144,60 Z" />
+                </group>
                 <!-- Book, drawn first so it sits inside the shell until it rises -->
                 <group
                     android:name="book"
                     android:pivotX="144"
                     android:pivotY="150"
-                    android:scaleX="0.7"
-                    android:scaleY="0.7"
-                    android:translateY="56">
+                    android:scaleX="0.6"
+                    android:scaleY="0.6"
+                    android:translateY="40">
                     <path
                         android:fillColor="#FFB81C"
                         android:pathData="M96,122 L144,128 L192,122 L192,180 L144,186 L96,180 Z" />
@@ -112,21 +119,21 @@
                     android:startOffset="460"
                     android:propertyName="translateY"
                     android:valueFrom="0"
-                    android:valueTo="-70"
+                    android:valueTo="-38"
                     android:interpolator="@android:interpolator/decelerate_cubic" />
                 <objectAnimator
                     android:duration="380"
                     android:startOffset="460"
                     android:propertyName="translateX"
                     android:valueFrom="0"
-                    android:valueTo="34"
+                    android:valueTo="30"
                     android:interpolator="@android:interpolator/decelerate_cubic" />
                 <objectAnimator
                     android:duration="380"
                     android:startOffset="460"
                     android:propertyName="rotation"
                     android:valueFrom="0"
-                    android:valueTo="40"
+                    android:valueTo="35"
                     android:interpolator="@android:interpolator/decelerate_cubic" />
             </set>
         </aapt:attr>
@@ -136,13 +143,13 @@
             <set android:ordering="together">
                 <objectAnimator
                     android:duration="200"
-                    android:startOffset="700"
+                    android:startOffset="640"
                     android:propertyName="fillAlpha"
                     android:valueFrom="1"
                     android:valueTo="0" />
                 <objectAnimator
                     android:duration="200"
-                    android:startOffset="700"
+                    android:startOffset="640"
                     android:propertyName="strokeAlpha"
                     android:valueFrom="1"
                     android:valueTo="0" />
@@ -153,7 +160,7 @@
         <aapt:attr name="android:animation">
             <objectAnimator
                 android:duration="200"
-                android:startOffset="700"
+                android:startOffset="640"
                 android:propertyName="fillAlpha"
                 android:valueFrom="0.7"
                 android:valueTo="0" />
@@ -167,21 +174,21 @@
                     android:duration="420"
                     android:startOffset="560"
                     android:propertyName="translateY"
-                    android:valueFrom="56"
-                    android:valueTo="-6"
+                    android:valueFrom="40"
+                    android:valueTo="-38"
                     android:interpolator="@android:interpolator/overshoot" />
                 <objectAnimator
                     android:duration="420"
                     android:startOffset="560"
                     android:propertyName="scaleX"
-                    android:valueFrom="0.7"
+                    android:valueFrom="0.6"
                     android:valueTo="1"
                     android:interpolator="@android:interpolator/overshoot" />
                 <objectAnimator
                     android:duration="420"
                     android:startOffset="560"
                     android:propertyName="scaleY"
-                    android:valueFrom="0.7"
+                    android:valueFrom="0.6"
                     android:valueTo="1"
                     android:interpolator="@android:interpolator/overshoot" />
             </set>
