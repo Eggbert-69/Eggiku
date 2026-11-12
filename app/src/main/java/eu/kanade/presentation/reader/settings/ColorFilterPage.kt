@@ -21,6 +21,10 @@ import tachiyomi.presentation.core.util.collectAsState
 
 @Composable
 internal fun ColorFilterPage(screenModel: ReaderSettingsScreenModel) {
+    // KMK -->
+    EggikuSharpnessSection(screenModel)
+    // KMK <--
+
     val customBrightness by screenModel.preferences.customBrightness().collectAsState()
     CheckboxItem(
         label = stringResource(MR.strings.pref_custom_brightness),

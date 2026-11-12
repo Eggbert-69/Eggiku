@@ -121,6 +121,8 @@ class MigrationListScreen(
             // KMK -->
             onCancel = { screenModel.cancelManga(it) },
             openOptionsDialog = screenModel::openOptionsDialog,
+            onConfirmMatch = screenModel::eggikuConfirm,
+            onPickCandidate = screenModel::eggikuPickCandidate,
             // KMK <--
         )
 

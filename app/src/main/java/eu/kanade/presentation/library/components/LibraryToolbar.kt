@@ -25,8 +25,10 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
+import eu.kanade.tachiyomi.ui.library.EggikuDeadSeriesScreen
 import eu.kanade.tachiyomi.ui.library.EggikuDuplicatesScreen
 import eu.kanade.tachiyomi.ui.library.EggikuQuickSortScreen
+import eu.kanade.tachiyomi.ui.library.EggikuTopShelfScreen
 import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -172,6 +174,14 @@ private fun LibraryRegularToolbar(
                     AppBar.OverflowAction(
                         title = stringResource(KMR.strings.duplicates_title),
                         onClick = { navigator?.push(EggikuDuplicatesScreen()) },
+                    ),
+                    AppBar.OverflowAction(
+                        title = stringResource(KMR.strings.eggiku_top_shelf),
+                        onClick = { navigator?.push(EggikuTopShelfScreen()) },
+                    ),
+                    AppBar.OverflowAction(
+                        title = stringResource(KMR.strings.eggiku_dead_series),
+                        onClick = { navigator?.push(EggikuDeadSeriesScreen()) },
                     ),
                     AppBar.OverflowAction(
                         title = stringResource(KMR.strings.migration_undo),

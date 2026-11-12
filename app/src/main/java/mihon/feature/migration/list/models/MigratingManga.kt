@@ -24,6 +24,25 @@ class MigratingManga(
 
     val searchResult = MutableStateFlow<SearchResult>(SearchResult.Searching)
 
+    // KMK -->
+    /** Every source that had a match, best first, to compare side by side */
+    val eggikuCandidates = MutableStateFlow<List<EggikuCandidate>>(emptyList())
+
+    /** The picked match might be the wrong series; it waits for a tap before it moves */
+    val eggikuUnsure = MutableStateFlow(false)
+    val eggikuConfirmed = MutableStateFlow(false)
+
+    data class EggikuCandidate(
+        val manga: Manga,
+        val source: String,
+        val chapterCount: Int,
+        val latestChapter: Double?,
+        val lastUploadMillis: Long,
+        val carriedRead: Int,
+        val totalRead: Int,
+    )
+    // KMK <--
+
     sealed interface SearchResult {
         data object Searching : SearchResult
         data object NotFound : SearchResult

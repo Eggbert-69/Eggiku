@@ -3,8 +3,10 @@ package mihon.domain.migration.usecases
 import eu.kanade.domain.manga.interactor.UpdateManga
 import eu.kanade.domain.manga.model.hasCustomCover
 import eu.kanade.domain.source.service.SourcePreferences
+import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.download.DownloadManager
+import eu.kanade.tachiyomi.data.rating.EggikuRatings
 import eu.kanade.tachiyomi.data.track.EnhancedTracker
 import eu.kanade.tachiyomi.data.track.TrackerManager
 import kotlinx.coroutines.CancellationException
@@ -86,9 +88,18 @@ class MigrateMangaUseCase(
                 val prevMangaChapters = getChaptersByMangaId.await(current.id)
                 val mangaChapters = getChaptersByMangaId.await(target.id)
 
+                // KMK -->
+                // Some sources number chapters differently (one starts at 0, the other at 1), so
+                // line them up before copying read progress across
+                val offset = EggikuMigrationSmarts.chapterOffset(prevMangaChapters, mangaChapters)
+                if (offset != 0.0) EggikuMigrationSmarts.offsetsApplied.incrementAndGet()
+                // KMK <--
                 val maxChapterRead = prevMangaChapters
                     .filter { it.read }
                     .maxOfOrNull { it.chapterNumber }
+                    // KMK -->
+                    ?.plus(offset)
+                // KMK <--
 
                 // SY -->
                 val historyUpdates = mutableListOf<HistoryUpdate>()
@@ -102,7 +113,12 @@ class MigrateMangaUseCase(
                     var updatedChapter = mangaChapter
                     if (updatedChapter.isRecognizedNumber) {
                         val prevChapter = prevMangaChapters
-                            .find { it.isRecognizedNumber && it.chapterNumber == updatedChapter.chapterNumber }
+                            .find {
+                                it.isRecognizedNumber &&
+                                    // KMK -->
+                                    it.chapterNumber + offset == updatedChapter.chapterNumber
+                                // KMK <--
+                            }
 
                         if (prevChapter != null) {
                             updatedChapter = updatedChapter.copy(
@@ -207,6 +223,8 @@ class MigrateMangaUseCase(
             updateManga.awaitAll(listOfNotNull(currentMangaUpdate, targetMangaUpdate))
 
             // KMK -->
+            EggikuRatings.move(current.id, target.id)
+            EggikuAchievements.countMigration()
             EggikuMigrationUndo.record(
                 oldId = current.id,
                 newId = target.id,

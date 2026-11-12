@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.data.duplicates
 
 import eu.kanade.domain.manga.interactor.UpdateManga
+import eu.kanade.tachiyomi.data.rating.EggikuRatings
 import tachiyomi.core.common.preference.PreferenceStore
 import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.domain.category.interactor.SetMangaCategories
@@ -90,6 +91,7 @@ object EggikuDuplicates {
             if (categories.isNotEmpty()) setCategories.await(keeper.id, categories)
 
             others.forEach { other ->
+                EggikuRatings.move(other.id, keeper.id)
                 if (updateManga.awaitUpdateFavorite(other.id, false)) {
                     removedCount++
                     removedIds += other.id

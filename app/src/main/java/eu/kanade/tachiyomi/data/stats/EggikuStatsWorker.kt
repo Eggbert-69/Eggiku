@@ -9,6 +9,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
 import eu.kanade.tachiyomi.data.notification.Notifications
@@ -37,6 +38,11 @@ class EggikuStatsWorker(context: Context, params: WorkerParameters) : CoroutineW
 
     override suspend fun doWork(): Result {
         EggikuCookTimer.checkDue(applicationContext)
+        try {
+            EggikuAchievements.checkAndNotify(applicationContext)
+        } catch (_: Exception) {
+            // Badges are a bonus
+        }
         // New Eggiku build out? Say so once per build
         if (EggikuUpdates.autoCheck().get()) {
             try {

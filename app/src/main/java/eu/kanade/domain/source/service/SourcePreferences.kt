@@ -85,7 +85,13 @@ class SourcePreferences(
 
     fun migrationDeepSearchMode() = preferenceStore.getBoolean("migration_deep_search", false)
 
-    fun migrationPrioritizeByChapters() = preferenceStore.getBoolean("migration_prioritize_by_chapters", false)
+    fun migrationPrioritizeByChapters() = preferenceStore.getBoolean(
+        "migration_prioritize_by_chapters",
+        // KMK -->
+        // Eggiku: check every source and pick the best match by default
+        true,
+        // KMK <--
+    )
 
     fun migrationHideUnmatched() = preferenceStore.getBoolean("migration_hide_unmatched", false)
 

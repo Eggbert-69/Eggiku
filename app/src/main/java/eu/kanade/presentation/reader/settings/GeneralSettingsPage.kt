@@ -10,6 +10,7 @@ import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderSettingsScreenModel
 import eu.kanade.tachiyomi.util.system.hasDisplayCutout
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.components.CheckboxItem
 import tachiyomi.presentation.core.components.SettingsChipRow
@@ -60,6 +61,17 @@ internal fun GeneralPage(screenModel: ReaderSettingsScreenModel) {
         label = stringResource(MR.strings.pref_show_page_number),
         pref = screenModel.preferences.showPageNumber(),
     )
+
+    // KMK -->
+    CheckboxItem(
+        label = stringResource(KMR.strings.eggiku_one_hand_mode),
+        pref = screenModel.preferences.eggikuOneHandMode(),
+    )
+    CheckboxItem(
+        label = stringResource(KMR.strings.eggiku_skip_warning),
+        pref = screenModel.preferences.eggikuSkipWarning(),
+    )
+    // KMK <--
 
     // SY -->
     val forceHorizontalSeekbar by screenModel.preferences.forceHorizontalSeekbar().collectAsState()

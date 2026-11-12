@@ -32,4 +32,12 @@
         <item quantity="one">%d possible duplicate in your library. Library ⋮ → Find duplicates</item>
         <item quantity="other">%d possible duplicates in your library. Library ⋮ → Find duplicates</item>
     </plurals>
+    <plurals name="eggiku_nudge_many_series">
+        <item quantity="one">%d series keeps failing to update</item>
+        <item quantity="other">%d series keep failing to update</item>
+    </plurals>
+    <plurals name="eggiku_dead_months">
+        <item quantity="one">last chapter %d month ago</item>
+        <item quantity="other">last chapter %d months ago</item>
+    </plurals>
 </resources>

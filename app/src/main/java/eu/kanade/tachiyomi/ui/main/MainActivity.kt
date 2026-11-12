@@ -56,7 +56,6 @@ import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.connections.service.ConnectionsPreferences
 import eu.kanade.domain.source.interactor.GetIncognitoState
 import eu.kanade.domain.sync.SyncPreferences
-import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.components.AppStateBanners
 import eu.kanade.presentation.components.DownloadedOnlyBannerBackgroundColor
 import eu.kanade.presentation.components.IncognitoModeBannerBackgroundColor
@@ -83,6 +82,7 @@ import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.download.DownloadCache
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
+import eu.kanade.tachiyomi.data.smartdownload.EggikuSmartDownloads
 import eu.kanade.tachiyomi.data.stats.EggikuStatsWorker
 import eu.kanade.tachiyomi.data.updater.AppUpdateChecker
 import eu.kanade.tachiyomi.data.updater.AppUpdateJob
@@ -201,6 +201,9 @@ class MainActivity : BaseActivity() {
 
         // Prevent splash screen showing up on configuration changes
         val splashScreen = if (isLaunch) installSplashScreen() else null
+        // KMK -->
+        EggikuIntro.splashGone.value = false
+        // KMK <--
 
         super.onCreate(savedInstanceState)
 
@@ -407,6 +410,10 @@ class MainActivity : BaseActivity() {
             // SY <--
 
             // KMK -->
+            if (isLaunch) EggikuIntroOverlay()
+            // KMK <--
+
+            // KMK -->
             val previewLastVersion = Injekt.get<PreferenceStore>().getInt(
                 Preference.appStateKey("preview_last_version_code"),
                 0,
@@ -464,22 +471,12 @@ class MainActivity : BaseActivity() {
         }
 
         val startTime = System.currentTimeMillis()
-        // KMK -->
-        val splashMin = if (
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-            Injekt.get<UiPreferences>().eggikuIntroAnimation().get()
-        ) {
-            EGGIKU_INTRO_DURATION
-        } else {
-            SPLASH_MIN_DURATION
-        }
-        // KMK <--
         splashScreen?.setKeepOnScreenCondition {
             val elapsed = System.currentTimeMillis() - startTime
-            // KMK -->
-            elapsed <= splashMin ||
-                // KMK <--
-                (!ready && elapsed <= SPLASH_MAX_DURATION)
+            (elapsed <= SPLASH_MIN_DURATION || (!ready && elapsed <= SPLASH_MAX_DURATION))
+                // KMK -->
+                .also { keep -> if (!keep) EggikuIntro.splashGone.value = true }
+            // KMK <--
         }
         setSplashScreenExitAnimation(splashScreen)
 
@@ -544,6 +541,7 @@ class MainActivity : BaseActivity() {
                 try {
                     EggikuStatsWorker.setup(context)
                     EggikuCookTimer.checkDue(context)
+                    EggikuSmartDownloads.setup(context)
                 } catch (e: Exception) {
                     logcat(LogPriority.ERROR, e)
                 }
@@ -670,6 +668,12 @@ class MainActivity : BaseActivity() {
             )
         }
 
+        // KMK -->
+        if (EggikuOpen.handle(intent, navigator)) {
+            ready = true
+            return true
+        }
+        // KMK <--
         val tabToOpen = when (intent.action) {
             Constants.SHORTCUT_LIBRARY -> HomeScreen.Tab.Library()
             Constants.SHORTCUT_MANGA -> {
@@ -769,9 +773,5 @@ class MainActivity : BaseActivity() {
 
 // Splash screen
 private const val SPLASH_MIN_DURATION = 500 // ms
-
-// KMK -->
-private const val EGGIKU_INTRO_DURATION = 1050 // ms, the egg crack plus a beat to see the book
-// KMK <--
 private const val SPLASH_MAX_DURATION = 5000 // ms
 private const val SPLASH_EXIT_ANIM_DURATION = 400L // ms

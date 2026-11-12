@@ -35,7 +35,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
+import eu.kanade.tachiyomi.ui.stats.EggikuAchievementsScreen
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.i18n.stringResource
@@ -144,6 +146,10 @@ fun EggikuReadingStatsSection(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilledTonalButton(onClick = onOpenRecaps) {
                     Text(stringResource(KMR.strings.stats_recaps))
+                }
+                val navigator = LocalNavigator.current
+                FilledTonalButton(onClick = { navigator?.push(EggikuAchievementsScreen()) }) {
+                    Text(stringResource(KMR.strings.ach_title))
                 }
                 OutlinedButton(onClick = { showSettings = true }) {
                     Text(stringResource(MR.strings.action_settings))

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
 import androidx.compose.material.icons.outlined.FindReplace
 import androidx.compose.material.icons.outlined.FlipToBack
 import androidx.compose.material.icons.outlined.SelectAll
@@ -121,6 +122,7 @@ data class MigrateMangaScreen(
                     onClickUnselectAll = screenModel::clearSelection,
                     onClickSelectAll = screenModel::toggleAllSelection,
                     onClickInvertSelection = screenModel::invertSelection,
+                    onClickMoveAll = { navigator.push(MigrationConfigScreen(state.titles.map { it.id })) },
                     // KMK <--
                     scrollBehavior = scrollBehavior,
                 )
@@ -251,6 +253,9 @@ data class MigrateMangaScreen(
         onClickUnselectAll: () -> Unit,
         onClickSelectAll: () -> Unit,
         onClickInvertSelection: () -> Unit,
+        // KMK -->
+        onClickMoveAll: () -> Unit,
+        // KMK <--
         scrollBehavior: TopAppBarScrollBehavior,
     ) {
         AppBar(
@@ -260,6 +265,13 @@ data class MigrateMangaScreen(
                 if (itemCnt > 0) {
                     AppBarActions(
                         persistentListOf(
+                            // KMK -->
+                            AppBar.Action(
+                                title = stringResource(KMR.strings.eggiku_move_all_off_source),
+                                icon = Icons.AutoMirrored.Outlined.DriveFileMove,
+                                onClick = onClickMoveAll,
+                            ),
+                            // KMK <--
                             AppBar.Action(
                                 title = stringResource(MR.strings.action_select_all),
                                 icon = Icons.Outlined.SelectAll,
