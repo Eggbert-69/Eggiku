@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.TextStyle
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import eu.kanade.domain.extension.interactor.ExtensionSourceItem
+import eu.kanade.presentation.browse.components.EggikuEggIcons
 import eu.kanade.presentation.browse.components.EggikuOrphanBanner
 import eu.kanade.presentation.browse.components.ExtensionIcon
 import eu.kanade.presentation.components.AppBar
@@ -52,6 +54,7 @@ import eu.kanade.presentation.components.WarningBanner
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.more.settings.widget.TrailingWidgetBuffer
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.extension.EggikuNsfwOverride
 import eu.kanade.tachiyomi.extension.model.Extension
 import eu.kanade.tachiyomi.source.ConfigurableSource
 import eu.kanade.tachiyomi.ui.browse.extension.details.ExtensionDetailsScreenModel
@@ -60,6 +63,7 @@ import eu.kanade.tachiyomi.util.system.copyToClipboard
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.components.ScrollbarLazyColumn
 import tachiyomi.presentation.core.components.material.Icon
@@ -68,6 +72,7 @@ import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.screens.EmptyScreen
+import tachiyomi.presentation.core.util.collectAsState
 
 @Composable
 fun ExtensionDetailsScreen(
@@ -329,18 +334,26 @@ private fun DetailsHeader(
 
             InfoDivider()
 
+            // KMK -->
+            val nsfwOverrides by EggikuNsfwOverride.overrides().collectAsState()
+            val isNsfw = EggikuNsfwOverride.isNsfw(extension, nsfwOverrides)
+            val overridden = EggikuNsfwOverride.overrideFor(extension.pkgName, nsfwOverrides) != null
+            // KMK <--
             InfoText(
-                modifier = Modifier.weight(if (extension.isNsfw) 1.5f else 1f),
+                modifier = Modifier.weight(if (isNsfw) 1.5f else 1f),
                 primaryText = LocaleHelper.getSourceDisplayName(extension.lang, context),
                 secondaryText = stringResource(MR.strings.ext_info_language),
             )
 
-            if (extension.isNsfw) {
+            if (isNsfw) {
                 InfoDivider()
 
                 InfoText(
                     modifier = Modifier.weight(1f),
-                    primaryText = stringResource(MR.strings.ext_nsfw_short),
+                    // KMK -->
+                    primaryText = stringResource(MR.strings.ext_nsfw_short) +
+                        if (overridden) "*" else "",
+                    // KMK <--
                     primaryTextStyle = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.error,
                         fontWeight = FontWeight.Medium,
@@ -399,6 +412,34 @@ private fun DetailsHeader(
                 }
             },
         )
+
+        // KMK -->
+        // Your own 18+ rating, for extensions the repo rates differently than you would
+        val nsfwOverrides by EggikuNsfwOverride.overrides().collectAsState()
+        val treatAsNsfw = EggikuNsfwOverride.isNsfw(extension, nsfwOverrides)
+        val ratingSetByYou = EggikuNsfwOverride.overrideFor(extension.pkgName, nsfwOverrides) != null
+        TextPreferenceWidget(
+            modifier = Modifier.padding(horizontal = MaterialTheme.padding.small),
+            title = stringResource(KMR.strings.ext_treat_as_nsfw),
+            subtitle = stringResource(
+                when {
+                    ratingSetByYou -> KMR.strings.ext_treat_as_nsfw_set_by_you
+                    extension.isNsfw -> KMR.strings.ext_treat_as_nsfw_repo_yes
+                    else -> KMR.strings.ext_treat_as_nsfw_repo_no
+                },
+            ),
+            icon = if (treatAsNsfw) EggikuEggIcons.Cracked else EggikuEggIcons.Intact,
+            iconTint = if (treatAsNsfw) Color.Unspecified else MaterialTheme.colorScheme.onSurfaceVariant,
+            widget = {
+                Switch(
+                    checked = treatAsNsfw,
+                    onCheckedChange = { EggikuNsfwOverride.set(extension, it) },
+                    modifier = Modifier.padding(start = TrailingWidgetBuffer),
+                )
+            },
+            onPreferenceClick = { EggikuNsfwOverride.set(extension, !treatAsNsfw) },
+        )
+        // KMK <--
 
         HorizontalDivider()
     }

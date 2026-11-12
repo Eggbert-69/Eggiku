@@ -18,6 +18,7 @@ import eu.kanade.domain.source.service.SourcePreferences.DataSaver
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.browse.SourceUiModel
 import eu.kanade.presentation.components.SEARCH_DEBOUNCE_MILLIS
+import eu.kanade.tachiyomi.extension.EggikuNsfwOverride
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -66,8 +67,9 @@ class SourcesScreenModel(
         // SY -->
         combine(
             // KMK -->
-            state.map { Pair(it.searchQuery, it.hideNsfw) }
-                .distinctUntilChanged().debounce(SEARCH_DEBOUNCE_MILLIS),
+            state.map { Triple(it.searchQuery, it.hideNsfw, it.nsfwOverrides) }
+                .distinctUntilChanged().debounce(SEARCH_DEBOUNCE_MILLIS)
+                .map { Pair(it.first, it.second) },
             // KMK <--
             getEnabledSources.subscribe(),
             getSourceCategories.subscribe(),
@@ -85,6 +87,9 @@ class SourcesScreenModel(
         // KMK -->
         sourcePreferences.eggikuHideNsfw().changes()
             .onEach { hide -> mutableState.update { it.copy(hideNsfw = hide) } }
+            .launchIn(screenModelScope)
+        EggikuNsfwOverride.overrides().changes()
+            .onEach { overrides -> mutableState.update { it.copy(nsfwOverrides = overrides) } }
             .launchIn(screenModelScope)
         // KMK <--
 
@@ -127,7 +132,7 @@ class SourcesScreenModel(
         }
         val sources = unfilteredSources
             // Eggiku: the egg button hides 18+ sources completely
-            .filter { !hideNsfw || it.installedExtension?.isNsfw != true }
+            .filter { !hideNsfw || it.installedExtension?.let { ext -> EggikuNsfwOverride.isNsfw(ext) } != true }
             .filter(queryFilter(searchQuery))
         // KMK <--
         mutableState.update { state ->
@@ -251,6 +256,7 @@ class SourcesScreenModel(
         // KMK -->
         val searchQuery: String? = null,
         val hideNsfw: Boolean = false,
+        val nsfwOverrides: Set<String> = emptySet(),
         // KMK <--
     ) {
         val isEmpty = items.isEmpty()

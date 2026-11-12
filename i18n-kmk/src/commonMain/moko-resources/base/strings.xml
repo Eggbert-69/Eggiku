@@ -488,4 +488,8 @@
     <string name="cook_pick_hint">When the time\'s up, you\'ll get a notification and this series moves to Continue reading.</string>
     <string name="cook_done_title">Done cooking 🍳</string>
     <string name="cook_done_text">%1$s has been cooking long enough. It\'s waiting in Continue reading.</string>
+    <string name="ext_treat_as_nsfw">Treat as 18+</string>
+    <string name="ext_treat_as_nsfw_repo_yes">The repo rates this 18+. Turn off if it\'s only mature, so the egg button won\'t hide it.</string>
+    <string name="ext_treat_as_nsfw_repo_no">The repo doesn\'t rate this 18+. Turn on to hide it with the egg button.</string>
+    <string name="ext_treat_as_nsfw_set_by_you">Set by you (the repo says otherwise). Flip it back to use the repo\'s rating.</string>
 </resources>

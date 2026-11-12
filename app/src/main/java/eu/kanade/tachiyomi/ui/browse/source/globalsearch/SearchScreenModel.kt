@@ -7,6 +7,7 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.presentation.util.ioCoroutineScope
+import eu.kanade.tachiyomi.extension.EggikuNsfwOverride
 import eu.kanade.tachiyomi.extension.ExtensionManager
 import eu.kanade.tachiyomi.source.Source
 import kotlinx.collections.immutable.PersistentMap
@@ -96,7 +97,7 @@ abstract class SearchScreenModel(
         val hideNsfw = preferences.eggikuHideNsfw().get()
         val nsfwIds = if (hideNsfw) {
             extensionManager.installedExtensionsFlow.value
-                .filter { it.isNsfw }
+                .filter { EggikuNsfwOverride.isNsfw(it) }
                 .flatMap { ext -> ext.sources.map { it.id } }
                 .toSet()
         } else {
