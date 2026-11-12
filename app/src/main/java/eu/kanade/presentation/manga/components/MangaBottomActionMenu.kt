@@ -5,8 +5,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,13 +12,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material.icons.Icons
@@ -49,11 +48,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -69,6 +71,9 @@ import kotlinx.coroutines.launch
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
+import tachiyomi.presentation.core.components.material.GlassDefaults
+import tachiyomi.presentation.core.components.material.LocalGlassEnabled
+import tachiyomi.presentation.core.components.material.glass
 import tachiyomi.presentation.core.i18n.stringResource
 import kotlin.time.Duration.Companion.seconds
 
@@ -91,9 +96,11 @@ fun MangaBottomActionMenu(
     ) {
         val scope = rememberCoroutineScope()
         Surface(
-            modifier = modifier,
-            shape = MaterialTheme.shapes.large.copy(bottomEnd = ZeroCornerSize, bottomStart = ZeroCornerSize),
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            // KMK -->
+            modifier = modifier.bottomActionMenuContainer(),
+            shape = bottomActionMenuShape(),
+            color = bottomActionMenuColor(),
+            // KMK <--
         ) {
             val haptic = LocalHapticFeedback.current
             val confirm = remember { mutableStateListOf(false, false, false, false, false, false, false) }
@@ -109,11 +116,12 @@ fun MangaBottomActionMenu(
             }
             Row(
                 modifier = Modifier
-                    .padding(
+                    // KMK -->
+                    .windowInsetsPadding(
                         WindowInsets.navigationBars
-                            .only(WindowInsetsSides.Bottom)
-                            .asPaddingValues(),
+                            .only(WindowInsetsSides.Bottom),
                     )
+                    // KMK <--
                     .padding(horizontal = 8.dp, vertical = 12.dp),
             ) {
                 if (onBookmarkClicked != null) {
@@ -214,7 +222,9 @@ internal fun RowScope.Button(
     // KMK <--
     Box(
         modifier = Modifier
-            .size(48.dp)
+            // KMK -->
+            .heightIn(min = 48.dp)
+            // KMK <--
             .weight(animatedWeight)
             .combinedClickable(
                 interactionSource = null,
@@ -235,21 +245,19 @@ internal fun RowScope.Button(
                 tint = animatedColor,
                 // KMK <--
             )
-            AnimatedVisibility(
-                visible = toConfirm,
-                enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
-                exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
-            ) {
-                Text(
-                    text = title,
-                    overflow = TextOverflow.Visible,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.labelSmall,
-                    // KMK -->
-                    color = animatedColor,
-                    // KMK <--
-                )
-            }
+            // KMK -->
+            // Always show what the button does under its icon
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = title,
+                overflow = if (toConfirm) TextOverflow.Visible else TextOverflow.Ellipsis,
+                maxLines = if (toConfirm) 1 else 2,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.labelSmall,
+                color = animatedColor,
+                modifier = Modifier.padding(horizontal = 2.dp),
+            )
+            // KMK <--
         }
         content?.invoke()
     }
@@ -283,9 +291,11 @@ fun LibraryBottomActionMenu(
     ) {
         val scope = rememberCoroutineScope()
         Surface(
-            modifier = modifier,
-            shape = MaterialTheme.shapes.large.copy(bottomEnd = ZeroCornerSize, bottomStart = ZeroCornerSize),
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            // KMK -->
+            modifier = modifier.bottomActionMenuContainer(),
+            shape = bottomActionMenuShape(),
+            color = bottomActionMenuColor(),
+            // KMK <--
         ) {
             val haptic = LocalHapticFeedback.current
             val confirm = remember { mutableStateListOf(false, false, false, false, false, false, false) }
@@ -438,3 +448,29 @@ fun LibraryBottomActionMenu(
 }
 
 private val BottomBarMenuDpOffset = DpOffset(0.dp, 0.dp)
+
+// KMK -->
+/** With the glass look on, the action bar floats as a rounded glass capsule above the navigation bar */
+@Composable
+private fun Modifier.bottomActionMenuContainer(): Modifier {
+    if (!LocalGlassEnabled.current) return this
+    return this
+        .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+        .padding(horizontal = 12.dp, vertical = 8.dp)
+        .glass(shape = GlassDefaults.BarShape)
+}
+
+@Composable
+private fun bottomActionMenuShape(): Shape {
+    return if (LocalGlassEnabled.current) {
+        GlassDefaults.BarShape
+    } else {
+        MaterialTheme.shapes.large.copy(bottomEnd = ZeroCornerSize, bottomStart = ZeroCornerSize)
+    }
+}
+
+@Composable
+private fun bottomActionMenuColor(): Color {
+    return if (LocalGlassEnabled.current) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh
+}
+// KMK <--

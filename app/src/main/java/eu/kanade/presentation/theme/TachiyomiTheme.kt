@@ -2,15 +2,18 @@ package eu.kanade.presentation.theme
 
 import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import com.materialkolor.DynamicMaterialExpressiveTheme
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.domain.ui.model.AppTheme
@@ -94,8 +97,28 @@ fun TachiyomiTheme(
 @Composable
 private fun GlassProvider(content: @Composable () -> Unit) {
     val glassEnabled = remember { Injekt.get<UiPreferences>().glassEffect().get() }
-    CompositionLocalProvider(LocalGlassEnabled provides glassEnabled, content = content)
+    CompositionLocalProvider(LocalGlassEnabled provides glassEnabled) {
+        if (glassEnabled) {
+            // Rounder, bubblier corners on cards, covers, menus, sheets and dialogs
+            MaterialTheme(
+                colorScheme = MaterialTheme.colorScheme,
+                shapes = BubblyShapes,
+                typography = MaterialTheme.typography,
+                content = content,
+            )
+        } else {
+            content()
+        }
+    }
 }
+
+private val BubblyShapes = Shapes(
+    extraSmall = RoundedCornerShape(10.dp),
+    small = RoundedCornerShape(14.dp),
+    medium = RoundedCornerShape(20.dp),
+    large = RoundedCornerShape(28.dp),
+    extraLarge = RoundedCornerShape(36.dp),
+)
 // KMK <--
 
 @Composable
