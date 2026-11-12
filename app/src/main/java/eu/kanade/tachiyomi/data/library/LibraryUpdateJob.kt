@@ -392,6 +392,9 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
         val currentlyUpdatingManga = CopyOnWriteArrayList<Manga>()
         val newUpdates = CopyOnWriteArrayList<Pair<Manga, Array<Chapter>>>()
         val failedUpdates = CopyOnWriteArrayList<Pair<Manga, String?>>()
+        // KMK -->
+        val sourceResults = CopyOnWriteArrayList<Pair<Long, Boolean>>()
+        // KMK <--
         val hasDownloads = AtomicBoolean(false)
         // SY -->
         val mdlistLogged = mdList.isLoggedIn
@@ -462,7 +465,15 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
                                             newUpdates.add(manga to newChapters.toTypedArray())
                                         }
                                         clearErrorFromDB(mangaId = manga.id)
+                                        // KMK -->
+                                        sourceResults.add(manga.source to true)
+                                        // KMK <--
                                     } catch (e: Throwable) {
+                                        // KMK -->
+                                        if (e !is NoChaptersException && e !is SourceNotInstalledException) {
+                                            sourceResults.add(manga.source to false)
+                                        }
+                                        // KMK <--
                                         val errorMessage = when (e) {
                                             is NoChaptersException ->
                                                 context.stringResource(MR.strings.no_chapters_error)
@@ -486,6 +497,10 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
         }
 
         notifier.cancelProgressNotification()
+
+        // KMK -->
+        EggikuSourceHealth.record(sourceResults)
+        // KMK <--
 
         if (newUpdates.isNotEmpty()) {
             notifier.showUpdateNotifications(newUpdates)

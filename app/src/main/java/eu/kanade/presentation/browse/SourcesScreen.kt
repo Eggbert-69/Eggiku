@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import eu.kanade.domain.source.model.installedExtension
 import eu.kanade.presentation.browse.components.BaseSourceItem
+import eu.kanade.presentation.browse.components.EggikuSourceHealthIcon
 import eu.kanade.presentation.components.AnimatedFloatingSearchBox
 import eu.kanade.presentation.components.SOURCE_SEARCH_BOX_HEIGHT
 import eu.kanade.presentation.util.animateItemFastScroll
@@ -206,6 +207,9 @@ private fun SourceItem(
         onClickItem = { onClickItem(source, Listing.Popular) },
         onLongClickItem = { onLongClickItem(source) },
         action = {
+            // KMK -->
+            EggikuSourceHealthIcon(sourceId = source.id)
+            // KMK <--
             if (source.supportsLatest /* SY --> */ && showLatest /* SY <-- */) {
                 TextButton(onClick = { onClickItem(source, Listing.Latest) }) {
                     Text(
