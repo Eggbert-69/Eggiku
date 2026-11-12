@@ -5,6 +5,7 @@ import com.materialkolor.PaletteStyle
 import eu.kanade.domain.ui.model.AppTheme
 import eu.kanade.domain.ui.model.TabletUiMode
 import eu.kanade.domain.ui.model.ThemeMode
+import tachiyomi.core.common.preference.Preference
 import tachiyomi.core.common.preference.PreferenceStore
 import tachiyomi.core.common.preference.getEnum
 import java.time.format.DateTimeFormatter
@@ -36,6 +37,17 @@ class UiPreferences(
     fun preloadLibraryColor() = preferenceStore.getBoolean("pref_preload_library_color_key", true)
 
     fun glassEffect() = preferenceStore.getBoolean("pref_glass_effect_key", true)
+
+    // KMK -->
+    /** Whether the hidden Glib Glorb theme shows in the theme list */
+    fun glibGlorbUnlocked() = preferenceStore.getBoolean("eggiku_glib_glorb_unlocked", false)
+
+    /** Set right before the rocket's smoke hands over to the new theme, so the smoke can clear on it */
+    fun glibGlorbRevealPending() = preferenceStore.getBoolean(
+        Preference.appStateKey("eggiku_glib_glorb_reveal"),
+        false,
+    )
+    // KMK <--
 
     fun showAdvancedSettings() = preferenceStore.getBoolean("eggiku_show_advanced_settings", false)
 

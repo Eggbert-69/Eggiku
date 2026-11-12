@@ -211,12 +211,19 @@ class ReaderActivity : BaseActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             overrideActivityTransition(
                 OVERRIDE_TRANSITION_OPEN,
-                R.anim.shared_axis_x_push_enter,
+                // KMK -->
+                R.anim.eggiku_reader_enter,
+                // KMK <--
                 R.anim.shared_axis_x_push_exit,
             )
         } else {
             @Suppress("DEPRECATION")
-            overridePendingTransition(R.anim.shared_axis_x_push_enter, R.anim.shared_axis_x_push_exit)
+            overridePendingTransition(
+                // KMK -->
+                R.anim.eggiku_reader_enter,
+                // KMK <--
+                R.anim.shared_axis_x_push_exit,
+            )
         }
 
         enableEdgeToEdge()

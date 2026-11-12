@@ -66,7 +66,7 @@ class SourcesScreenModel(
         // SY -->
         combine(
             // KMK -->
-            state.map { Pair(it.searchQuery, it.nsfwOnly) }
+            state.map { Pair(it.searchQuery, it.hideNsfw) }
                 .distinctUntilChanged().debounce(SEARCH_DEBOUNCE_MILLIS),
             // KMK <--
             getEnabledSources.subscribe(),
@@ -81,6 +81,12 @@ class SourcesScreenModel(
             }
             .flowOn(Dispatchers.IO)
             .launchIn(screenModelScope)
+
+        // KMK -->
+        sourcePreferences.eggikuHideNsfw().changes()
+            .onEach { hide -> mutableState.update { it.copy(hideNsfw = hide) } }
+            .launchIn(screenModelScope)
+        // KMK <--
 
         sourcePreferences.dataSaver().changes()
             .onEach {
@@ -106,7 +112,7 @@ class SourcesScreenModel(
     ) {
         // KMK -->
         val searchQuery = filters.first
-        val nsfwOnly = filters.second
+        val hideNsfw = filters.second
         val queryFilter: (String?) -> ((Source) -> Boolean) = { query ->
             filter@{ source ->
                 if (query.isNullOrBlank()) return@filter true
@@ -120,7 +126,8 @@ class SourcesScreenModel(
             }
         }
         val sources = unfilteredSources
-            .filter { !nsfwOnly || it.installedExtension?.isNsfw != false }
+            // Eggiku: the egg button hides 18+ sources completely
+            .filter { !hideNsfw || it.installedExtension?.isNsfw != true }
             .filter(queryFilter(searchQuery))
         // KMK <--
         mutableState.update { state ->
@@ -214,10 +221,10 @@ class SourcesScreenModel(
         }
     }
 
+    /** Eggiku: the egg button; remembered and shared with the Extensions tab */
     fun toggleNsfwOnly() {
-        mutableState.update {
-            it.copy(nsfwOnly = !it.nsfwOnly)
-        }
+        val pref = sourcePreferences.eggikuHideNsfw()
+        pref.set(!pref.get())
     }
     // KMK <--
 
@@ -243,7 +250,7 @@ class SourcesScreenModel(
         // SY <--
         // KMK -->
         val searchQuery: String? = null,
-        val nsfwOnly: Boolean = false,
+        val hideNsfw: Boolean = false,
         // KMK <--
     ) {
         val isEmpty = items.isEmpty()

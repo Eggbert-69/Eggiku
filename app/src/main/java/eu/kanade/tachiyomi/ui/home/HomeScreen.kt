@@ -3,6 +3,8 @@ package eu.kanade.tachiyomi.ui.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
@@ -25,10 +27,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -54,6 +60,7 @@ import eu.kanade.tachiyomi.ui.manga.MangaScreen
 import eu.kanade.tachiyomi.ui.more.MoreTab
 import eu.kanade.tachiyomi.ui.updates.UpdatesTab
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -67,6 +74,7 @@ import tachiyomi.presentation.core.components.material.LocalScaffoldExtraBottomI
 import tachiyomi.presentation.core.components.material.NavigationBar
 import tachiyomi.presentation.core.components.material.NavigationRail
 import tachiyomi.presentation.core.components.material.Scaffold
+import tachiyomi.presentation.core.components.material.rememberReduceMotion
 import tachiyomi.presentation.core.i18n.pluralStringResource
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -354,9 +362,102 @@ object HomeScreen : Screen() {
             Icon(
                 painter = tab.options.icon!!,
                 contentDescription = tab.options.title,
+                // KMK -->
+                modifier = Modifier.eggikuTabTapAnimation(tab),
+                // KMK <--
             )
         }
     }
+
+    // KMK -->
+    /**
+     * Eggiku: each tab icon does its own little move when you switch to it. The bookcase rocks
+     * (the egg wobbles), the bell jingles, the portal door stretches open; the others pop.
+     */
+    @Composable
+    private fun Modifier.eggikuTabTapAnimation(tab: eu.kanade.presentation.util.Tab): Modifier {
+        val tabNavigator = LocalTabNavigator.current
+        val selected = tabNavigator.current::class == tab::class
+        val reduceMotion = rememberReduceMotion()
+        val rotation = remember { Animatable(0f) }
+        val scaleX = remember { Animatable(1f) }
+        val scaleY = remember { Animatable(1f) }
+        var wasSelected by remember { mutableStateOf(selected) }
+        LaunchedEffect(selected) {
+            val justSelected = selected && !wasSelected
+            wasSelected = selected
+            if (!justSelected || reduceMotion) return@LaunchedEffect
+            when (tab) {
+                is LibraryTab -> rotation.animateTo(
+                    0f,
+                    keyframes {
+                        durationMillis = 420
+                        0f at 0
+                        -9f at 90
+                        7f at 200
+                        -3f at 310
+                        0f at 420
+                    },
+                )
+                is UpdatesTab -> rotation.animateTo(
+                    0f,
+                    keyframes {
+                        durationMillis = 520
+                        0f at 0
+                        16f at 70
+                        -13f at 160
+                        9f at 250
+                        -5f at 340
+                        2f at 430
+                        0f at 520
+                    },
+                )
+                is BrowseTab -> coroutineScope {
+                    launch {
+                        scaleY.animateTo(
+                            1f,
+                            keyframes {
+                                durationMillis = 360
+                                1f at 0
+                                0.78f at 90
+                                1.16f at 210
+                                1f at 360
+                            },
+                        )
+                    }
+                    scaleX.animateTo(
+                        1f,
+                        keyframes {
+                            durationMillis = 360
+                            1f at 0
+                            1.14f at 90
+                            0.92f at 210
+                            1f at 360
+                        },
+                    )
+                }
+                else -> coroutineScope {
+                    val pop = keyframes<Float> {
+                        durationMillis = 240
+                        1f at 0
+                        1.18f at 90
+                        0.96f at 170
+                        1f at 240
+                    }
+                    launch { scaleY.animateTo(1f, pop) }
+                    scaleX.animateTo(1f, pop)
+                }
+            }
+        }
+        return this.graphicsLayer {
+            rotationZ = rotation.value
+            this.scaleX = scaleX.value
+            this.scaleY = scaleY.value
+            // The bell swings from its top; the others from the bottom, like they're sitting on a shelf
+            transformOrigin = if (tab is UpdatesTab) TransformOrigin(0.5f, 0.1f) else TransformOrigin(0.5f, 0.9f)
+        }
+    }
+    // KMK <--
 
     suspend fun search(query: String) {
         librarySearchEvent.send(query)

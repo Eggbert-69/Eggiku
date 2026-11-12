@@ -92,8 +92,22 @@ abstract class SearchScreenModel(
     }
 
     open fun getEnabledSources(): List<Source> {
+        // KMK -->
+        val hideNsfw = preferences.eggikuHideNsfw().get()
+        val nsfwIds = if (hideNsfw) {
+            extensionManager.installedExtensionsFlow.value
+                .filter { it.isNsfw }
+                .flatMap { ext -> ext.sources.map { it.id } }
+                .toSet()
+        } else {
+            emptySet()
+        }
+        // KMK <--
         return sourceManager.getVisibleSources()
             .filter { it.lang in enabledLanguages && "${it.id}" !in disabledSources }
+            // KMK -->
+            .filter { it.id !in nsfwIds }
+            // KMK <--
             .sortedWith(
                 compareBy(
                     { "${it.id}" !in pinnedSources },

@@ -21,14 +21,28 @@ object EggikuReaderMusicSession {
 
     private val preferences: EggikuMusicPreferences by lazy { Injekt.get() }
 
-    private var pausedByUs = false
+    /** When Eggiku paused the music on leaving the reader; 0 = it didn't */
+    private var pausedByUsAt = 0L
+
+    /** Don't surprise anyone by resuming music they left behind hours ago */
+    private const val RESUME_WINDOW_MS = 2 * 60 * 60 * 1000L
+
     private var fadeJob: Job? = null
 
     fun onReaderStart(context: Context, scope: CoroutineScope) {
         EggikuMusic.start(context)
-        if (pausedByUs) {
-            pausedByUs = false
-            EggikuMusic.play()
+        val pausedAt = pausedByUsAt
+        pausedByUsAt = 0L
+        if (pausedAt > 0L && System.currentTimeMillis() - pausedAt < RESUME_WINDOW_MS) {
+            // Resume what we paused. The music app's session can take a moment to report in,
+            // so try a few times rather than once.
+            scope.launch {
+                repeat(5) {
+                    if (EggikuMusic.nowPlaying.value?.isPlaying == true) return@launch
+                    if (EggikuMusic.nowPlaying.value != null) EggikuMusic.play()
+                    delay(400)
+                }
+            }
         }
         if (preferences.fadeOutAfter30Minutes().get()) {
             fadeJob?.cancel()
@@ -41,10 +55,8 @@ object EggikuReaderMusicSession {
         fadeJob = null
         if (preferences.pauseWhenLeavingReader().get() && EggikuMusic.nowPlaying.value?.isPlaying == true) {
             EggikuMusic.pause()
-            // Only resume later if the reader is coming back
-            pausedByUs = !isFinishing
-        } else if (isFinishing) {
-            pausedByUs = false
+            // Remember it even when the reader closes, so opening any chapter again picks it back up
+            pausedByUsAt = System.currentTimeMillis()
         }
         EggikuMusic.stop()
     }

@@ -1815,6 +1815,8 @@ class LibraryScreenModel(
             libraryData.favorites
                 .asSequence()
                 .filter { it.libraryManga.lastRead > 0 && it.libraryManga.unreadCount > 0 }
+                // Eggiku: only things read lately, so migrating old series doesn't fill the row
+                .filter { System.currentTimeMillis() - it.libraryManga.lastRead < CONTINUE_READING_MAX_AGE_MS }
                 // Eggiku: entries in locked categories never show up here
                 .filterNot { EggikuCategoryLock.isPrivate(it.libraryManga.categories) }
                 .sortedByDescending { it.libraryManga.lastRead }
@@ -1914,4 +1916,5 @@ class LibraryScreenModel(
 
 // KMK -->
 private const val CONTINUE_READING_LIMIT = 15
+private const val CONTINUE_READING_MAX_AGE_MS = 30L * 24 * 60 * 60 * 1000
 // KMK <--

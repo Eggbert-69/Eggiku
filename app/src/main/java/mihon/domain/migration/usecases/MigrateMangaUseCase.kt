@@ -8,8 +8,10 @@ import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.track.EnhancedTracker
 import eu.kanade.tachiyomi.data.track.TrackerManager
 import kotlinx.coroutines.CancellationException
+import logcat.LogPriority
 import mihon.domain.migration.models.MigrationFlag
 import mihon.domain.source.interactor.UpdateMangaFromRemote
+import tachiyomi.core.common.util.system.logcat
 import tachiyomi.domain.category.interactor.GetCategories
 import tachiyomi.domain.category.interactor.SetMangaCategories
 import tachiyomi.domain.chapter.interactor.GetChaptersByMangaId
@@ -132,11 +134,15 @@ class MigrateMangaUseCase(
                 // SY <--
             }
 
-            // Update categories
-            if (MigrationFlag.CATEGORY in flags) {
-                val categoryIds = getCategories.await(current.id).map { it.id }
-                setMangaCategories.await(target.id, categoryIds)
+            // KMK -->
+            // Read the categories now, before anything changes the old entry, and apply them
+            // after the target is in the library (see below) so nothing can undo them
+            val categoryIds = if (MigrationFlag.CATEGORY in flags) {
+                getCategories.await(current.id).map { it.id }
+            } else {
+                null
             }
+            // KMK <--
 
             // Update track
             // SY -->
@@ -190,10 +196,25 @@ class MigrateMangaUseCase(
             )
 
             updateManga.awaitAll(listOfNotNull(currentMangaUpdate, targetMangaUpdate))
+
+            // KMK -->
+            // Eggiku: put the migrated entry in the same categories, then check it stuck
+            if (categoryIds != null) {
+                setMangaCategories.await(target.id, categoryIds)
+                val applied = getCategories.await(target.id).map { it.id }.toSet()
+                if (applied != categoryIds.toSet()) {
+                    logcat(LogPriority.WARN) { "Eggiku: categories didn't stick after migration, retrying" }
+                    setMangaCategories.await(target.id, categoryIds)
+                }
+            }
+            // KMK <--
         } catch (e: Throwable) {
             if (e is CancellationException) {
                 throw e
             }
+            // KMK -->
+            logcat(LogPriority.ERROR, e) { "Eggiku: migration of ${current.title} failed" }
+            // KMK <--
         }
     }
 }

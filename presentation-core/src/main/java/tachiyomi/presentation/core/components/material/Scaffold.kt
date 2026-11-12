@@ -153,6 +153,7 @@ fun Scaffold(
                 content = { innerPadding ->
                     // Glass bars blur whatever the content draws behind them
                     Box(modifier = if (glassEnabled) Modifier.hazeSource(state = hazeState) else Modifier) {
+                        if (LocalGlibGlorb.current) EggikuStarfield(Modifier.matchParentSize())
                         CompositionLocalProvider(LocalScaffoldExtraBottomInset provides 0.dp) {
                             content(innerPadding)
                         }

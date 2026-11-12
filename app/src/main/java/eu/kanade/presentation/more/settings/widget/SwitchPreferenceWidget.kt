@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
+import tachiyomi.presentation.core.components.material.eggikuPop
 
 @Composable
 fun SwitchPreferenceWidget(
@@ -34,7 +35,11 @@ fun SwitchPreferenceWidget(
             Switch(
                 checked = checked,
                 onCheckedChange = null,
-                modifier = Modifier.padding(start = TrailingWidgetBuffer),
+                modifier = Modifier
+                    .padding(start = TrailingWidgetBuffer)
+                    // KMK -->
+                    .eggikuPop(checked, peak = 1.12f),
+                // KMK <--
             )
         },
         onPreferenceClick = { onCheckedChanged(!checked) },

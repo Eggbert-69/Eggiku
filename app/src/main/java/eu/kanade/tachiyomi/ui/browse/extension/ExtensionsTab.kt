@@ -2,7 +2,6 @@ package eu.kanade.tachiyomi.ui.browse.extension
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined._18UpRating
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -14,10 +13,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.browse.ExtensionScreen
+import eu.kanade.presentation.browse.components.EggikuEggIcons
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.TabContent
 import eu.kanade.presentation.more.settings.screen.browse.ExtensionStoresScreen
@@ -46,10 +47,13 @@ fun extensionsTab(
         searchEnabled = true,
         actions = persistentListOf(
             // KMK -->
+            // Eggiku: a whole egg while 18+ is hidden, a cracked one spilling its yolk while it's shown
             AppBar.Action(
-                title = stringResource(KMR.strings.action_toggle_nsfw_only),
-                icon = Icons.Outlined._18UpRating,
-                iconTint = if (state.nsfwOnly) MaterialTheme.colorScheme.error else LocalContentColor.current,
+                title = stringResource(
+                    if (state.hideNsfw) KMR.strings.action_show_nsfw_sources else KMR.strings.action_hide_nsfw_sources,
+                ),
+                icon = if (state.hideNsfw) EggikuEggIcons.Intact else EggikuEggIcons.Cracked,
+                iconTint = if (state.hideNsfw) LocalContentColor.current else Color.Unspecified,
                 onClick = { extensionsScreenModel.toggleNsfwOnly() },
             ),
             AppBar.OverflowAction(

@@ -44,6 +44,9 @@ enum class AppTheme(val titleRes: StringResource?) {
     KANAGAWA(KMR.strings.theme_kanagawa),
     ONE_DARK(KMR.strings.theme_onedark),
     SOLARIZED(KMR.strings.theme_solarized),
+
+    /** Hidden until unlocked: type "wyatt" in the settings search and launch the rocket */
+    GLIB_GLORB(KMR.strings.theme_glibglorb),
     // KMK <--
 
     // Deprecated

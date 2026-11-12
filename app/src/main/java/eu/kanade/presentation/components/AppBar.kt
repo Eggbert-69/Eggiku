@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.material.LocalGlassEnabled
+import tachiyomi.presentation.core.components.material.eggikuPop
 import tachiyomi.presentation.core.components.material.glass
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.util.clearFocusOnSoftKeyboardHide
@@ -248,6 +249,10 @@ fun AppBarActions(
                     imageVector = it.icon,
                     tint = it.iconTint ?: LocalContentColor.current,
                     contentDescription = it.title,
+                    // KMK -->
+                    // Pops when the icon changes, e.g. bookmarking or cracking the 18+ egg
+                    modifier = Modifier.eggikuPop(it.icon),
+                    // KMK <--
                 )
             }
         }

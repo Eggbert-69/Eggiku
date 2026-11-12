@@ -8,6 +8,14 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -15,11 +23,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -28,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -63,6 +75,7 @@ import eu.kanade.tachiyomi.widget.materialdialogs.setTitle
 import exh.util.dropBlank
 import exh.util.trimOrNull
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import logcat.LogPriority
 import tachiyomi.core.common.i18n.stringResource
@@ -72,6 +85,7 @@ import tachiyomi.domain.track.interactor.GetTracks
 import tachiyomi.domain.track.model.Track
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.sy.SYMR
+import tachiyomi.presentation.core.components.material.rememberReduceMotion
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.source.local.isLocal
 import uy.kohesive.injekt.Injekt
@@ -107,6 +121,15 @@ fun EditMangaDialog(
     val colorScheme = AndroidViewColorScheme(MaterialTheme.colorScheme)
     // KMK <--
 
+    // KMK -->
+    // Fields ease in when the dialog opens; Save shows a quick check before it closes
+    val reduceMotion = rememberReduceMotion()
+    val enter = remember { Animatable(if (reduceMotion) 1f else 0f) }
+    LaunchedEffect(Unit) { enter.animateTo(1f, spring(dampingRatio = 0.75f, stiffness = 380f)) }
+    var saved by remember { mutableStateOf(false) }
+    val saveScope = rememberCoroutineScope()
+    // KMK <--
+
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
@@ -114,6 +137,9 @@ fun EditMangaDialog(
                 onClick = {
                     @Suppress("NAME_SHADOWING")
                     val binding = binding ?: return@TextButton
+                    // KMK -->
+                    if (saved) return@TextButton
+                    // KMK <--
                     onPositiveClick(
                         binding.title.text.toString(),
                         binding.mangaAuthor.text.toString(),
@@ -133,10 +159,31 @@ fun EditMangaDialog(
                             }
                         }?.toLong(),
                     )
-                    onDismissRequest()
+                    // KMK -->
+                    saved = true
+                    saveScope.launch {
+                        if (!reduceMotion) delay(380)
+                        onDismissRequest()
+                    }
+                    // KMK <--
                 },
             ) {
-                Text(stringResource(MR.strings.action_save))
+                // KMK -->
+                AnimatedContent(
+                    targetState = saved,
+                    transitionSpec = {
+                        (fadeIn(tween(120)) + scaleIn(spring(dampingRatio = 0.45f), initialScale = 0.4f)) togetherWith
+                            fadeOut(tween(90))
+                    },
+                    label = "editSave",
+                ) { isSaved ->
+                    if (isSaved) {
+                        androidx.compose.material3.Icon(Icons.Filled.Check, contentDescription = null)
+                    } else {
+                        Text(stringResource(MR.strings.action_save))
+                    }
+                }
+                // KMK <--
             }
         },
         dismissButton = {
@@ -148,6 +195,12 @@ fun EditMangaDialog(
             Column(
                 Modifier
                     .fillMaxWidth()
+                    // KMK -->
+                    .graphicsLayer {
+                        alpha = enter.value.coerceIn(0f, 1f)
+                        translationY = (1f - enter.value) * 24.dp.toPx()
+                    }
+                    // KMK <--
                     .verticalScroll(rememberScrollState()),
             ) {
                 AndroidView(
