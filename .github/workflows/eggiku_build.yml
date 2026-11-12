@@ -78,6 +78,8 @@ jobs:
           SHORT=$(git rev-parse --short HEAD)
           TAG="build-${BRANCH}-${GITHUB_RUN_NUMBER}"
           mv Eggiku.apk "Eggiku-${BRANCH}-${SHORT}.apk"
+          echo "### Eggiku APK built" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`Eggiku-${BRANCH}-${SHORT}.apk\` - SHA-256 \`$(sha256sum "Eggiku-${BRANCH}-${SHORT}.apk" | cut -d' ' -f1)\`" >> "$GITHUB_STEP_SUMMARY"
           gh release create "$TAG" "Eggiku-${BRANCH}-${SHORT}.apk" \
             --target "$GITHUB_SHA" --prerelease \
             --title "Eggiku ${BRANCH} build ${GITHUB_RUN_NUMBER}" \
