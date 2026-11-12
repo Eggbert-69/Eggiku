@@ -44,7 +44,7 @@ object EggikuDuplicates {
     /** "The Hero's Return (Official)" and "the heros return" count as the same name */
     fun normalize(title: String): String = title
         .lowercase()
-        .replace(Regex("""\(.*?\)|\[.*?]|\{.*?}"""), " ")
+        .replace(Regex("""\(.*?\)|\[.*?\]|\{.*?\}"""), " ")
         .replace(Regex("""\bofficial\b|\bcolou?red\b"""), " ")
         .replace(Regex("""[^\p{L}\p{N}]+"""), "")
         .trim()
