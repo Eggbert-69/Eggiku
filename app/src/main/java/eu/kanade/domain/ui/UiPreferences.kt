@@ -42,6 +42,14 @@ class UiPreferences(
     /** Whether the hidden Glib Glorb theme shows in the theme list */
     fun glibGlorbUnlocked() = preferenceStore.getBoolean("eggiku_glib_glorb_unlocked", false)
 
+    /** Names of the other hidden themes that have been found */
+    fun unlockedHiddenThemes() = preferenceStore.getStringSet("eggiku_unlocked_hidden_themes", emptySet())
+
+    fun isHiddenThemeUnlocked(theme: AppTheme): Boolean = when (theme) {
+        AppTheme.GLIB_GLORB -> glibGlorbUnlocked().get()
+        else -> theme.name in unlockedHiddenThemes().get()
+    }
+
     /** Set right before the rocket's smoke hands over to the new theme, so the smoke can clear on it */
     fun glibGlorbRevealPending() = preferenceStore.getBoolean(
         Preference.appStateKey("eggiku_glib_glorb_reveal"),

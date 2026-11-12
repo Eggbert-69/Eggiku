@@ -24,4 +24,8 @@
         <item quantity="one">%d month</item>
         <item quantity="other">%d months</item>
     </plurals>
+    <plurals name="cook_until_chapters">
+        <item quantity="one">Until %d new chapter</item>
+        <item quantity="other">Until %d new chapters</item>
+    </plurals>
 </resources>

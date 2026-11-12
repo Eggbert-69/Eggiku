@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.domain.ui.model.AppTheme
+import eu.kanade.domain.ui.model.HiddenAppThemes
 import eu.kanade.presentation.manga.components.MangaCover
 import eu.kanade.presentation.theme.TachiyomiTheme
 import tachiyomi.core.common.preference.InMemoryPreferenceStore
@@ -84,7 +85,7 @@ private fun AppThemesList(
             .filterNot { it.titleRes == null }
             // KMK -->
             .filterNot {
-                it == AppTheme.GLIB_GLORB && !Injekt.get<UiPreferences>().glibGlorbUnlocked().get()
+                it in HiddenAppThemes && !Injekt.get<UiPreferences>().isHiddenThemeUnlocked(it)
             }
         // KMK <--
     }

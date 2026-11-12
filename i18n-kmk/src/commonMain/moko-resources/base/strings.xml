@@ -492,4 +492,25 @@
     <string name="ext_treat_as_nsfw_repo_yes">The repo rates this 18+. Turn off if it\'s only mature, so the egg button won\'t hide it.</string>
     <string name="ext_treat_as_nsfw_repo_no">The repo doesn\'t rate this 18+. Turn on to hide it with the egg button.</string>
     <string name="ext_treat_as_nsfw_set_by_you">Set by you (the repo says otherwise). Flip it back to use the repo\'s rating.</string>
+    <string name="widget_reading_label">Eggiku reading</string>
+    <string name="widget_reading_description">Your streak, weekly goal and what to read next</string>
+    <string name="widget_streak_safe">Streak safe today</string>
+    <string name="widget_streak_read_today">Read today to keep it</string>
+    <string name="widget_week_chapters">%1$d chapters this week</string>
+    <string name="widget_nothing_to_continue">Nothing to continue yet</string>
+    <string name="share_series_text">Read %1$s with me on Eggiku!\nOpen in Eggiku: %2$s\nOn the web: %3$s\n(If the Eggiku link doesn\'t open, share this message to Eggiku.)</string>
+    <string name="cook_until_chapters_status">Cooking until %1$d new chapters (%2$d so far)</string>
+    <string name="cooking_row_title">Cooking</string>
+    <string name="cooking_weeks_left">%1$d wk left</string>
+    <string name="cooking_days_left">%1$d d left</string>
+    <string name="cooking_chapters_left">%1$d ch to go</string>
+    <string name="continue_reading_picked_up">Pick it back up?</string>
+    <string name="continue_reading_cooked">Done cooking</string>
+    <string name="continue_reading_skipped">Hidden for a week</string>
+    <string name="theme_sunnysideup">Sunny Side Up</string>
+    <string name="theme_midnightarcade">Midnight Arcade</string>
+    <string name="hidden_theme_found">You found a hidden theme: %1$s! It\'s in Appearance now.</string>
+    <string name="sunny_taps_left">%1$d more…</string>
+    <string name="arcade_insert_coin">INSERT COIN</string>
+    <string name="arcade_hint">Tap the coin.</string>
 </resources>

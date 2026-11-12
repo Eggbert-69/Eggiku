@@ -33,6 +33,7 @@ import eu.kanade.presentation.theme.colorscheme.GruvboxColorScheme
 import eu.kanade.presentation.theme.colorscheme.KanagawaColorScheme
 import eu.kanade.presentation.theme.colorscheme.LavenderColorScheme
 import eu.kanade.presentation.theme.colorscheme.MatrixColorScheme
+import eu.kanade.presentation.theme.colorscheme.MidnightArcadeColorScheme
 import eu.kanade.presentation.theme.colorscheme.MidnightDuskColorScheme
 import eu.kanade.presentation.theme.colorscheme.MochaColorScheme
 import eu.kanade.presentation.theme.colorscheme.MonetColorScheme
@@ -43,6 +44,7 @@ import eu.kanade.presentation.theme.colorscheme.RosePineColorScheme
 import eu.kanade.presentation.theme.colorscheme.SapphireColorScheme
 import eu.kanade.presentation.theme.colorscheme.SolarizedColorScheme
 import eu.kanade.presentation.theme.colorscheme.StrawberryColorScheme
+import eu.kanade.presentation.theme.colorscheme.SunnySideUpColorScheme
 import eu.kanade.presentation.theme.colorscheme.TachiyomiColorScheme
 import eu.kanade.presentation.theme.colorscheme.TakoColorScheme
 import eu.kanade.presentation.theme.colorscheme.TealTurqoiseColorScheme
@@ -149,7 +151,7 @@ private fun BaseTachiyomiTheme(
     // KMK -->
     // Glib Glorb is always dark and always pure black
     val isGlibGlorb = appTheme == AppTheme.GLIB_GLORB
-    val isDark = isSystemInDarkTheme() || isGlibGlorb
+    val isDark = isSystemInDarkTheme() || isGlibGlorb || appTheme == AppTheme.MIDNIGHT_ARCADE
     // KMK <--
     MaterialExpressiveTheme(
         colorScheme = remember(appTheme, isDark, isAmoled) {
@@ -231,5 +233,7 @@ private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(
     AppTheme.ONE_DARK to OneDarkColorScheme,
     AppTheme.SOLARIZED to SolarizedColorScheme,
     AppTheme.GLIB_GLORB to GlibGlorbColorScheme,
+    AppTheme.SUNNY_SIDE_UP to SunnySideUpColorScheme,
+    AppTheme.MIDNIGHT_ARCADE to MidnightArcadeColorScheme,
     // KMK <--
 )

@@ -35,5 +35,21 @@
                 android:value="true" />
         </receiver>
 
+        <!-- KMK -->
+        <receiver
+            android:name="tachiyomi.presentation.widget.eggiku.EggikuReadingWidgetReceiver"
+            android:enabled="@bool/glance_appwidget_available"
+            android:exported="false"
+            android:label="@string/widget_reading_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/eggiku_reading_widget_info" />
+        </receiver>
+        <!-- KMK -->
+
     </application>
 </manifest>

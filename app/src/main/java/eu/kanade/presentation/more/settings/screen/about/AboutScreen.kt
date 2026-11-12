@@ -12,6 +12,8 @@ import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,8 +25,10 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.domain.ui.model.AppTheme
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.more.LogoHeader
+import eu.kanade.presentation.more.settings.screen.EggikuHiddenThemes
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.util.LocalBackPress
 import eu.kanade.presentation.util.Screen
@@ -43,6 +47,7 @@ import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.updaterEnabled
 import kotlinx.coroutines.launch
 import logcat.LogPriority
+import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.core.common.util.lang.withUIContext
 import tachiyomi.core.common.util.system.logcat
@@ -71,6 +76,10 @@ class AboutScreen : Screen() {
         val handleBack = LocalBackPress.current
         val navigator = LocalNavigator.currentOrThrow
         var isCheckingUpdates by remember { mutableStateOf(false) }
+        // KMK -->
+        var versionTaps by remember { mutableIntStateOf(0) }
+        var lastVersionTap by remember { mutableLongStateOf(0L) }
+        // KMK <--
 
         // KMK -->
         var isCheckingWhatsNew by remember { mutableStateOf(false) }
@@ -98,6 +107,21 @@ class AboutScreen : Screen() {
                         title = stringResource(MR.strings.version),
                         subtitle = getVersionName(withBuildDate = true),
                         onPreferenceClick = {
+                            // KMK -->
+                            // Eggiku: 7 quick taps hatches the hidden Sunny Side Up theme
+                            val now = System.currentTimeMillis()
+                            versionTaps = if (now - lastVersionTap < 1_200) versionTaps + 1 else 1
+                            lastVersionTap = now
+                            if (versionTaps >= 7) {
+                                versionTaps = 0
+                                EggikuHiddenThemes.unlock(context, AppTheme.SUNNY_SIDE_UP)
+                                return@TextPreferenceWidget
+                            }
+                            if (versionTaps >= 4) {
+                                context.toast(context.stringResource(KMR.strings.sunny_taps_left, 7 - versionTaps))
+                                return@TextPreferenceWidget
+                            }
+                            // KMK <--
                             val deviceInfo = CrashLogUtil(context).getDebugInfo()
                             context.copyToClipboard("Debug information", deviceInfo)
                         },

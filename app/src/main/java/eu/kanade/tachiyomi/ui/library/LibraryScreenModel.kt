@@ -1813,22 +1813,41 @@ class LibraryScreenModel(
         // KMK -->
         /** Recently read entries that still have unread chapters, newest first */
         val continueReading: List<LibraryItem> by lazy {
+            val skipped = EggikuContinueReading.skippedIds()
+            val visible = libraryData.favorites
+                .filterNot { it.libraryManga.id in skipped }
+                // Eggiku: entries in locked categories never show up here
+                .filterNot { EggikuCategoryLock.isPrivate(it.libraryManga.categories) }
             // Eggiku: series whose cook timer finished come first, read or not
             val cooked = EggikuCookTimer.ready().get()
-            val cookedItems = libraryData.favorites
-                .filter { it.libraryManga.id.toString() in cooked }
-                .filterNot { EggikuCategoryLock.isPrivate(it.libraryManga.categories) }
-            cookedItems + libraryData.favorites
+            val cookedItems = visible.filter { it.libraryManga.id.toString() in cooked }
+            val recent = visible
                 .asSequence()
                 .filterNot { it.libraryManga.id.toString() in cooked }
                 .filter { it.libraryManga.lastRead > 0 && it.libraryManga.unreadCount > 0 }
                 // Eggiku: only things read lately, so migrating old series doesn't fill the row
                 .filter { System.currentTimeMillis() - it.libraryManga.lastRead < CONTINUE_READING_MAX_AGE_MS }
-                // Eggiku: entries in locked categories never show up here
-                .filterNot { EggikuCategoryLock.isPrivate(it.libraryManga.categories) }
                 .sortedByDescending { it.libraryManga.lastRead }
-                .take(CONTINUE_READING_LIMIT)
                 .toList()
+            // Eggiku: then series you binged and dropped, as a nudge to pick them back up
+            val shown = (cookedItems + recent).map { it.libraryManga.id }.toSet()
+            val dropped = EggikuContinueReading.droppedBinges()
+            val nudges = visible
+                .filter { it.libraryManga.id in dropped && it.libraryManga.id !in shown }
+                .filter { it.libraryManga.unreadCount > 0 }
+                .sortedByDescending { it.libraryManga.lastRead }
+                .take(3)
+            (cookedItems + recent + nudges).take(CONTINUE_READING_LIMIT)
+        }
+
+        /** Eggiku: series with a cook timer running, soonest first */
+        val cooking: List<LibraryItem> by lazy {
+            val timers = EggikuCookTimer.parse(EggikuCookTimer.timers().get())
+            val goals = EggikuCookTimer.chapterGoals()
+            libraryData.favorites
+                .filter { it.libraryManga.id in timers || it.libraryManga.id in goals }
+                .filterNot { EggikuCategoryLock.isPrivate(it.libraryManga.categories) }
+                .sortedBy { timers[it.libraryManga.id] ?: Long.MAX_VALUE }
         }
         // KMK <--
 

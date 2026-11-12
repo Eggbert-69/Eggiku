@@ -1,5 +1,14 @@
 package eu.kanade.presentation.library.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -14,6 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
 import eu.kanade.core.preference.PreferenceMutableState
 import eu.kanade.tachiyomi.ui.library.LibraryItem
@@ -50,15 +63,38 @@ fun LibraryContent(
     getItemsForCategory: (Category) -> List<LibraryItem>,
     // KMK -->
     continueReadingItems: List<LibraryItem> = emptyList(),
+    cookingItems: List<LibraryItem> = emptyList(),
     onResumeReading: (LibraryManga) -> Unit = {},
     // KMK <--
 ) {
+    // KMK -->
+    // The Continue reading and Cooking rows slide up out of the way while you scroll down the
+    // library, and come back once you scroll back up to the top
+    var showTopRows by remember { mutableStateOf(true) }
+    val topRowsScroll = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (available.y < -6f) showTopRows = false
+                return Offset.Zero
+            }
+
+            override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                if (available.y > 0f) showTopRows = true
+                return Offset.Zero
+            }
+        }
+    }
+    // KMK <--
     Column(
-        modifier = Modifier.padding(
-            top = contentPadding.calculateTopPadding(),
-            start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-            end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
-        ),
+        modifier = Modifier
+            .padding(
+                top = contentPadding.calculateTopPadding(),
+                start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+                end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
+            )
+            // KMK -->
+            .nestedScroll(topRowsScroll),
+        // KMK <--
     ) {
         val pagerState = rememberPagerState(currentPage) { categories.size }
 
@@ -66,11 +102,27 @@ fun LibraryContent(
         var isRefreshing by remember(pagerState.currentPage) { mutableStateOf(false) }
 
         // KMK -->
-        ContinueReadingRow(
-            items = continueReadingItems,
-            onResume = onResumeReading,
-            onOpen = onClickManga,
-        )
+        AnimatedVisibility(
+            visible = showTopRows,
+            enter = expandVertically(spring(dampingRatio = 0.8f, stiffness = 400f)) +
+                slideInVertically(spring(dampingRatio = 0.8f, stiffness = 400f)) { -it / 2 } +
+                fadeIn(tween(180)),
+            exit = shrinkVertically(tween(220)) +
+                slideOutVertically(tween(220)) { -it / 2 } +
+                fadeOut(tween(160)),
+        ) {
+            Column {
+                ContinueReadingRow(
+                    items = continueReadingItems,
+                    onResume = onResumeReading,
+                    onOpen = onClickManga,
+                )
+                CookingRow(
+                    items = cookingItems,
+                    onOpen = onClickManga,
+                )
+            }
+        }
         // KMK <--
 
         if (showPageTabs && categories.isNotEmpty() && (categories.size > 1 || !categories.first().isSystemCategory)) {

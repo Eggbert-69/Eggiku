@@ -237,9 +237,7 @@ fun MoreScreen(
                 )
             }
             // KMK -->
-            item {
-                Sponsor()
-            }
+            // Eggiku: no sponsor button (it pointed at Komikku's sponsor page)
             // KMK <--
         }
     }

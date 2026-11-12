@@ -18,6 +18,9 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.presentationCore)
     api(projects.i18n)
+    // KMK -->
+    implementation(projects.i18nKmk)
+    // KMK <--
 
     implementation(compose.glance)
     implementation(libs.material)
