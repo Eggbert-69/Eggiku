@@ -16,6 +16,7 @@ import androidx.core.net.toUri
 import com.hippo.unifile.UniFile
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.domain.ui.model.ThemeMode
+import eu.kanade.domain.ui.model.isScheduledDarkNow
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.ui.base.delegate.ThemingDelegate
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
@@ -112,6 +113,9 @@ fun Context.createReaderThemeContext(): Context {
         1, 2 -> true // Black, Gray
         3 -> when (themeMode) { // Automatic bg uses activity background by default
             ThemeMode.SYSTEM -> applicationContext.isNightMode()
+            // KMK -->
+            ThemeMode.SCHEDULED -> isScheduledDarkNow()
+            // KMK <--
             else -> themeMode == ThemeMode.DARK
         }
         else -> false // White

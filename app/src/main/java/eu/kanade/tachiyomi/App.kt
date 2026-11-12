@@ -41,6 +41,7 @@ import eu.kanade.domain.SYDomainModule
 import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.sync.SyncPreferences
 import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.domain.ui.model.ThemeMode
 import eu.kanade.domain.ui.model.setAppCompatDelegateThemeMode
 import eu.kanade.tachiyomi.core.security.PrivacyPreferences
 import eu.kanade.tachiyomi.crash.CrashActivity
@@ -303,6 +304,12 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
 
     override fun onStart(owner: LifecycleOwner) {
         SecureActivityDelegate.onApplicationStart()
+
+        // KMK -->
+        // Scheduled dark mode: switch if the schedule crossed a boundary while the app was away
+        val themeMode = Injekt.get<UiPreferences>().themeMode().get()
+        if (themeMode == ThemeMode.SCHEDULED) setAppCompatDelegateThemeMode(themeMode)
+        // KMK <--
 
         val syncPreferences: SyncPreferences = Injekt.get()
         val syncTriggerOpt = syncPreferences.getSyncTriggerOptions()

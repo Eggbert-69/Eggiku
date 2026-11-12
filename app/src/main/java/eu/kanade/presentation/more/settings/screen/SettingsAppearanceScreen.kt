@@ -36,6 +36,9 @@ import tachiyomi.presentation.core.util.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 object SettingsAppearanceScreen : SearchableSettings {
     @Suppress("unused")
@@ -140,6 +143,9 @@ object SettingsAppearanceScreen : SearchableSettings {
                         true
                     },
                 ),
+                // KMK <--
+                // KMK -->
+                *scheduleItems(uiPreferences, themeMode).toTypedArray(),
                 // KMK <--
                 Preference.PreferenceItem.SwitchPreference(
                     preference = amoledPref,
@@ -358,6 +364,39 @@ object SettingsAppearanceScreen : SearchableSettings {
         )
     }
     // SY <--
+
+    // KMK -->
+    @Composable
+    private fun scheduleItems(
+        uiPreferences: UiPreferences,
+        themeMode: ThemeMode,
+    ): List<Preference.PreferenceItem<out Any, out Any>> {
+        if (themeMode != ThemeMode.SCHEDULED) return emptyList()
+        val hours = (0..23).associateWith { hour ->
+            LocalTime.of(hour, 0).format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+        }.toImmutableMap()
+        return listOf(
+            Preference.PreferenceItem.ListPreference(
+                preference = uiPreferences.darkScheduleStartHour(),
+                entries = hours,
+                title = stringResource(KMR.strings.pref_dark_schedule_start),
+                onValueChanged = {
+                    setAppCompatDelegateThemeMode(ThemeMode.SCHEDULED)
+                    true
+                },
+            ),
+            Preference.PreferenceItem.ListPreference(
+                preference = uiPreferences.darkScheduleEndHour(),
+                entries = hours,
+                title = stringResource(KMR.strings.pref_dark_schedule_end),
+                onValueChanged = {
+                    setAppCompatDelegateThemeMode(ThemeMode.SCHEDULED)
+                    true
+                },
+            ),
+        )
+    }
+    // KMK <--
 }
 
 private val DateFormats = listOf(

@@ -10,12 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import eu.kanade.domain.ui.model.ThemeMode
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.i18n.stringResource
 
 private val options = mapOf(
     ThemeMode.SYSTEM to MR.strings.theme_system,
     ThemeMode.LIGHT to MR.strings.theme_light,
     ThemeMode.DARK to MR.strings.theme_dark,
+    // KMK -->
+    ThemeMode.SCHEDULED to KMR.strings.theme_scheduled,
+    // KMK <--
 )
 
 @Composable

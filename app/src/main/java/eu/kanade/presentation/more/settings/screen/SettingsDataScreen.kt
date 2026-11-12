@@ -75,6 +75,7 @@ import eu.kanade.tachiyomi.util.system.DeviceUtil
 import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -711,20 +712,33 @@ object SettingsDataScreen : SearchableSettings {
     @Composable
     private fun getSyncPreferences(syncPreferences: SyncPreferences, syncService: Int): List<Preference> {
         val context = LocalContext.current
+        // KMK -->
+        // Google Drive sync needs Komikku's private Google key, which Eggiku builds don't have
+        val driveSyncAvailable = remember {
+            runCatching { context.assets.open("client_secrets.json").close() }.isSuccess
+        }
+        LaunchedEffect(driveSyncAvailable) {
+            if (!driveSyncAvailable && syncService == SyncManager.SyncService.GOOGLE_DRIVE.value) {
+                syncPreferences.syncService().set(SyncManager.SyncService.NONE.value)
+                SyncDataJob.setupTask(context, prefInterval = 0)
+            }
+        }
+        // KMK <--
         return listOf(
             Preference.PreferenceGroup(
                 title = stringResource(SYMR.strings.pref_sync_service_category),
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.ListPreference(
                         preference = syncPreferences.syncService(),
-                        entries = persistentMapOf(
+                        // KMK -->
+                        entries = listOfNotNull(
                             SyncManager.SyncService.NONE.value to stringResource(MR.strings.off),
                             SyncManager.SyncService.SYNCYOMI.value to stringResource(SYMR.strings.syncyomi),
-                            SyncManager.SyncService.GOOGLE_DRIVE.value to stringResource(SYMR.strings.google_drive),
-                            // KMK -->
+                            (SyncManager.SyncService.GOOGLE_DRIVE.value to stringResource(SYMR.strings.google_drive))
+                                .takeIf { driveSyncAvailable },
                             SyncManager.SyncService.WEB_DAV.value to stringResource(KMR.strings.web_dav),
-                            // KMK <--
-                        ),
+                        ).toMap().toImmutableMap(),
+                        // KMK <--
                         title = stringResource(SYMR.strings.pref_sync_service),
                         onValueChanged = {
                             // KMK -->

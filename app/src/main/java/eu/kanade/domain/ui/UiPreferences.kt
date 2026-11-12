@@ -38,6 +38,10 @@ class UiPreferences(
     fun glassEffect() = preferenceStore.getBoolean("pref_glass_effect_key", true)
 
     fun showAdvancedSettings() = preferenceStore.getBoolean("eggiku_show_advanced_settings", false)
+
+    fun darkScheduleStartHour() = preferenceStore.getInt("eggiku_dark_schedule_start", 19)
+
+    fun darkScheduleEndHour() = preferenceStore.getInt("eggiku_dark_schedule_end", 7)
     // KMK <--
 
     fun relativeTime() = preferenceStore.getBoolean("relative_time_v2", true)

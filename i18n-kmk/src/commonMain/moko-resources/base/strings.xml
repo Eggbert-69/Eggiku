@@ -130,6 +130,9 @@
     <string name="backup_history_hint">Tap a backup to restore it</string>
     <string name="backup_history_share">Share backup</string>
     <string name="restore_preview_summary">This backup has %1$d library entries and %2$d categories.</string>
+    <string name="theme_scheduled">Scheduled</string>
+    <string name="pref_dark_schedule_start">Dark mode starts at</string>
+    <string name="pref_dark_schedule_end">Light mode starts at</string>
     <string name="continue_reading_row_title">Continue reading</string>
     <string name="continue_reading_unread">%1$d unread</string>
     <string name="pref_continue_reading_row">Continue reading row</string>
