@@ -57,6 +57,7 @@ import eu.kanade.tachiyomi.data.coil.TachiyomiImageDecoder
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
+import eu.kanade.tachiyomi.data.sync.SyncManager
 import eu.kanade.tachiyomi.di.AppModule
 import eu.kanade.tachiyomi.di.PreferenceModule
 import eu.kanade.tachiyomi.di.SYPreferenceModule
@@ -230,6 +231,16 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
             WorkManager.initialize(this, Configuration.Builder().build())
         }
         val syncPreferences: SyncPreferences = Injekt.get()
+        // KMK -->
+        // Google Drive sync needs Komikku's private Google key, which Eggiku builds don't have.
+        // A restored Komikku backup can turn it on, so switch it off before it fails in the background.
+        if (syncPreferences.syncService().get() == SyncManager.SyncService.GOOGLE_DRIVE.value &&
+            runCatching { assets.open("client_secrets.json").close() }.isFailure
+        ) {
+            syncPreferences.syncService().set(SyncManager.SyncService.NONE.value)
+            SyncDataJob.setupTask(this, prefInterval = 0)
+        }
+        // KMK <--
         val syncTriggerOpt = syncPreferences.getSyncTriggerOptions()
         if (syncPreferences.isSyncEnabled() && syncTriggerOpt.syncOnAppStart) {
             SyncDataJob.startNow(this@App)
