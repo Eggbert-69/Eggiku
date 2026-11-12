@@ -571,5 +571,5 @@
     <string name="cloud_backup_send_drive_summary">For phones where Drive isn\'t in the save screen: opens Drive\'s "Upload" with your newest backup. Pick a folder and Save.</string>
     <string name="cloud_backup_send_drive_none">No backup yet. Make one first with Create backup.</string>
     <string name="eggiku_pref_intro_animation">Egg intro animation</string>
-    <string name="eggiku_pref_intro_animation_summary">Let the egg crack open all the way when the app opens. Off keeps launch as fast as possible.</string>
+    <string name="eggiku_pref_intro_animation_summary">Plays the egg cracking open when the app starts. Tap to skip it.</string>
 </resources>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK --> <!-- First frame of eggiku_splash_egg, shown by the system launch screen before the in-app intro plays -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="288"
+    android:viewportHeight="288">
+    <group
+        android:name="wobble"
+        android:pivotX="144"
+        android:pivotY="228">
+        <!-- Back wall of the shell, seen between the teeth once it cracks -->
+        <group android:name="inner_shell">
+            <clip-path android:pathData="M40,126 L248,126 L248,260 L40,260 Z" />
+            <path
+                android:fillColor="#E6CC98"
+                android:pathData="M144,60 C180,60 204,120 204,165 C204,202 178,228 144,228 C110,228 84,202 84,165 C84,120 108,60 144,60 Z" />
+        </group>
+        <!-- Book, drawn first so it sits inside the shell until it rises -->
+        <group
+            android:name="book"
+            android:pivotX="144"
+            android:pivotY="150"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:translateY="40">
+            <path
+                android:fillColor="#FFB81C"
+                android:pathData="M96,122 L144,128 L192,122 L192,180 L144,186 L96,180 Z" />
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M102,120 Q123,110 144,121 L144,176 Q123,165 102,174 Z" />
+            <path
+                android:fillColor="#F3EEE2"
+                android:pathData="M144,121 Q165,110 186,120 L186,174 Q165,165 144,176 Z" />
+            <path
+                android:pathData="M144,121 L144,176"
+                android:strokeWidth="2"
+                android:strokeColor="#C9A44A" />
+            <path
+                android:pathData="M110,132 Q124,126 136,132 M110,144 Q124,138 136,144 M152,132 Q164,126 178,132 M152,144 Q164,138 178,144"
+                android:strokeWidth="2.5"
+                android:strokeColor="#D8CFBC"
+                android:strokeLineCap="round" />
+        </group>
+        <!-- Bottom of the shell -->
+        <group android:name="bottom_shell">
+            <clip-path android:pathData="M40,140 L84,140 L100,128 L116,148 L132,128 L148,148 L164,128 L180,148 L196,130 L248,140 L248,260 L40,260 Z" />
+            <path
+                android:fillColor="#FFF4DC"
+                android:strokeWidth="4"
+                android:strokeColor="#E8CFA0"
+                android:pathData="M144,60 C180,60 204,120 204,165 C204,202 178,228 144,228 C110,228 84,202 84,165 C84,120 108,60 144,60 Z" />
+            <path
+                android:fillColor="#F2DDB2"
+                android:pathData="M100,190 C112,214 132,222 150,222 C128,214 112,204 100,190 Z" />
+        </group>
+        <!-- Top of the shell, which pops off -->
+        <group
+            android:name="top_shell"
+            android:pivotX="196"
+            android:pivotY="134">
+            <clip-path android:pathData="M40,140 L84,140 L100,128 L116,148 L132,128 L148,148 L164,128 L180,148 L196,130 L248,140 L248,30 L40,30 Z" />
+            <path
+                android:name="top_shell_fill"
+                android:fillColor="#FFF4DC"
+                android:strokeWidth="4"
+                android:strokeColor="#E8CFA0"
+                android:pathData="M144,60 C180,60 204,120 204,165 C204,202 178,228 144,228 C110,228 84,202 84,165 C84,120 108,60 144,60 Z" />
+            <path
+                android:name="top_shell_shine"
+                android:fillColor="#FFFFFF"
+                android:fillAlpha="0.7"
+                android:pathData="M118,92 C124,80 132,74 140,72 C132,82 126,94 124,106 C120,104 116,100 118,92 Z" />
+        </group>
+    </group>
+</vector>
