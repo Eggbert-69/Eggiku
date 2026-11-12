@@ -9,6 +9,7 @@ import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.extension.interactor.GetExtensionsByType
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.presentation.components.SEARCH_DEBOUNCE_MILLIS
+import eu.kanade.tachiyomi.extension.EggikuNsfwOverride
 import eu.kanade.tachiyomi.extension.ExtensionManager
 import eu.kanade.tachiyomi.extension.model.Extension
 import eu.kanade.tachiyomi.extension.model.InstallStep
@@ -54,6 +55,9 @@ class ExtensionsScreenModel(
         hideNsfwPref.changes()
             .onEach { hide -> mutableState.update { it.copy(hideNsfw = hide) } }
             .launchIn(screenModelScope)
+        EggikuNsfwOverride.overrides().changes()
+            .onEach { overrides -> mutableState.update { it.copy(nsfwOverrides = overrides) } }
+            .launchIn(screenModelScope)
         // KMK <--
         val context = Injekt.get<Application>()
         val extensionMapper: (Map<String, InstallStep>) -> ((Extension) -> ExtensionUiModel.Item) = { map ->
@@ -77,9 +81,10 @@ class ExtensionsScreenModel(
                     .debounce(SEARCH_DEBOUNCE_MILLIS)
                     .map { searchQueryPredicate(it ?: "") },
                 // KMK -->
-                state.map { it.hideNsfw }
+                state.map { it.hideNsfw to it.nsfwOverrides }
                     .distinctUntilChanged()
-                    .debounce(SEARCH_DEBOUNCE_MILLIS),
+                    .debounce(SEARCH_DEBOUNCE_MILLIS)
+                    .map { it.first },
                 // KMK <--
                 currentDownloads,
                 getExtensions.subscribe(),
@@ -87,7 +92,7 @@ class ExtensionsScreenModel(
                 buildMap {
                     val updates = _updates.filter(predicate).map(extensionMapper(downloads))
                         // KMK -->
-                        .filter { !hideNsfw || !it.extension.isNsfw }
+                        .filter { !hideNsfw || !EggikuNsfwOverride.isNsfw(it.extension) }
                     // KMK <--
                     if (updates.isNotEmpty()) {
                         put(ExtensionUiModel.Header.Resource(MR.strings.ext_updates_pending), updates)
@@ -95,11 +100,11 @@ class ExtensionsScreenModel(
 
                     val installed = _installed.filter(predicate).map(extensionMapper(downloads))
                         // KMK -->
-                        .filter { !hideNsfw || !it.extension.isNsfw }
+                        .filter { !hideNsfw || !EggikuNsfwOverride.isNsfw(it.extension) }
                     // KMK <--
                     val untrusted = _untrusted.filter(predicate).map(extensionMapper(downloads))
                         // KMK -->
-                        .filter { !hideNsfw || !it.extension.isNsfw }
+                        .filter { !hideNsfw || !EggikuNsfwOverride.isNsfw(it.extension) }
                     // KMK <--
                     if (installed.isNotEmpty() || untrusted.isNotEmpty()) {
                         put(ExtensionUiModel.Header.Resource(MR.strings.ext_installed), installed + untrusted)
@@ -108,7 +113,7 @@ class ExtensionsScreenModel(
                     val languagesWithExtensions = _available
                         .filter(predicate)
                         // KMK -->
-                        .filter { !hideNsfw || !it.isNsfw }
+                        .filter { !hideNsfw || !EggikuNsfwOverride.isNsfw(it) }
                         // KMK <--
                         .groupBy { it.lang }
                         .toSortedMap(LocaleHelper.comparator)
@@ -282,6 +287,7 @@ class ExtensionsScreenModel(
         val searchQuery: String? = null,
         // KMK -->
         val hideNsfw: Boolean = false,
+        val nsfwOverrides: Set<String> = emptySet(),
         // KMK <--
     ) {
         val isEmpty = items.isEmpty()

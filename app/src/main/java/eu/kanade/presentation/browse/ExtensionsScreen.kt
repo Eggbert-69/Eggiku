@@ -51,6 +51,7 @@ import eu.kanade.presentation.more.settings.screen.browse.ExtensionStoresScreen
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import eu.kanade.presentation.util.animateItemFastScroll
 import eu.kanade.presentation.util.rememberRequestPackageInstallsPermissionState
+import eu.kanade.tachiyomi.extension.EggikuNsfwOverride
 import eu.kanade.tachiyomi.extension.model.Extension
 import eu.kanade.tachiyomi.extension.model.InstallStep
 import eu.kanade.tachiyomi.ui.browse.extension.ExtensionUiModel
@@ -75,6 +76,7 @@ import tachiyomi.presentation.core.screens.EmptyScreen
 import tachiyomi.presentation.core.screens.EmptyScreenAction
 import tachiyomi.presentation.core.screens.LoadingScreen
 import tachiyomi.presentation.core.theme.header
+import tachiyomi.presentation.core.util.collectAsState
 import tachiyomi.presentation.core.util.plus
 import tachiyomi.presentation.core.util.secondaryItemAlpha
 
@@ -408,13 +410,18 @@ private fun ExtensionItemContent(
                 Text(text = extension.storeName?.let { "@$it" } ?: "(?)")
                 // KMK <--
 
+                // KMK -->
+                val nsfwOverrides by EggikuNsfwOverride.overrides().collectAsState()
+                // KMK <--
                 val warning = when {
                     extension is Extension.Untrusted -> MR.strings.ext_untrusted
                     extension is Extension.Installed && extension.isObsolete -> MR.strings.ext_obsolete
                     // SY -->
                     extension is Extension.Installed && extension.isRedundant -> SYMR.strings.ext_redundant
                     // SY <--
-                    extension.isNsfw -> MR.strings.ext_nsfw_short
+                    // KMK -->
+                    EggikuNsfwOverride.isNsfw(extension, nsfwOverrides) -> MR.strings.ext_nsfw_short
+                    // KMK <--
                     else -> null
                 }
                 if (warning != null) {

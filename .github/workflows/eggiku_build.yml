@@ -86,11 +86,16 @@ jobs:
           set -e
           BRANCH="${GITHUB_REF_NAME//\//-}"
           SHORT=$(git rev-parse --short HEAD)
-          TAG="build-${BRANCH}-${GITHUB_RUN_NUMBER}"
+          # Build numbers count up per branch from its last published build, so compile-check
+          # runs on wip/* branches don't skip numbers
+          LAST=$(gh release list --limit 500 --json tagName -q '.[].tagName' \
+            | grep "^build-${BRANCH}-[0-9]*$" | sed 's/.*-//' | sort -n | tail -1 || true)
+          NUM=$(( ${LAST:-0} + 1 ))
+          TAG="build-${BRANCH}-${NUM}"
           mv Eggiku.apk "Eggiku-${BRANCH}-${SHORT}.apk"
           echo "### Eggiku APK built" >> "$GITHUB_STEP_SUMMARY"
           echo "\`Eggiku-${BRANCH}-${SHORT}.apk\` - SHA-256 \`$(sha256sum "Eggiku-${BRANCH}-${SHORT}.apk" | cut -d' ' -f1)\`" >> "$GITHUB_STEP_SUMMARY"
           gh release create "$TAG" "Eggiku-${BRANCH}-${SHORT}.apk" \
             --target "$GITHUB_SHA" --prerelease \
-            --title "Eggiku ${BRANCH} build ${GITHUB_RUN_NUMBER}" \
+            --title "Eggiku ${BRANCH} build ${NUM}" \
             --notes "Built from \`${SHORT}\` on \`${GITHUB_REF_NAME}\`. Download the .apk below to install."

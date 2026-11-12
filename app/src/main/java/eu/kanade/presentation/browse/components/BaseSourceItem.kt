@@ -8,16 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import eu.kanade.domain.source.model.installedExtension
+import eu.kanade.tachiyomi.extension.EggikuNsfwOverride
 import eu.kanade.tachiyomi.util.system.LocaleHelper
 import tachiyomi.domain.source.model.Source
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.icons.FlagEmoji
+import tachiyomi.presentation.core.util.collectAsState
 import tachiyomi.presentation.core.util.secondaryItemAlpha
 
 @Composable
@@ -90,7 +93,8 @@ private val defaultContent: @Composable RowScope.(
             }
 
             // KMK -->
-            if (source.installedExtension?.isNsfw == true) {
+            val nsfwOverrides by EggikuNsfwOverride.overrides().collectAsState()
+            if (source.installedExtension?.let { EggikuNsfwOverride.isNsfw(it, nsfwOverrides) } == true) {
                 Text(
                     text = stringResource(MR.strings.ext_nsfw_short).uppercase(),
                     color = MaterialTheme.colorScheme.error,
