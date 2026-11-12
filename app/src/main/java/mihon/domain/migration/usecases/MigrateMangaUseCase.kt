@@ -62,6 +62,15 @@ class MigrateMangaUseCase(
         val targetSource = sourceManager.get(target.source) ?: return
         val currentSource = sourceManager.get(current.source)
         val flags = /* KMK --> */ presetFlags ?: /* KMK <-- */ sourcePreferences.migrationFlags().get()
+        // KMK -->
+        // For undo: what things looked like before
+        val newWasFavorite = target.favorite
+        val oldCategoriesBefore = try {
+            getCategories.await(current.id).map { it.id }.filter { it != 0L }
+        } catch (_: Exception) {
+            emptyList()
+        }
+        // KMK <--
 
         try {
             updateMangaFromRemote(
@@ -198,6 +207,13 @@ class MigrateMangaUseCase(
             updateManga.awaitAll(listOfNotNull(currentMangaUpdate, targetMangaUpdate))
 
             // KMK -->
+            EggikuMigrationUndo.record(
+                oldId = current.id,
+                newId = target.id,
+                replaced = replace,
+                newWasFavorite = newWasFavorite,
+                oldCategories = oldCategoriesBefore,
+            )
             // Eggiku: put the migrated entry in the same categories, then check it stuck
             if (categoryIds != null) {
                 setMangaCategories.await(target.id, categoryIds)

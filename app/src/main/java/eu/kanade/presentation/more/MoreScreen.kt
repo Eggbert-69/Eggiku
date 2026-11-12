@@ -23,12 +23,14 @@ import androidx.compose.material.icons.outlined.NewReleases
 import androidx.compose.material.icons.outlined.QueryStats
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Storage
+import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,11 +38,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
 import eu.kanade.presentation.more.settings.widget.SwitchPreferenceWidget
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
 import eu.kanade.tachiyomi.ui.more.DownloadQueueState
+import eu.kanade.tachiyomi.ui.more.EggikuUpdateScreen
 import eu.kanade.tachiyomi.util.system.openInBrowser
 import exh.pref.DelegateSourcePreferences
 import exh.source.ExhPreferences
@@ -54,6 +59,7 @@ import tachiyomi.presentation.core.components.material.TextButton
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.pluralStringResource
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.util.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -237,7 +243,22 @@ fun MoreScreen(
                 )
             }
             // KMK -->
-            // Eggiku: no sponsor button (it pointed at Komikku's sponsor page)
+            // Eggiku: where the sponsor button was, check GitHub for a newer Eggiku build
+            item {
+                val navigator = LocalNavigator.current
+                val available by EggikuUpdates.availableTag().collectAsState()
+                val seen by EggikuUpdates.lastSeenTag().collectAsState()
+                TextPreferenceWidget(
+                    title = stringResource(KMR.strings.eggiku_updates),
+                    subtitle = if (available.isNotEmpty() && available != seen) {
+                        stringResource(KMR.strings.eggiku_update_new_build)
+                    } else {
+                        stringResource(KMR.strings.eggiku_update_based_on, EggikuUpdates.baseVersion)
+                    },
+                    icon = Icons.Outlined.SystemUpdate,
+                    onPreferenceClick = { navigator?.push(EggikuUpdateScreen()) },
+                )
+            }
             // KMK <--
         }
     }

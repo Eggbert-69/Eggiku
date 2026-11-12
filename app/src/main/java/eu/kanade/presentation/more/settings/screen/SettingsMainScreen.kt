@@ -272,12 +272,9 @@ object SettingsMainScreen : Screen() {
             screen = SettingsSecurityScreen,
         ),
         // SY -->
-        Item(
-            titleRes = SYMR.strings.pref_category_eh,
-            subtitleRes = SYMR.strings.pref_ehentai_summary,
-            icon = EhAssets.EhLogo,
-            screen = SettingsEhScreen,
-        ),
+        // KMK -->
+        // Eggiku: no E-Hentai settings entry
+        // KMK <--
         Item(
             titleRes = SYMR.strings.pref_category_mangadex,
             subtitleRes = SYMR.strings.pref_mangadex_summary,

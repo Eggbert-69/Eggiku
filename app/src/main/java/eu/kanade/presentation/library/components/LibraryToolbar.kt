@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,8 +25,13 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
+import eu.kanade.tachiyomi.ui.library.EggikuDuplicatesScreen
 import eu.kanade.tachiyomi.ui.library.EggikuQuickSortScreen
+import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.launch
+import mihon.domain.migration.usecases.EggikuMigrationUndo
+import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
@@ -112,6 +118,7 @@ private fun LibraryRegularToolbar(
 ) {
     // KMK -->
     val navigator = LocalNavigator.current
+    val scope = rememberCoroutineScope()
     // KMK <--
     val context = LocalContext.current
     val pillAlpha = if (isSystemInDarkTheme()) 0.12f else 0.08f
@@ -161,6 +168,25 @@ private fun LibraryRegularToolbar(
                     AppBar.OverflowAction(
                         title = stringResource(KMR.strings.quick_sort_title),
                         onClick = { navigator?.push(EggikuQuickSortScreen()) },
+                    ),
+                    AppBar.OverflowAction(
+                        title = stringResource(KMR.strings.duplicates_title),
+                        onClick = { navigator?.push(EggikuDuplicatesScreen()) },
+                    ),
+                    AppBar.OverflowAction(
+                        title = stringResource(KMR.strings.migration_undo),
+                        onClick = {
+                            scope.launch {
+                                val count = EggikuMigrationUndo.undoLast()
+                                context.toast(
+                                    if (count == 0) {
+                                        context.stringResource(KMR.strings.migration_undo_none)
+                                    } else {
+                                        context.stringResource(KMR.strings.migration_undone, count)
+                                    },
+                                )
+                            }
+                        },
                     ),
                     // KMK <--
                     AppBar.OverflowAction(

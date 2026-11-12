@@ -370,6 +370,8 @@ object SettingsDataScreen : SearchableSettings {
 
         val folder = remember { EggikuCloudBackup.readablePath(Injekt.get<StorageManager>().getAutomaticBackupsDirectory()?.uri) }
 
+        // Android's save screen hides Google Drive in its side menu, so say where to look first
+        var showDriveHelp by remember { mutableStateOf(false) }
         val pickCloudFile = rememberLauncherForActivityResult(
             ActivityResultContracts.CreateDocument("application/octet-stream"),
         ) { uri ->
@@ -390,6 +392,24 @@ object SettingsDataScreen : SearchableSettings {
                     )
                 }
             }
+        }
+        if (showDriveHelp) {
+            AlertDialog(
+                onDismissRequest = { showDriveHelp = false },
+                title = { Text(stringResource(KMR.strings.cloud_backup_drive_help_title)) },
+                text = { Text(stringResource(KMR.strings.cloud_backup_drive_help)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showDriveHelp = false
+                            pickCloudFile.launch("Eggiku-backup.tachibk")
+                        },
+                    ) { Text(stringResource(KMR.strings.cloud_backup_drive_help_go)) }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDriveHelp = false }) { Text(stringResource(MR.strings.action_cancel)) }
+                },
+            )
         }
 
         val lastBackupText = if (lastTime > 0) {
@@ -462,7 +482,7 @@ object SettingsDataScreen : SearchableSettings {
                 Preference.PreferenceItem.TextPreference(
                     title = stringResource(KMR.strings.cloud_backup_title),
                     subtitle = cloudSubtitle,
-                    onClick = { pickCloudFile.launch("Eggiku-backup.tachibk") },
+                    onClick = { showDriveHelp = true },
                 ),
             )
             if (cloudParsed != null) {

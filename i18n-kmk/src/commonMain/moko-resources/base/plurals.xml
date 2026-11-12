@@ -28,4 +28,8 @@
         <item quantity="one">Until %d new chapter</item>
         <item quantity="other">Until %d new chapters</item>
     </plurals>
+    <plurals name="duplicates_found">
+        <item quantity="one">%d possible duplicate in your library. Library ⋮ → Find duplicates</item>
+        <item quantity="other">%d possible duplicates in your library. Library ⋮ → Find duplicates</item>
+    </plurals>
 </resources>

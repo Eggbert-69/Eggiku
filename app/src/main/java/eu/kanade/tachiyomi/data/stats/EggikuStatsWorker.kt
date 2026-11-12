@@ -10,6 +10,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
+import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.util.system.notify
@@ -36,6 +37,29 @@ class EggikuStatsWorker(context: Context, params: WorkerParameters) : CoroutineW
 
     override suspend fun doWork(): Result {
         EggikuCookTimer.checkDue(applicationContext)
+        // New Eggiku build out? Say so once per build
+        if (EggikuUpdates.autoCheck().get()) {
+            try {
+                val status = EggikuUpdates.check()
+                val latest = status.latest
+                val tag = latest?.let { "build-${it.branch}-${it.number}" }
+                val notified = Injekt.get<PreferenceStore>()
+                    .getString(Preference.appStateKey("eggiku_update_notified"), "")
+                if (status.updateAvailable && latest != null && tag != null && notified.get() != tag) {
+                    notified.set(tag)
+                    applicationContext.notify(ID_UPDATE, Notifications.CHANNEL_COMMON) {
+                        setSmallIcon(R.drawable.ic_komikku)
+                        setColor(ContextCompat.getColor(applicationContext, R.color.ic_launcher))
+                        setContentTitle(applicationContext.stringResource(KMR.strings.eggiku_update_notification))
+                        setContentText(latest.title)
+                        setContentIntent(openApp())
+                        setAutoCancel(true)
+                    }
+                }
+            } catch (_: Exception) {
+                // Offline or GitHub rate limit; try again tomorrow
+            }
+        }
         val log = EggikuReadingLog.all()
         val today = EggikuReadingLog.today()
         val streak = EggikuReadingLog.streak(log, today)
@@ -100,6 +124,7 @@ class EggikuStatsWorker(context: Context, params: WorkerParameters) : CoroutineW
         private const val TAG = "EggikuStats"
         private const val ID_REMINDER = -1901
         private const val ID_WEEKLY_RECAP = -1902
+        private const val ID_UPDATE = -1903
 
         /** Runs every day around 8 PM */
         fun setup(context: Context) {
