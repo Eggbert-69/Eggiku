@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Komikku</string>
+    <!-- KMK: Eggiku fork name -->
+    <string name="app_name" translatable="false">Eggiku</string>
 
     <!-- Generic strings -->
     <string name="on">On</string>

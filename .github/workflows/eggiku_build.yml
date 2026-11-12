@@ -1,0 +1,84 @@
+# Eggiku: builds a signed APK on every push to a non-master branch (or on demand)
+# and publishes it as a GitHub pre-release, so it can be downloaded straight to a phone.
+#
+# Needs two repository secrets (Settings > Secrets and variables > Actions):
+#   EGGIKU_KEYSTORE_BASE64   - the signing keystore (PKCS12), base64-encoded
+#   EGGIKU_KEYSTORE_PASSWORD - its password
+# Keep a private copy of both: without the same key, updates can't install over an existing Eggiku.
+name: Eggiku build
+
+on:
+  push:
+    branches-ignore:
+      - master
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Eggiku
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          java-version-file: .github/.java-version
+          distribution: temurin
+
+      - name: Set up gradle
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+
+      - name: Check code format
+        run: ./gradlew spotlessCheck
+
+      - name: Build app
+        run: ./gradlew assembleRelease
+
+      - name: Sign APK
+        env:
+          KS_PASS: ${{ secrets.EGGIKU_KEYSTORE_PASSWORD }}
+          KS_B64: ${{ secrets.EGGIKU_KEYSTORE_BASE64 }}
+        run: |
+          set -e
+          if [ -z "$KS_PASS" ] || [ -z "$KS_B64" ]; then
+            echo "::error::Add the EGGIKU_KEYSTORE_BASE64 and EGGIKU_KEYSTORE_PASSWORD repository secrets (Settings > Secrets and variables > Actions)."
+            exit 1
+          fi
+          echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/eggiku.p12"
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          IN=app/build/outputs/apk/release/app-universal-release-unsigned.apk
+          "$BT"/zipalign -f -p 4 "$IN" aligned.apk
+          "$BT"/apksigner sign \
+            --ks "$RUNNER_TEMP/eggiku.p12" --ks-type PKCS12 \
+            --ks-pass env:KS_PASS --ks-key-alias eggiku \
+            --out Eggiku.apk aligned.apk
+          "$BT"/apksigner verify Eggiku.apk
+          rm -f "$RUNNER_TEMP/eggiku.p12"
+
+      - name: Publish pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          SHORT=$(git rev-parse --short HEAD)
+          TAG="build-${BRANCH}-${GITHUB_RUN_NUMBER}"
+          mv Eggiku.apk "Eggiku-${BRANCH}-${SHORT}.apk"
+          gh release create "$TAG" "Eggiku-${BRANCH}-${SHORT}.apk" \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "Eggiku ${BRANCH} build ${GITHUB_RUN_NUMBER}" \
+            --notes "Built from \`${SHORT}\` on \`${GITHUB_REF_NAME}\`. Download the .apk below to install."

@@ -26,7 +26,10 @@ android {
     namespace = "eu.kanade.tachiyomi"
 
     defaultConfig {
-        applicationId = "app.komikku"
+        // KMK -->
+        // Eggiku: own app ID so it installs alongside official Komikku
+        applicationId = "app.eggiku"
+        // KMK <--
 
         versionCode = 82
         versionName = "1.14.1"
