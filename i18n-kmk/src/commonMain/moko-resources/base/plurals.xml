@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="orphan_series_count">
+        <item quantity="one">%d series in your library uses it.</item>
+        <item quantity="other">%d series in your library use it.</item>
+    </plurals>
 </resources>
