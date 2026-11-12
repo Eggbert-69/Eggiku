@@ -9,6 +9,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.util.system.notify
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit
 class EggikuStatsWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        EggikuCookTimer.checkDue(applicationContext)
         val log = EggikuReadingLog.all()
         val today = EggikuReadingLog.today()
         val streak = EggikuReadingLog.streak(log, today)

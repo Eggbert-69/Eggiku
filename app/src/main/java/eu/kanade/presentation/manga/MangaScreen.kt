@@ -70,6 +70,7 @@ import eu.kanade.presentation.browse.RelatedMangaTitle
 import eu.kanade.presentation.components.relativeDateText
 import eu.kanade.presentation.manga.components.ChapterDownloadAction
 import eu.kanade.presentation.manga.components.ChapterHeader
+import eu.kanade.presentation.manga.components.EggikuCookTimerCard
 import eu.kanade.presentation.manga.components.ExpandableMangaDescription
 import eu.kanade.presentation.manga.components.MangaActionRow
 import eu.kanade.presentation.manga.components.MangaBottomActionMenu
@@ -704,6 +705,9 @@ private fun MangaScreenSmallImpl(
                         ) {
                             EggikuReadingPlaylistCard(mangaId = state.manga.id)
                         }
+                        item(key = "eggiku-cook-timer") {
+                            EggikuCookTimerCard(mangaId = state.manga.id)
+                        }
                     }
                     // KMK <--
 
@@ -1140,6 +1144,7 @@ private fun MangaScreenLargeImpl(
                         // KMK -->
                         if (state.manga.favorite) {
                             EggikuReadingPlaylistCard(mangaId = state.manga.id)
+                            EggikuCookTimerCard(mangaId = state.manga.id)
                         }
                         // KMK <--
                         // SY -->

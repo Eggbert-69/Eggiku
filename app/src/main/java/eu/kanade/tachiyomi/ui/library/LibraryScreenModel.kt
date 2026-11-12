@@ -24,6 +24,7 @@ import eu.kanade.presentation.components.SEARCH_DEBOUNCE_MILLIS
 import eu.kanade.presentation.library.components.LibraryToolbarTitle
 import eu.kanade.presentation.manga.DownloadAction
 import eu.kanade.tachiyomi.data.cache.CoverCache
+import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.download.DownloadCache
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
@@ -1812,8 +1813,14 @@ class LibraryScreenModel(
         // KMK -->
         /** Recently read entries that still have unread chapters, newest first */
         val continueReading: List<LibraryItem> by lazy {
-            libraryData.favorites
+            // Eggiku: series whose cook timer finished come first, read or not
+            val cooked = EggikuCookTimer.ready().get()
+            val cookedItems = libraryData.favorites
+                .filter { it.libraryManga.id.toString() in cooked }
+                .filterNot { EggikuCategoryLock.isPrivate(it.libraryManga.categories) }
+            cookedItems + libraryData.favorites
                 .asSequence()
+                .filterNot { it.libraryManga.id.toString() in cooked }
                 .filter { it.libraryManga.lastRead > 0 && it.libraryManga.unreadCount > 0 }
                 // Eggiku: only things read lately, so migrating old series doesn't fill the row
                 .filter { System.currentTimeMillis() - it.libraryManga.lastRead < CONTINUE_READING_MAX_AGE_MS }

@@ -19,6 +19,7 @@ import eu.kanade.domain.track.interactor.TrackChapter
 import eu.kanade.domain.track.service.TrackPreferences
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.manga.components.ChapterDownloadAction
+import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.database.models.toDomainChapter
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.download.DownloadProvider
@@ -926,6 +927,7 @@ class ReaderViewModel @JvmOverloads constructor(
     fun restartReadTimer() {
         // KMK -->
         manga?.id?.let { mangaId ->
+            EggikuCookTimer.served(mangaId)
             EggikuReadingLog.readerMangaId = mangaId
             viewModelScope.launchIO { EggikuReadingLog.readerMangaPrivate = eggikuIsPrivate(mangaId) }
         }
