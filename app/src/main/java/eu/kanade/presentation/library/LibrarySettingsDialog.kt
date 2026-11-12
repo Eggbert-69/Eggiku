@@ -388,6 +388,10 @@ private fun ColumnScope.DisplayPage(
         label = stringResource(KMR.strings.action_display_source_badge),
         pref = screenModel.libraryPreferences.sourceBadge(),
     )
+    CheckboxItem(
+        label = stringResource(KMR.strings.pref_large_badges),
+        pref = screenModel.libraryPreferences.largeBadges(),
+    )
     // KMK <--
     CheckboxItem(
         label = stringResource(MR.strings.action_display_show_continue_reading_button),

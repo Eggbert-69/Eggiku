@@ -10,6 +10,8 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -47,6 +49,8 @@ import eu.kanade.presentation.theme.colorscheme.TidalWaveColorScheme
 import eu.kanade.presentation.theme.colorscheme.TokyoNightColorScheme
 import eu.kanade.presentation.theme.colorscheme.YinYangColorScheme
 import eu.kanade.presentation.theme.colorscheme.YotsubaColorScheme
+import tachiyomi.domain.library.service.LibraryPreferences
+import tachiyomi.presentation.core.components.LocalLargeBadges
 import tachiyomi.presentation.core.components.material.LocalGlassEnabled
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -97,7 +101,12 @@ fun TachiyomiTheme(
 @Composable
 private fun GlassProvider(content: @Composable () -> Unit) {
     val glassEnabled = remember { Injekt.get<UiPreferences>().glassEffect().get() }
-    CompositionLocalProvider(LocalGlassEnabled provides glassEnabled) {
+    val largeBadges by remember { Injekt.get<LibraryPreferences>().largeBadges().changes() }
+        .collectAsState(initial = Injekt.get<LibraryPreferences>().largeBadges().get())
+    CompositionLocalProvider(
+        LocalGlassEnabled provides glassEnabled,
+        LocalLargeBadges provides largeBadges,
+    ) {
         if (glassEnabled) {
             // Rounder, bubblier corners on cards, covers, menus, sheets and dialogs
             MaterialTheme(

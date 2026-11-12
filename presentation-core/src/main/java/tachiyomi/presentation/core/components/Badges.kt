@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.persistentMapOf
 
+// KMK -->
+/** Eggiku: larger, easier to read badges on library covers */
+val LocalLargeBadges = staticCompositionLocalOf { false }
+// KMK <--
+
 @Composable
 fun BadgeGroup(
     modifier: Modifier = Modifier,
@@ -39,7 +45,7 @@ fun BadgeGroup(
     Row(
         modifier = modifier.clip(shape)
             // KMK -->
-            .height(18.dp),
+            .height(if (LocalLargeBadges.current) 24.dp else 18.dp),
         // KMK <--
     ) {
         content()
@@ -59,11 +65,15 @@ fun Badge(
         modifier = modifier
             .clip(shape)
             .background(color)
-            .padding(horizontal = 3.dp, vertical = 1.dp),
+            // KMK -->
+            .padding(horizontal = if (LocalLargeBadges.current) 5.dp else 3.dp, vertical = 1.dp),
+        // KMK <--
         color = textColor,
         fontWeight = FontWeight.Medium,
         maxLines = 1,
-        style = MaterialTheme.typography.bodySmall,
+        // KMK -->
+        style = if (LocalLargeBadges.current) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodySmall,
+        // KMK <--
     )
 }
 

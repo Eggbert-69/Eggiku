@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ViewList
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.FlipToBack
+import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.SelectAll
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,7 @@ import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
 import kotlinx.collections.immutable.persistentListOf
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.components.Pill
 import tachiyomi.presentation.core.i18n.stringResource
@@ -49,6 +52,10 @@ fun LibraryToolbar(
     onSearchQueryChange: (String?) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior?,
     onInvalidateDownloadCache: (Context) -> Unit,
+    // KMK -->
+    isListMode: Boolean = false,
+    onClickToggleDisplayMode: (() -> Unit)? = null,
+    // KMK <--
 ) = when {
     selectedCount > 0 -> LibrarySelectionToolbar(
         selectedCount = selectedCount,
@@ -72,6 +79,10 @@ fun LibraryToolbar(
         // SY <--
         scrollBehavior = scrollBehavior,
         onInvalidateDownloadCache = onInvalidateDownloadCache,
+        // KMK -->
+        isListMode = isListMode,
+        onClickToggleDisplayMode = onClickToggleDisplayMode,
+        // KMK <--
     )
 }
 
@@ -92,6 +103,10 @@ private fun LibraryRegularToolbar(
     // SY <--
     scrollBehavior: TopAppBarScrollBehavior?,
     onInvalidateDownloadCache: (Context) -> Unit,
+    // KMK -->
+    isListMode: Boolean,
+    onClickToggleDisplayMode: (() -> Unit)?,
+    // KMK <--
 ) {
     val context = LocalContext.current
     val pillAlpha = if (isSystemInDarkTheme()) 0.12f else 0.08f
@@ -144,6 +159,20 @@ private fun LibraryRegularToolbar(
                         },
                     ),
                 ).builder().apply {
+                    // KMK -->
+                    if (onClickToggleDisplayMode != null) {
+                        add(
+                            0,
+                            AppBar.Action(
+                                title = stringResource(
+                                    if (isListMode) KMR.strings.action_show_as_grid else KMR.strings.action_show_as_list,
+                                ),
+                                icon = if (isListMode) Icons.Outlined.GridView else Icons.AutoMirrored.Outlined.ViewList,
+                                onClick = onClickToggleDisplayMode,
+                            ),
+                        )
+                    }
+                    // KMK <--
                     // SY -->
                     if (onClickSyncExh != null) {
                         add(

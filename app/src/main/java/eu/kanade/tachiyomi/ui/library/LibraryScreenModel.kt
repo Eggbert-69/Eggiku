@@ -97,7 +97,9 @@ import tachiyomi.domain.category.model.Category.Companion.UNCATEGORIZED_ID
 import tachiyomi.domain.chapter.interactor.GetBookmarkedChaptersByMangaId
 import tachiyomi.domain.chapter.interactor.GetChaptersByMangaId
 import tachiyomi.domain.chapter.interactor.GetMergedChaptersByMangaId
+import tachiyomi.domain.chapter.interactor.UpdateChapter
 import tachiyomi.domain.chapter.model.Chapter
+import tachiyomi.domain.chapter.model.ChapterUpdate
 import tachiyomi.domain.history.interactor.GetNextChapters
 import tachiyomi.domain.library.model.LibraryDisplayMode
 import tachiyomi.domain.library.model.LibraryGroup
@@ -135,6 +137,9 @@ class LibraryScreenModel(
     private val getTracksPerManga: GetTracksPerManga = Injekt.get(),
     private val getNextChapters: GetNextChapters = Injekt.get(),
     private val getChaptersByMangaId: GetChaptersByMangaId = Injekt.get(),
+    // KMK -->
+    private val updateChapter: UpdateChapter = Injekt.get(),
+    // KMK <--
     private val getBookmarkedChaptersByMangaId: GetBookmarkedChaptersByMangaId = Injekt.get(),
     private val setReadStatus: SetReadStatus = Injekt.get(),
     private val updateManga: UpdateManga = Injekt.get(),
@@ -1099,7 +1104,17 @@ class LibraryScreenModel(
      */
     fun markReadSelection(read: Boolean) {
         val selection = state.value.selectedManga
-        screenModelScope.launchNonCancellable {
+        // KMK -->
+        markReadUndo = null
+        markReadJob = screenModelScope.launchNonCancellable {
+            markReadUndo = selection
+                .filterNot { it.source == MERGED_SOURCE_ID }
+                .flatMap { manga ->
+                    getChaptersByMangaId.await(manga.id).map {
+                        ChapterUpdate(id = it.id, read = it.read, lastPageRead = it.lastPageRead)
+                    }
+                }
+            // KMK <--
             selection.forEach { manga ->
                 setReadStatus.await(
                     manga = manga,
@@ -1117,6 +1132,29 @@ class LibraryScreenModel(
      * @param deleteFromLibrary whether to delete manga from library.
      * @param deleteChapters whether to delete downloaded chapters.
      */
+    // KMK -->
+    private var markReadJob: Job? = null
+    private var markReadUndo: List<ChapterUpdate>? = null
+
+    /** Puts chapter read state back the way it was before the last mark-as-read/unread */
+    fun undoMarkRead() {
+        val previousJob = markReadJob
+        screenModelScope.launchNonCancellable {
+            previousJob?.join()
+            val updates = markReadUndo ?: return@launchNonCancellable
+            markReadUndo = null
+            updateChapter.awaitAll(updates)
+        }
+    }
+
+    /** Adds entries back to the library after removing them */
+    fun restoreToLibrary(mangaIds: List<Long>) {
+        screenModelScope.launchNonCancellable {
+            updateManga.awaitAll(mangaIds.distinct().map { MangaUpdate(id = it, favorite = true) })
+        }
+    }
+    // KMK <--
+
     fun removeMangas(mangas: List<Manga>, deleteFromLibrary: Boolean, deleteChapters: Boolean) {
         screenModelScope.launchNonCancellable {
             if (deleteFromLibrary) {
@@ -1179,6 +1217,20 @@ class LibraryScreenModel(
     fun getDisplayMode(): PreferenceMutableState<LibraryDisplayMode> {
         return libraryPreferences.displayMode().asState(screenModelScope)
     }
+
+    // KMK -->
+    /** Switches the library between list and the last-used grid style */
+    fun toggleListDisplayMode() {
+        val displayMode = libraryPreferences.displayMode()
+        val current = displayMode.get()
+        if (current == LibraryDisplayMode.List) {
+            displayMode.set(libraryPreferences.lastGridDisplayMode().get())
+        } else {
+            libraryPreferences.lastGridDisplayMode().set(current)
+            displayMode.set(LibraryDisplayMode.List)
+        }
+    }
+    // KMK <--
 
     fun getColumnsForOrientation(isLandscape: Boolean): PreferenceMutableState<Int> {
         return (if (isLandscape) libraryPreferences.landscapeColumns() else libraryPreferences.portraitColumns())

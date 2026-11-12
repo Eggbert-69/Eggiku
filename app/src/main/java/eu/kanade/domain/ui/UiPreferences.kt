@@ -36,6 +36,8 @@ class UiPreferences(
     fun preloadLibraryColor() = preferenceStore.getBoolean("pref_preload_library_color_key", true)
 
     fun glassEffect() = preferenceStore.getBoolean("pref_glass_effect_key", true)
+
+    fun showAdvancedSettings() = preferenceStore.getBoolean("eggiku_show_advanced_settings", false)
     // KMK <--
 
     fun relativeTime() = preferenceStore.getBoolean("relative_time_v2", true)

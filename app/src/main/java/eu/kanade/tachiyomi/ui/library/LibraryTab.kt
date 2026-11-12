@@ -7,6 +7,7 @@ import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -70,6 +71,7 @@ import mihon.feature.migration.config.MigrationConfigScreen
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.domain.category.model.Category
+import tachiyomi.domain.library.model.LibraryDisplayMode
 import tachiyomi.domain.library.model.LibraryGroup
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.library.service.LibraryPreferences
@@ -82,6 +84,7 @@ import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.screens.EmptyScreen
 import tachiyomi.presentation.core.screens.EmptyScreenAction
 import tachiyomi.presentation.core.screens.LoadingScreen
+import tachiyomi.presentation.core.util.collectAsState
 import tachiyomi.source.local.isLocal
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -118,6 +121,9 @@ data object LibraryTab : Tab {
         val state by screenModel.state.collectAsState()
 
         val snackbarHostState = remember { SnackbarHostState() }
+        // KMK -->
+        val libraryDisplayMode by remember { Injekt.get<LibraryPreferences>().displayMode() }.collectAsState()
+        // KMK <--
 
         val onClickRefresh: (Category?) -> Boolean = { category ->
             // SY -->
@@ -192,14 +198,42 @@ data object LibraryTab : Tab {
                     },
                     // For scroll overlay when no tab
                     scrollBehavior = scrollBehavior.takeIf { !state.showCategoryTabs },
+                    // KMK -->
+                    isListMode = libraryDisplayMode == LibraryDisplayMode.List,
+                    onClickToggleDisplayMode = screenModel::toggleListDisplayMode,
+                    // KMK <--
                 )
             },
             bottomBar = {
                 LibraryBottomActionMenu(
                     visible = state.selectionMode,
                     onChangeCategoryClicked = screenModel::openChangeCategoryDialog,
-                    onMarkAsReadClicked = { screenModel.markReadSelection(true) },
-                    onMarkAsUnreadClicked = { screenModel.markReadSelection(false) },
+                    // KMK -->
+                    onMarkAsReadClicked = {
+                        val count = state.selection.size
+                        screenModel.markReadSelection(true)
+                        scope.launch {
+                            showUndoSnackbar(
+                                snackbarHostState,
+                                context.stringResource(KMR.strings.undo_marked_read, count),
+                                context.stringResource(MR.strings.action_undo),
+                                screenModel::undoMarkRead,
+                            )
+                        }
+                    },
+                    onMarkAsUnreadClicked = {
+                        val count = state.selection.size
+                        screenModel.markReadSelection(false)
+                        scope.launch {
+                            showUndoSnackbar(
+                                snackbarHostState,
+                                context.stringResource(KMR.strings.undo_marked_unread, count),
+                                context.stringResource(MR.strings.action_undo),
+                                screenModel::undoMarkRead,
+                            )
+                        }
+                    },
+                    // KMK <--
                     onDownloadClicked = screenModel::performDownloadAction
                         .takeIf { state.selectedManga.fastAll { !it.isLocal() } },
                     onDeleteClicked = screenModel::openDeleteMangaDialog,
@@ -397,6 +431,18 @@ data object LibraryTab : Tab {
                     onConfirm = { deleteManga, deleteChapter ->
                         screenModel.removeMangas(dialog.manga, deleteManga, deleteChapter)
                         screenModel.clearSelection()
+                        // KMK -->
+                        if (deleteManga) {
+                            val ids = dialog.manga.map { it.id }
+                            scope.launch {
+                                showUndoSnackbar(
+                                    snackbarHostState,
+                                    context.stringResource(KMR.strings.undo_removed_from_library, ids.size),
+                                    context.stringResource(MR.strings.action_undo),
+                                ) { screenModel.restoreToLibrary(ids) }
+                            }
+                        }
+                        // KMK <--
                     },
                 )
             }
@@ -508,3 +554,20 @@ data object LibraryTab : Tab {
     private val requestSettingsSheetEvent = Channel<Unit>()
     private suspend fun requestOpenSettingsSheet() = requestSettingsSheetEvent.send(Unit)
 }
+
+// KMK -->
+private suspend fun showUndoSnackbar(
+    snackbarHostState: SnackbarHostState,
+    message: String,
+    undoLabel: String,
+    onUndo: () -> Unit,
+) {
+    val result = snackbarHostState.showSnackbar(
+        message = message,
+        actionLabel = undoLabel,
+        withDismissAction = true,
+        duration = SnackbarDuration.Long,
+    )
+    if (result == SnackbarResult.ActionPerformed) onUndo()
+}
+// KMK <--

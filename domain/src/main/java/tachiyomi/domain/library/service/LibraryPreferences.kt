@@ -85,6 +85,16 @@ class LibraryPreferences(
 
     // KMK -->
     fun showContinueReadingRow() = preferenceStore.getBoolean("eggiku_continue_reading_row", true)
+
+    /** Grid style to go back to from the toolbar's grid/list switch */
+    fun lastGridDisplayMode() = preferenceStore.getObjectFromString(
+        "eggiku_last_grid_display_mode",
+        LibraryDisplayMode.ComfortableGrid,
+        LibraryDisplayMode.Serializer::serialize,
+        LibraryDisplayMode.Serializer::deserialize,
+    )
+
+    fun largeBadges() = preferenceStore.getBoolean("eggiku_large_badges", true)
     // KMK <--
 
     fun markDuplicateReadChapterAsRead() = preferenceStore.getStringSet("mark_duplicate_read_chapter_read", emptySet())
