@@ -80,6 +80,9 @@
     <string name="theme_kanagawa">Kanagawa</string>
     <string name="theme_onedark">One Dark</string>
     <string name="theme_solarized">Solarized</string>
+    <string name="continue_reading_row_title">Continue reading</string>
+    <string name="continue_reading_unread">%1$d unread</string>
+    <string name="pref_continue_reading_row">Continue reading row</string>
     <string name="pref_glass_effect">Glass &amp; bubbly look</string>
     <string name="pref_glass_effect_summary">Translucent, blurred bars in your theme colors, with rounder menus, tabs and covers</string>
     <!-- Custom Color Picker -->
@@ -233,7 +236,7 @@
     <string name="discord_status_scrolling">Scrolling through</string>
     <string name="discord_status_messing">Messing around with</string>
     <string name="discord_download_button">Read on %s</string>
-    <string name="discord_app_description">Komikku - a manga reader app</string>
+    <string name="discord_app_description">Eggiku - a manga reader app</string>
     <!-- Discord RPC Customization -->
     <string name="pref_category_discord_customization">Discord Customization</string>
     <string name="pref_discord_custom_message">Custom Message</string>

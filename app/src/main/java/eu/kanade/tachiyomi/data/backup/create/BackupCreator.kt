@@ -198,11 +198,15 @@ class BackupCreator(
 
     companion object {
         private const val MAX_AUTO_BACKUPS: Int = 4
-        private val FILENAME_REGEX = """${BuildConfig.APPLICATION_ID}_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}.tachibk""".toRegex()
+        // KMK -->
+        // Eggiku names backups "Eggiku_<date>.tachibk"; older app-ID-named backups still count toward rotation
+        private val FILENAME_REGEX =
+            """(Eggiku|${Regex.escape(BuildConfig.APPLICATION_ID)})_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}.tachibk""".toRegex()
 
         fun getFilename(): String {
             val date = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.ENGLISH).format(Date())
-            return "${BuildConfig.APPLICATION_ID}_$date.tachibk"
+            return "Eggiku_$date.tachibk"
         }
+        // KMK <--
     }
 }

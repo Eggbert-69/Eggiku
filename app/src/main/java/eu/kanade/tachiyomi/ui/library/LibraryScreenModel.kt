@@ -1749,6 +1749,18 @@ class LibraryScreenModel(
 
         val selectedManga by lazy { selection.mapNotNull { libraryData.favoritesById[it]?.libraryManga?.manga } }
 
+        // KMK -->
+        /** Recently read entries that still have unread chapters, newest first */
+        val continueReading: List<LibraryItem> by lazy {
+            libraryData.favorites
+                .asSequence()
+                .filter { it.libraryManga.lastRead > 0 && it.libraryManga.unreadCount > 0 }
+                .sortedByDescending { it.libraryManga.lastRead }
+                .take(CONTINUE_READING_LIMIT)
+                .toList()
+        }
+        // KMK <--
+
         // SY -->
         val showCleanTitles: Boolean by lazy {
             selectedManga.fastAny {
@@ -1837,3 +1849,7 @@ class LibraryScreenModel(
     }
     // KMK <--
 }
+
+// KMK -->
+private const val CONTINUE_READING_LIMIT = 15
+// KMK <--

@@ -55,7 +55,9 @@ jobs:
       - name: Build app
         run: ./gradlew assembleRelease
 
+      # wip/* branches only check that the app compiles; no APK is signed or published
       - name: Sign APK
+        if: ${{ !startsWith(github.ref_name, 'wip/') }}
         env:
           KS_PASS: ${{ secrets.EGGIKU_KEYSTORE_PASSWORD }}
           KS_B64: ${{ secrets.EGGIKU_KEYSTORE_BASE64 }}
@@ -77,6 +79,7 @@ jobs:
           rm -f "$RUNNER_TEMP/eggiku.p12"
 
       - name: Publish pre-release
+        if: ${{ !startsWith(github.ref_name, 'wip/') }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

@@ -54,7 +54,6 @@ import tachiyomi.presentation.core.components.ScrollbarLazyColumn
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.icons.CustomIcons
-import tachiyomi.presentation.core.icons.Discord
 import tachiyomi.presentation.core.icons.Github
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -258,12 +257,9 @@ class AboutScreen : Screen() {
                         LinkIcon(
                             label = stringResource(MR.strings.website),
                             icon = Icons.Outlined.Public,
-                            url = "https://komikku-app.github.io",
-                        )
-                        LinkIcon(
-                            label = "Discord",
-                            icon = CustomIcons.Discord,
-                            url = "https://discord.gg/85jB7V5AJR",
+                            // KMK -->
+                            url = EGGIKU_REPO_URL,
+                            // KMK <--
                         )
                         // LinkIcon(
                         //     label = "X",
@@ -283,7 +279,9 @@ class AboutScreen : Screen() {
                         LinkIcon(
                             label = "GitHub",
                             icon = CustomIcons.Github,
-                            url = "https://github.com/komikku-app",
+                            // KMK -->
+                            url = EGGIKU_REPO_URL,
+                            // KMK <--
                         )
                     }
                 }
@@ -407,3 +405,7 @@ class AboutScreen : Screen() {
         }
     }
 }
+
+// KMK -->
+private const val EGGIKU_REPO_URL = "https://github.com/Eggbert-69/Eggiku"
+// KMK <--

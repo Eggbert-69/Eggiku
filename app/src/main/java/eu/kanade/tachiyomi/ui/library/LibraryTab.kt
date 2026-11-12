@@ -72,6 +72,7 @@ import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.domain.category.model.Category
 import tachiyomi.domain.library.model.LibraryGroup
 import tachiyomi.domain.library.model.LibraryManga
+import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
@@ -301,6 +302,23 @@ data object LibraryTab : Tab {
                     )
                 }
                 else -> {
+                    // KMK -->
+                    val resumeReading: (LibraryManga) -> Unit = {
+                        scope.launchIO {
+                            val chapter = screenModel.getNextUnreadChapter(it.manga)
+                            if (chapter != null) {
+                                context.startActivity(
+                                    ReaderActivity.newIntent(context, chapter.mangaId, chapter.id),
+                                )
+                            } else {
+                                snackbarHostState.showSnackbar(context.stringResource(MR.strings.no_next_chapter))
+                            }
+                        }
+                    }
+                    val showContinueReadingRow by remember {
+                        Injekt.get<LibraryPreferences>().showContinueReadingRow().changes()
+                    }.collectAsState(initial = true)
+                    // KMK <--
                     LibraryContent(
                         categories = state.displayedCategories,
                         // KMK -->
@@ -314,19 +332,9 @@ data object LibraryTab : Tab {
                         showPageTabs = state.showCategoryTabs || !state.searchQuery.isNullOrEmpty(),
                         onChangeCurrentPage = screenModel::updateActiveCategoryIndex,
                         onClickManga = { navigator.push(MangaScreen(it)) },
-                        onContinueReadingClicked = { it: LibraryManga ->
-                            scope.launchIO {
-                                val chapter = screenModel.getNextUnreadChapter(it.manga)
-                                if (chapter != null) {
-                                    context.startActivity(
-                                        ReaderActivity.newIntent(context, chapter.mangaId, chapter.id),
-                                    )
-                                } else {
-                                    snackbarHostState.showSnackbar(context.stringResource(MR.strings.no_next_chapter))
-                                }
-                            }
-                            Unit
-                        }.takeIf { state.showMangaContinueButton },
+                        // KMK -->
+                        onContinueReadingClicked = resumeReading.takeIf { state.showMangaContinueButton },
+                        // KMK <--
                         onToggleSelection = screenModel::toggleSelection,
                         onToggleRangeSelection = { category, manga ->
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -340,6 +348,12 @@ data object LibraryTab : Tab {
                         getDisplayMode = { screenModel.getDisplayMode() },
                         getColumnsForOrientation = { screenModel.getColumnsForOrientation(it) },
                         getItemsForCategory = { state.getItemsForCategory(it) },
+                        // KMK -->
+                        continueReadingItems = state.continueReading.takeIf {
+                            showContinueReadingRow && state.searchQuery.isNullOrEmpty() && !state.selectionMode
+                        }.orEmpty(),
+                        onResumeReading = resumeReading,
+                        // KMK <--
                     )
                 }
             }

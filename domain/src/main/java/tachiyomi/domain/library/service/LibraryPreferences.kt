@@ -83,6 +83,10 @@ class LibraryPreferences(
         false,
     )
 
+    // KMK -->
+    fun showContinueReadingRow() = preferenceStore.getBoolean("eggiku_continue_reading_row", true)
+    // KMK <--
+
     fun markDuplicateReadChapterAsRead() = preferenceStore.getStringSet("mark_duplicate_read_chapter_read", emptySet())
 
     // region Filter

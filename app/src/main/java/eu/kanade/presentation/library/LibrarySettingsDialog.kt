@@ -390,6 +390,12 @@ private fun ColumnScope.DisplayPage(
         label = stringResource(MR.strings.action_display_show_continue_reading_button),
         pref = screenModel.libraryPreferences.showContinueReadingButton(),
     )
+    // KMK -->
+    CheckboxItem(
+        label = stringResource(KMR.strings.pref_continue_reading_row),
+        pref = screenModel.libraryPreferences.showContinueReadingRow(),
+    )
+    // KMK <--
 
     HeadingItem(MR.strings.tabs_header)
     CheckboxItem(
