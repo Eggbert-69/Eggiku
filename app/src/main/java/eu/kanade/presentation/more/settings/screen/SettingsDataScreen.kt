@@ -3,6 +3,8 @@ package eu.kanade.presentation.more.settings.screen
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.text.format.DateUtils
+import android.text.format.Formatter
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,6 +49,7 @@ import com.journeyapps.barcodescanner.ScanOptions
 import eu.kanade.domain.sync.SyncPreferences
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.screen.SettingsSecurityScreen.PasswordDialog
+import eu.kanade.presentation.more.settings.screen.data.BackupHistoryScreen
 import eu.kanade.presentation.more.settings.screen.data.CreateBackupScreen
 import eu.kanade.presentation.more.settings.screen.data.RestoreBackupScreen
 import eu.kanade.presentation.more.settings.screen.data.StorageInfo
@@ -57,6 +60,7 @@ import eu.kanade.presentation.more.settings.widget.EditTextPreferenceWidget
 import eu.kanade.presentation.more.settings.widget.PrefsHorizontalPadding
 import eu.kanade.presentation.more.settings.widget.TrailingWidgetBuffer
 import eu.kanade.presentation.util.relativeTimeSpanString
+import eu.kanade.tachiyomi.data.backup.EggikuCloudBackup
 import eu.kanade.tachiyomi.data.backup.create.BackupCreateJob
 import eu.kanade.tachiyomi.data.backup.restore.BackupRestoreJob
 import eu.kanade.tachiyomi.data.cache.ChapterCache
@@ -77,6 +81,7 @@ import kotlinx.coroutines.launch
 import logcat.LogPriority
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.storage.displayablePath
+import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.core.common.util.lang.launchNonCancellable
 import tachiyomi.core.common.util.lang.withUIContext
 import tachiyomi.core.common.util.system.logcat
@@ -84,6 +89,7 @@ import tachiyomi.domain.backup.service.BackupPreferences
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.domain.manga.interactor.GetFavorites
 import tachiyomi.domain.manga.model.Manga
+import tachiyomi.domain.storage.service.StorageManager
 import tachiyomi.domain.storage.service.StorageManager.Companion.allowAccessStorage
 import tachiyomi.domain.storage.service.StorageManager.Companion.directoryAccessible
 import tachiyomi.domain.storage.service.StoragePreferences
@@ -96,6 +102,7 @@ import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.util.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import kotlin.time.Duration.Companion.hours
 
 object SettingsDataScreen : SearchableSettings {
     @Suppress("unused")
@@ -320,6 +327,9 @@ object SettingsDataScreen : SearchableSettings {
                         true
                     },
                 ),
+                // KMK -->
+                *eggikuBackupItems(backupPreferences, lastAutoBackup).toTypedArray(),
+                // KMK <--
                 Preference.PreferenceItem.InfoPreference(
                     stringResource(MR.strings.backup_info) + "\n\n" +
                         stringResource(MR.strings.last_auto_backup_info, relativeTimeSpanString(lastAutoBackup)),
@@ -333,6 +343,155 @@ object SettingsDataScreen : SearchableSettings {
             ),
         )
     }
+
+    // KMK -->
+    @Composable
+    private fun eggikuBackupItems(
+        backupPreferences: BackupPreferences,
+        lastAutoBackup: Long,
+    ): List<Preference.PreferenceItem<out Any, out Any>> {
+        val context = LocalContext.current
+        val navigator = LocalNavigator.currentOrThrow
+        val scope = rememberCoroutineScope()
+
+        val backupInterval by backupPreferences.backupInterval().collectAsState()
+        val lastTime by backupPreferences.lastBackupTime().collectAsState()
+        val lastSize by backupPreferences.lastBackupSize().collectAsState()
+        val lastEntries by backupPreferences.lastBackupEntries().collectAsState()
+        val lastWasAuto by backupPreferences.lastBackupWasAuto().collectAsState()
+        val cloudUri by backupPreferences.cloudCopyUri().collectAsState()
+        val cloudTime by backupPreferences.cloudCopyLastTime().collectAsState()
+        val cloudError by backupPreferences.cloudCopyLastError().collectAsState()
+
+        val folder = remember { EggikuCloudBackup.readablePath(Injekt.get<StorageManager>().getAutomaticBackupsDirectory()?.uri) }
+
+        val pickCloudFile = rememberLauncherForActivityResult(
+            ActivityResultContracts.CreateDocument("application/octet-stream"),
+        ) { uri ->
+            if (uri == null) return@rememberLauncherForActivityResult
+            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            try {
+                context.contentResolver.takePersistableUriPermission(uri, flags)
+            } catch (_: Exception) {
+                // Some providers grant access without persistable permissions
+            }
+            backupPreferences.cloudCopyUri().set(uri.toString())
+            backupPreferences.cloudCopyLastError().set("")
+            scope.launchIO {
+                val copied = EggikuCloudBackup.copyLatest(context)
+                withUIContext {
+                    context.toast(
+                        if (copied) KMR.strings.cloud_backup_copied_now else KMR.strings.cloud_backup_will_copy,
+                    )
+                }
+            }
+        }
+
+        val lastBackupText = if (lastTime > 0) {
+            stringResource(
+                if (lastWasAuto) KMR.strings.last_backup_details_auto else KMR.strings.last_backup_details_manual,
+                relativeTimeSpanString(lastTime),
+                Formatter.formatShortFileSize(context, lastSize),
+                lastEntries,
+            )
+        } else {
+            stringResource(KMR.strings.last_backup_none)
+        }
+        val nextBackupText = when {
+            backupInterval <= 0 -> stringResource(KMR.strings.next_backup_off)
+            lastAutoBackup <= 0 -> stringResource(KMR.strings.next_backup_soon)
+            else -> {
+                val next = lastAutoBackup + backupInterval.hours.inWholeMilliseconds
+                val now = System.currentTimeMillis()
+                if (next <= now) {
+                    stringResource(KMR.strings.next_backup_soon)
+                } else {
+                    stringResource(
+                        KMR.strings.next_backup_at,
+                        DateUtils.getRelativeTimeSpanString(next, now, DateUtils.MINUTE_IN_MILLIS).toString(),
+                    )
+                }
+            }
+        }
+
+        val cloudParsed = cloudUri.takeIf { it.isNotBlank() }?.toUri()
+        val cloudSubtitle = if (cloudParsed == null) {
+            stringResource(KMR.strings.cloud_backup_not_set)
+        } else {
+            val where = EggikuCloudBackup.providerName(cloudParsed) ?: stringResource(KMR.strings.cloud_backup_cloud)
+            val name = remember(cloudUri) { EggikuCloudBackup.displayName(context, cloudParsed) } ?: "backup"
+            val status = when {
+                cloudError.isNotEmpty() -> stringResource(KMR.strings.cloud_backup_failed, cloudError)
+                cloudTime > 0 -> stringResource(KMR.strings.cloud_backup_last_copied, relativeTimeSpanString(cloudTime))
+                else -> stringResource(KMR.strings.cloud_backup_waiting)
+            }
+            stringResource(KMR.strings.cloud_backup_target, name, where) + "\n" + status
+        }
+
+        return buildList {
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.backup_status_title),
+                    subtitle = lastBackupText + "\n" + nextBackupText,
+                ),
+            )
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.backup_folder_title),
+                    subtitle = folder ?: stringResource(MR.strings.no_location_set),
+                    onClick = { navigator.push(BackupHistoryScreen()) },
+                ),
+            )
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.cloud_backup_title),
+                    subtitle = cloudSubtitle,
+                    onClick = { pickCloudFile.launch("Eggiku-backup.tachibk") },
+                ),
+            )
+            if (cloudParsed != null) {
+                add(
+                    Preference.PreferenceItem.TextPreference(
+                        title = stringResource(KMR.strings.cloud_backup_stop),
+                        onClick = {
+                            try {
+                                context.contentResolver.releasePersistableUriPermission(
+                                    cloudParsed,
+                                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+                                )
+                            } catch (_: Exception) {
+                                // Already released
+                            }
+                            backupPreferences.cloudCopyUri().set("")
+                            backupPreferences.cloudCopyLastError().set("")
+                        },
+                    ),
+                )
+            }
+            add(
+                Preference.PreferenceItem.ListPreference(
+                    preference = backupPreferences.autoBackupsToKeep(),
+                    entries = persistentMapOf(
+                        2 to "2",
+                        4 to "4",
+                        7 to "7",
+                        10 to "10",
+                        20 to "20",
+                        30 to "30",
+                    ),
+                    title = stringResource(KMR.strings.pref_auto_backups_to_keep),
+                ),
+            )
+            add(
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = backupPreferences.skipUnchangedBackups(),
+                    title = stringResource(KMR.strings.pref_skip_unchanged_backups),
+                    subtitle = stringResource(KMR.strings.pref_skip_unchanged_backups_summary),
+                ),
+            )
+        }
+    }
+    // KMK <--
 
     @Composable
     private fun getDataGroup(): Preference.PreferenceGroup {

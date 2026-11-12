@@ -33,6 +33,7 @@ import eu.kanade.tachiyomi.data.backup.restore.RestoreOptions
 import eu.kanade.tachiyomi.util.system.DeviceUtil
 import kotlinx.coroutines.flow.update
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.LabeledCheckbox
 import tachiyomi.presentation.core.components.LazyColumnWithAction
 import tachiyomi.presentation.core.components.SectionCard
@@ -74,6 +75,24 @@ class RestoreBackupScreen(
                         WarningBanner(MR.strings.restore_miui_warning)
                     }
                 }
+
+                // KMK -->
+                state.summary?.let { summary ->
+                    item {
+                        SectionCard {
+                            Text(
+                                text = stringResource(
+                                    KMR.strings.restore_preview_summary,
+                                    summary.libraryEntries,
+                                    summary.categories,
+                                ),
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(horizontal = MaterialTheme.padding.medium),
+                            )
+                        }
+                    }
+                }
+                // KMK <--
 
                 if (state.canRestore) {
                     item {
@@ -200,6 +219,10 @@ private class RestoreBackupScreenModel(
             return
         }
 
+        // KMK -->
+        mutableState.update { it.copy(summary = results) }
+        // KMK <--
+
         if (results.missingSources.isNotEmpty() || results.missingTrackers.isNotEmpty()) {
             setError(
                 error = MissingRestoreComponents(uri, results.missingSources, results.missingTrackers),
@@ -225,6 +248,9 @@ private class RestoreBackupScreenModel(
         val error: Any? = null,
         val canRestore: Boolean = false,
         val options: RestoreOptions = RestoreOptions(),
+        // KMK -->
+        val summary: BackupFileValidator.Results? = null,
+        // KMK <--
     )
 }
 

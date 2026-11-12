@@ -5,6 +5,7 @@ import android.net.Uri
 import com.hippo.unifile.UniFile
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.data.backup.BackupFileValidator
+import eu.kanade.tachiyomi.data.backup.EggikuCloudBackup
 import eu.kanade.tachiyomi.data.backup.create.creators.CategoriesBackupCreator
 import eu.kanade.tachiyomi.data.backup.create.creators.ExtensionStoresBackupCreator
 import eu.kanade.tachiyomi.data.backup.create.creators.FeedBackupCreator
@@ -37,6 +38,7 @@ import tachiyomi.i18n.MR
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.io.FileOutputStream
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
@@ -67,17 +69,17 @@ class BackupCreator(
 
     suspend fun backup(uri: Uri, options: BackupOptions): String {
         var file: UniFile? = null
+        // KMK -->
+        var dir: UniFile? = null
+        // KMK <--
         try {
             file = if (isAutoBackup) {
                 // Get dir of file and create
-                val dir = UniFile.fromUri(context, uri)
+                dir = UniFile.fromUri(context, uri)
 
-                // Delete older backups
-                dir?.listFiles { _, filename -> FILENAME_REGEX.matches(filename) }
-                    .orEmpty()
-                    .sortedByDescending { it.name }
-                    .drop(MAX_AUTO_BACKUPS - 1)
-                    .forEach { it.delete() }
+                // KMK -->
+                // Older backups are pruned after the new one is written successfully
+                // KMK <--
 
                 // Create new file to place backup
                 dir?.createFile(getFilename())
@@ -118,6 +120,19 @@ class BackupCreator(
                 throw IllegalStateException(context.stringResource(MR.strings.empty_backup_error))
             }
 
+            // KMK -->
+            val hash = MessageDigest.getInstance("SHA-256").digest(byteArray).joinToString("") { "%02x".format(it) }
+            if (isAutoBackup &&
+                backupPreferences.skipUnchangedBackups().get() &&
+                hash == backupPreferences.lastBackupHash().get()
+            ) {
+                // Nothing changed since the last backup: keep the existing files instead of piling up copies
+                file.delete()
+                backupPreferences.lastAutoBackupTimestamp().set(Instant.now().toEpochMilli())
+                return ""
+            }
+            // KMK <--
+
             file.openOutputStream()
                 .also {
                     // Force overwrite old file
@@ -134,6 +149,24 @@ class BackupCreator(
             if (isAutoBackup) {
                 backupPreferences.lastAutoBackupTimestamp().set(Instant.now().toEpochMilli())
             }
+
+            // KMK -->
+            backupPreferences.lastBackupHash().set(hash)
+            backupPreferences.lastBackupTime().set(Instant.now().toEpochMilli())
+            backupPreferences.lastBackupSize().set(file.length())
+            backupPreferences.lastBackupEntries().set(backupManga.count { it.favorite })
+            backupPreferences.lastBackupWasAuto().set(isAutoBackup)
+
+            if (isAutoBackup) {
+                dir?.listFiles { _, filename -> FILENAME_REGEX.matches(filename) }
+                    .orEmpty()
+                    .sortedByDescending { it.lastModified() }
+                    .drop(backupPreferences.autoBackupsToKeep().get().coerceAtLeast(1))
+                    .forEach { it.delete() }
+            }
+
+            EggikuCloudBackup.copy(context, file)
+            // KMK <--
 
             return fileUri.toString()
         } catch (e: Exception) {
@@ -197,7 +230,6 @@ class BackupCreator(
     // KMK <--
 
     companion object {
-        private const val MAX_AUTO_BACKUPS: Int = 4
         // KMK -->
         // Eggiku names backups "Eggiku_<date>.tachibk"; older app-ID-named backups still count toward rotation
         private val FILENAME_REGEX =
