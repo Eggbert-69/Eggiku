@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku Rosé Pine theme - https://rosepinetheme.com/palette -->
+<resources>
+    <color name="rosepine_primary">#286983</color>
+    <color name="rosepine_onPrimary">#FAF4ED</color>
+    <color name="rosepine_primaryContainer">#CCD5D6</color>
+    <color name="rosepine_onPrimaryContainer">#1E4F62</color>
+    <color name="rosepine_inversePrimary">#7EA5B5</color>
+    <color name="rosepine_secondary">#907AA9</color>
+    <color name="rosepine_onSecondary">#000000</color>
+    <color name="rosepine_secondaryContainer">#E3D9DE</color>
+    <color name="rosepine_onSecondaryContainer">#68587A</color>
+    <color name="rosepine_tertiary">#C67874</color>
+    <color name="rosepine_onTertiary">#000000</color>
+    <color name="rosepine_tertiaryContainer">#EFD9D2</color>
+    <color name="rosepine_onTertiaryContainer">#885350</color>
+    <color name="rosepine_background">#FAF4ED</color>
+    <color name="rosepine_onBackground">#544F74</color>
+    <color name="rosepine_surface">#FAF4ED</color>
+    <color name="rosepine_onSurface">#544F74</color>
+    <color name="rosepine_surfaceVariant">#F0EAE6</color>
+    <color name="rosepine_onSurfaceVariant">#68647F</color>
+    <color name="rosepine_surfaceTint">#286983</color>
+    <color name="rosepine_inverseSurface">#544F74</color>
+    <color name="rosepine_inverseOnSurface">#FAF4ED</color>
+    <color name="rosepine_outline">#8C8894</color>
+    <color name="rosepine_outlineVariant">#CBC6CB</color>
+    <color name="rosepine_error">#B4637A</color>
+    <color name="rosepine_onError">#000000</color>
+    <color name="rosepine_errorContainer">#EBD4D4</color>
+    <color name="rosepine_onErrorContainer">#874A5C</color>
+    <color name="rosepine_surfaceContainerLowest">#FCFAF6</color>
+    <color name="rosepine_surfaceContainerLow">#F5EFE9</color>
+    <color name="rosepine_surfaceContainer">#F0EAE6</color>
+    <color name="rosepine_surfaceContainerHigh">#EBE5E2</color>
+    <color name="rosepine_surfaceContainerHighest">#E6E0DE</color>
+</resources>

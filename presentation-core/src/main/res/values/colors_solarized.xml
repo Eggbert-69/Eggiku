@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku Solarized theme - https://ethanschoonover.com/solarized/ -->
+<resources>
+    <color name="solarized_primary">#268BD2</color>
+    <color name="solarized_onPrimary">#000000</color>
+    <color name="solarized_primaryContainer">#CEDEDF</color>
+    <color name="solarized_onPrimaryContainer">#1B6497</color>
+    <color name="solarized_inversePrimary">#7DB9E4</color>
+    <color name="solarized_secondary">#289B92</color>
+    <color name="solarized_onSecondary">#000000</color>
+    <color name="solarized_secondaryContainer">#CEE2D1</color>
+    <color name="solarized_onSecondaryContainer">#1C6B65</color>
+    <color name="solarized_tertiary">#AE8400</color>
+    <color name="solarized_onTertiary">#000000</color>
+    <color name="solarized_tertiaryContainer">#ECDDB1</color>
+    <color name="solarized_onTertiaryContainer">#785B00</color>
+    <color name="solarized_background">#FDF6E3</color>
+    <color name="solarized_onBackground">#435459</color>
+    <color name="solarized_surface">#FDF6E3</color>
+    <color name="solarized_onSurface">#435459</color>
+    <color name="solarized_surfaceVariant">#F2ECDB</color>
+    <color name="solarized_onSurfaceVariant">#606C6D</color>
+    <color name="solarized_surfaceTint">#268BD2</color>
+    <color name="solarized_inverseSurface">#435459</color>
+    <color name="solarized_inverseOnSurface">#FDF6E3</color>
+    <color name="solarized_outline">#868A85</color>
+    <color name="solarized_outlineVariant">#C9C9BC</color>
+    <color name="solarized_error">#DC322F</color>
+    <color name="solarized_onError">#FFFFFF</color>
+    <color name="solarized_errorContainer">#F6CBBB</color>
+    <color name="solarized_onErrorContainer">#A52623</color>
+    <color name="solarized_surfaceContainerLowest">#FEFAF1</color>
+    <color name="solarized_surfaceContainerLow">#F7F1DF</color>
+    <color name="solarized_surfaceContainer">#F2ECDB</color>
+    <color name="solarized_surfaceContainerHigh">#ECE7D7</color>
+    <color name="solarized_surfaceContainerHighest">#E7E3D2</color>
+</resources>

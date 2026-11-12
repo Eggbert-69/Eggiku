@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku Dracula theme - https://draculatheme.com/contribute -->
+<resources>
+    <color name="dracula_primary">#644AC9</color>
+    <color name="dracula_onPrimary">#FFFBEB</color>
+    <color name="dracula_primaryContainer">#DDD4E4</color>
+    <color name="dracula_onPrimaryContainer">#4B3897</color>
+    <color name="dracula_inversePrimary">#A292DF</color>
+    <color name="dracula_secondary">#A3144D</color>
+    <color name="dracula_onSecondary">#FFFBEB</color>
+    <color name="dracula_secondaryContainer">#EBC8C8</color>
+    <color name="dracula_onSecondaryContainer">#7A0F3A</color>
+    <color name="dracula_tertiary">#14710A</color>
+    <color name="dracula_onTertiary">#FFFBEB</color>
+    <color name="dracula_tertiaryContainer">#CBDDBA</color>
+    <color name="dracula_onTertiaryContainer">#0F5508</color>
+    <color name="dracula_background">#FFFBEB</color>
+    <color name="dracula_onBackground">#1F1F1F</color>
+    <color name="dracula_surface">#FFFBEB</color>
+    <color name="dracula_onSurface">#1F1F1F</color>
+    <color name="dracula_surfaceVariant">#F2EEDF</color>
+    <color name="dracula_onSurfaceVariant">#474744</color>
+    <color name="dracula_surfaceTint">#644AC9</color>
+    <color name="dracula_inverseSurface">#1F1F1F</color>
+    <color name="dracula_inverseOnSurface">#FFFBEB</color>
+    <color name="dracula_outline">#8F8D85</color>
+    <color name="dracula_outlineVariant">#C0BDB2</color>
+    <color name="dracula_error">#CB3A2A</color>
+    <color name="dracula_onError">#FFFBEB</color>
+    <color name="dracula_errorContainer">#F4D1C1</color>
+    <color name="dracula_onErrorContainer">#982C20</color>
+    <color name="dracula_surfaceContainerLowest">#FFFDF5</color>
+    <color name="dracula_surfaceContainerLow">#F8F4E5</color>
+    <color name="dracula_surfaceContainer">#F2EEDF</color>
+    <color name="dracula_surfaceContainerHigh">#EBE7D9</color>
+    <color name="dracula_surfaceContainerHighest">#E4E1D3</color>
+</resources>

@@ -34,6 +34,18 @@ enum class AppTheme(val titleRes: StringResource?) {
     MATRIX(KMR.strings.theme_matrix),
     SAPPHIRE(KMR.strings.theme_sapphire),
 
+    // KMK -->
+    // Eggiku themes
+    DRACULA(KMR.strings.theme_dracula),
+    GRUVBOX(KMR.strings.theme_gruvbox),
+    TOKYO_NIGHT(KMR.strings.theme_tokyonight),
+    ROSE_PINE(KMR.strings.theme_rosepine),
+    EVERFOREST(KMR.strings.theme_everforest),
+    KANAGAWA(KMR.strings.theme_kanagawa),
+    ONE_DARK(KMR.strings.theme_onedark),
+    SOLARIZED(KMR.strings.theme_solarized),
+    // KMK <--
+
     // Deprecated
     DARK_BLUE(null),
     HOT_PINK(null),

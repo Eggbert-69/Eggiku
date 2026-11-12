@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku Gruvbox theme - https://github.com/morhetz/gruvbox -->
+<resources>
+    <color name="gruvbox_primary">#FABD2F</color>
+    <color name="gruvbox_onPrimary">#282828</color>
+    <color name="gruvbox_primaryContainer">#6B582A</color>
+    <color name="gruvbox_onPrimaryContainer">#FBCE63</color>
+    <color name="gruvbox_inversePrimary">#96711C</color>
+    <color name="gruvbox_secondary">#FE8019</color>
+    <color name="gruvbox_onSecondary">#282828</color>
+    <color name="gruvbox_secondaryContainer">#6C4423</color>
+    <color name="gruvbox_onSecondaryContainer">#FEAB67</color>
+    <color name="gruvbox_tertiary">#8EC07C</color>
+    <color name="gruvbox_onTertiary">#282828</color>
+    <color name="gruvbox_tertiaryContainer">#495943</color>
+    <color name="gruvbox_onTertiaryContainer">#B1D4A5</color>
+    <color name="gruvbox_background">#282828</color>
+    <color name="gruvbox_onBackground">#EBDBB2</color>
+    <color name="gruvbox_surface">#282828</color>
+    <color name="gruvbox_onSurface">#EBDBB2</color>
+    <color name="gruvbox_surfaceVariant">#363532</color>
+    <color name="gruvbox_onSurfaceVariant">#C8BB99</color>
+    <color name="gruvbox_surfaceTint">#FABD2F</color>
+    <color name="gruvbox_inverseSurface">#EBDBB2</color>
+    <color name="gruvbox_inverseOnSurface">#282828</color>
+    <color name="gruvbox_outline">#8A826D</color>
+    <color name="gruvbox_outlineVariant">#5F5A4F</color>
+    <color name="gruvbox_error">#FB4934</color>
+    <color name="gruvbox_onError">#000000</color>
+    <color name="gruvbox_errorContainer">#6C332C</color>
+    <color name="gruvbox_onErrorContainer">#FD978B</color>
+    <color name="gruvbox_surfaceContainerLowest">#212121</color>
+    <color name="gruvbox_surfaceContainerLow">#302F2E</color>
+    <color name="gruvbox_surfaceContainer">#363532</color>
+    <color name="gruvbox_surfaceContainerHigh">#3C3A36</color>
+    <color name="gruvbox_surfaceContainerHighest">#43413B</color>
+</resources>

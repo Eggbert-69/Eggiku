@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku Tokyo Night theme - https://github.com/folke/tokyonight.nvim -->
+<resources>
+    <color name="tokyonight_primary">#2E7DE9</color>
+    <color name="tokyonight_onPrimary">#000000</color>
+    <color name="tokyonight_primaryContainer">#BACCE7</color>
+    <color name="tokyonight_onPrimaryContainer">#1E529A</color>
+    <color name="tokyonight_inversePrimary">#82B1F2</color>
+    <color name="tokyonight_secondary">#9854F1</color>
+    <color name="tokyonight_onSecondary">#000000</color>
+    <color name="tokyonight_secondaryContainer">#D1C3E9</color>
+    <color name="tokyonight_onSecondaryContainer">#693AA6</color>
+    <color name="tokyonight_tertiary">#587539</color>
+    <color name="tokyonight_onTertiary">#FFFFFF</color>
+    <color name="tokyonight_tertiaryContainer">#C3CAC1</color>
+    <color name="tokyonight_onTertiaryContainer">#42582B</color>
+    <color name="tokyonight_background">#E1E2E7</color>
+    <color name="tokyonight_onBackground">#28458A</color>
+    <color name="tokyonight_surface">#E1E2E7</color>
+    <color name="tokyonight_onSurface">#28458A</color>
+    <color name="tokyonight_surfaceVariant">#D6D9E1</color>
+    <color name="tokyonight_onSurfaceVariant">#465D94</color>
+    <color name="tokyonight_surfaceTint">#2E7DE9</color>
+    <color name="tokyonight_inverseSurface">#28458A</color>
+    <color name="tokyonight_inverseOnSurface">#E1E2E7</color>
+    <color name="tokyonight_outline">#6F7C9B</color>
+    <color name="tokyonight_outlineVariant">#ADB6CD</color>
+    <color name="tokyonight_error">#F52A65</color>
+    <color name="tokyonight_onError">#000000</color>
+    <color name="tokyonight_errorContainer">#E5BACA</color>
+    <color name="tokyonight_onErrorContainer">#9A1A40</color>
+    <color name="tokyonight_surfaceContainerLowest">#F0F0F3</color>
+    <color name="tokyonight_surfaceContainerLow">#DBDDE4</color>
+    <color name="tokyonight_surfaceContainer">#D6D9E1</color>
+    <color name="tokyonight_surfaceContainerHigh">#D0D4DF</color>
+    <color name="tokyonight_surfaceContainerHighest">#CBCFDC</color>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku Kanagawa theme - https://github.com/rebelot/kanagawa.nvim -->
+<resources>
+    <color name="kanagawa_primary">#4D699B</color>
+    <color name="kanagawa_onPrimary">#F2ECBC</color>
+    <color name="kanagawa_primaryContainer">#CECFB5</color>
+    <color name="kanagawa_onPrimaryContainer">#3A4F74</color>
+    <color name="kanagawa_inversePrimary">#94A5C3</color>
+    <color name="kanagawa_secondary">#624C83</color>
+    <color name="kanagawa_onSecondary">#F2ECBC</color>
+    <color name="kanagawa_secondaryContainer">#D2C9AF</color>
+    <color name="kanagawa_onSecondaryContainer">#4A3962</color>
+    <color name="kanagawa_tertiary">#6F894E</color>
+    <color name="kanagawa_onTertiary">#000000</color>
+    <color name="kanagawa_tertiaryContainer">#D5D6A4</color>
+    <color name="kanagawa_onTertiaryContainer">#4D5F36</color>
+    <color name="kanagawa_background">#F2ECBC</color>
+    <color name="kanagawa_onBackground">#4A4A58</color>
+    <color name="kanagawa_surface">#F2ECBC</color>
+    <color name="kanagawa_onSurface">#4A4A58</color>
+    <color name="kanagawa_surfaceVariant">#E8E2B6</color>
+    <color name="kanagawa_onSurfaceVariant">#646366</color>
+    <color name="kanagawa_surfaceTint">#4D699B</color>
+    <color name="kanagawa_inverseSurface">#4A4A58</color>
+    <color name="kanagawa_inverseOnSurface">#F2ECBC</color>
+    <color name="kanagawa_outline">#858274</color>
+    <color name="kanagawa_outlineVariant">#C3BFA0</color>
+    <color name="kanagawa_error">#C84053</color>
+    <color name="kanagawa_onError">#FFFFFF</color>
+    <color name="kanagawa_errorContainer">#E9C6A5</color>
+    <color name="kanagawa_onErrorContainer">#96303E</color>
+    <color name="kanagawa_surfaceContainerLowest">#F8F6DE</color>
+    <color name="kanagawa_surfaceContainerLow">#EDE7B9</color>
+    <color name="kanagawa_surfaceContainer">#E8E2B6</color>
+    <color name="kanagawa_surfaceContainerHigh">#E3DDB3</color>
+    <color name="kanagawa_surfaceContainerHighest">#DED9B0</color>
+</resources>

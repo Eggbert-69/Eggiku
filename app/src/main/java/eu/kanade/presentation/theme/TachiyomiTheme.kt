@@ -19,7 +19,11 @@ import eu.kanade.presentation.theme.colorscheme.CloudflareColorScheme
 import eu.kanade.presentation.theme.colorscheme.CottoncandyColorScheme
 import eu.kanade.presentation.theme.colorscheme.CustomColorScheme
 import eu.kanade.presentation.theme.colorscheme.DoomColorScheme
+import eu.kanade.presentation.theme.colorscheme.DraculaColorScheme
+import eu.kanade.presentation.theme.colorscheme.EverforestColorScheme
 import eu.kanade.presentation.theme.colorscheme.GreenAppleColorScheme
+import eu.kanade.presentation.theme.colorscheme.GruvboxColorScheme
+import eu.kanade.presentation.theme.colorscheme.KanagawaColorScheme
 import eu.kanade.presentation.theme.colorscheme.LavenderColorScheme
 import eu.kanade.presentation.theme.colorscheme.MatrixColorScheme
 import eu.kanade.presentation.theme.colorscheme.MidnightDuskColorScheme
@@ -27,12 +31,16 @@ import eu.kanade.presentation.theme.colorscheme.MochaColorScheme
 import eu.kanade.presentation.theme.colorscheme.MonetColorScheme
 import eu.kanade.presentation.theme.colorscheme.MonochromeColorScheme
 import eu.kanade.presentation.theme.colorscheme.NordColorScheme
+import eu.kanade.presentation.theme.colorscheme.OneDarkColorScheme
+import eu.kanade.presentation.theme.colorscheme.RosePineColorScheme
 import eu.kanade.presentation.theme.colorscheme.SapphireColorScheme
+import eu.kanade.presentation.theme.colorscheme.SolarizedColorScheme
 import eu.kanade.presentation.theme.colorscheme.StrawberryColorScheme
 import eu.kanade.presentation.theme.colorscheme.TachiyomiColorScheme
 import eu.kanade.presentation.theme.colorscheme.TakoColorScheme
 import eu.kanade.presentation.theme.colorscheme.TealTurqoiseColorScheme
 import eu.kanade.presentation.theme.colorscheme.TidalWaveColorScheme
+import eu.kanade.presentation.theme.colorscheme.TokyoNightColorScheme
 import eu.kanade.presentation.theme.colorscheme.YinYangColorScheme
 import eu.kanade.presentation.theme.colorscheme.YotsubaColorScheme
 import uy.kohesive.injekt.Injekt
@@ -157,4 +165,14 @@ private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(
     AppTheme.MATRIX to MatrixColorScheme,
     AppTheme.MOCHA to MochaColorScheme,
     AppTheme.SAPPHIRE to SapphireColorScheme,
+    // KMK -->
+    AppTheme.DRACULA to DraculaColorScheme,
+    AppTheme.GRUVBOX to GruvboxColorScheme,
+    AppTheme.TOKYO_NIGHT to TokyoNightColorScheme,
+    AppTheme.ROSE_PINE to RosePineColorScheme,
+    AppTheme.EVERFOREST to EverforestColorScheme,
+    AppTheme.KANAGAWA to KanagawaColorScheme,
+    AppTheme.ONE_DARK to OneDarkColorScheme,
+    AppTheme.SOLARIZED to SolarizedColorScheme,
+    // KMK <--
 )

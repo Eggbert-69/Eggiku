@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku Everforest theme - https://github.com/sainnhe/everforest -->
+<resources>
+    <color name="everforest_primary">#829401</color>
+    <color name="everforest_onPrimary">#000000</color>
+    <color name="everforest_primaryContainer">#E2E0B1</color>
+    <color name="everforest_onPrimaryContainer">#5A6601</color>
+    <color name="everforest_inversePrimary">#B4BF67</color>
+    <color name="everforest_secondary">#33A077</color>
+    <color name="everforest_onSecondary">#000000</color>
+    <color name="everforest_secondaryContainer">#D1E3CB</color>
+    <color name="everforest_onSecondaryContainer">#236F52</color>
+    <color name="everforest_tertiary">#B28000</color>
+    <color name="everforest_onTertiary">#000000</color>
+    <color name="everforest_tertiaryContainer">#EDDCB1</color>
+    <color name="everforest_onTertiaryContainer">#7B5800</color>
+    <color name="everforest_background">#FDF6E3</color>
+    <color name="everforest_onBackground">#4A555B</color>
+    <color name="everforest_surface">#FDF6E3</color>
+    <color name="everforest_onSurface">#4A555B</color>
+    <color name="everforest_surfaceVariant">#F2ECDB</color>
+    <color name="everforest_onSurfaceVariant">#61696A</color>
+    <color name="everforest_surfaceTint">#829401</color>
+    <color name="everforest_inverseSurface">#4A555B</color>
+    <color name="everforest_inverseOnSurface">#FDF6E3</color>
+    <color name="everforest_outline">#898B86</color>
+    <color name="everforest_outlineVariant">#CBC9BD</color>
+    <color name="everforest_error">#F85552</color>
+    <color name="everforest_onError">#000000</color>
+    <color name="everforest_errorContainer">#FCD3C3</color>
+    <color name="everforest_onErrorContainer">#A43836</color>
+    <color name="everforest_surfaceContainerLowest">#FEFAF1</color>
+    <color name="everforest_surfaceContainerLow">#F8F1DF</color>
+    <color name="everforest_surfaceContainer">#F2ECDB</color>
+    <color name="everforest_surfaceContainerHigh">#EDE7D7</color>
+    <color name="everforest_surfaceContainerHighest">#E7E3D3</color>
+</resources>

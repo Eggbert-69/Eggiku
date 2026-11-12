@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku One Dark theme - https://github.com/atom/atom/tree/master/packages/one-dark-syntax -->
+<resources>
+    <color name="onedark_primary">#61AFEF</color>
+    <color name="onedark_onPrimary">#282C34</color>
+    <color name="onedark_primaryContainer">#3A5670</color>
+    <color name="onedark_onPrimaryContainer">#9BCDF5</color>
+    <color name="onedark_inversePrimary">#3A698F</color>
+    <color name="onedark_secondary">#C678DD</color>
+    <color name="onedark_onSecondary">#282C34</color>
+    <color name="onedark_secondaryContainer">#5B446A</color>
+    <color name="onedark_onSecondaryContainer">#DDAEEB</color>
+    <color name="onedark_tertiary">#98C379</color>
+    <color name="onedark_onTertiary">#282C34</color>
+    <color name="onedark_tertiaryContainer">#4C5C4A</color>
+    <color name="onedark_onTertiaryContainer">#BBD7A7</color>
+    <color name="onedark_background">#282C34</color>
+    <color name="onedark_onBackground">#B2B8C4</color>
+    <color name="onedark_surface">#282C34</color>
+    <color name="onedark_onSurface">#B2B8C4</color>
+    <color name="onedark_surfaceVariant">#32363E</color>
+    <color name="onedark_onSurfaceVariant">#999FAA</color>
+    <color name="onedark_surfaceTint">#61AFEF</color>
+    <color name="onedark_inverseSurface">#B2B8C4</color>
+    <color name="onedark_inverseOnSurface">#282C34</color>
+    <color name="onedark_outline">#737881</color>
+    <color name="onedark_outlineVariant">#4F535C</color>
+    <color name="onedark_error">#E06C75</color>
+    <color name="onedark_onError">#000000</color>
+    <color name="onedark_errorContainer">#634049</color>
+    <color name="onedark_onErrorContainer">#ECA7AC</color>
+    <color name="onedark_surfaceContainerLowest">#21242B</color>
+    <color name="onedark_surfaceContainerLow">#2E323A</color>
+    <color name="onedark_surfaceContainer">#32363E</color>
+    <color name="onedark_surfaceContainerHigh">#363A42</color>
+    <color name="onedark_surfaceContainerHighest">#3B4048</color>
+</resources>
