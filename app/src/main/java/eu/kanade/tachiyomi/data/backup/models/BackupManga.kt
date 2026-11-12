@@ -61,6 +61,12 @@ class BackupManga(
     @ProtoNumber(804) var customDescription: String? = null,
     @ProtoNumber(805) var customGenre: List<String>? = null,
 
+    // KMK -->
+    // Eggiku: reading playlist link and whether it starts when the series opens
+    @ProtoNumber(1100) var eggikuPlaylist: String? = null,
+    @ProtoNumber(1101) var eggikuPlaylistAutoStart: Boolean = false,
+    // KMK <--
+
 ) {
     fun getMangaImpl(): Manga {
         return Manga.create().copy(

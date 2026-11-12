@@ -1,3 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="orphan_series_count">
+        <item quantity="one">%d series in your library uses it.</item>
+        <item quantity="other">%d series in your library use it.</item>
+    </plurals>
+    <plurals name="stats_reminder_text">
+        <item quantity="one">You haven\'t read today. Read a chapter to keep your %d-day streak.</item>
+        <item quantity="other">You haven\'t read today. Read a chapter to keep your %d-day streak.</item>
+    </plurals>
+    <plurals name="recap_chapters">
+        <item quantity="one">%d chapter</item>
+        <item quantity="other">%d chapters</item>
+    </plurals>
+    <plurals name="recap_new_series">
+        <item quantity="one">You started %d new series</item>
+        <item quantity="other">You started %d new series</item>
+    </plurals>
 </resources>

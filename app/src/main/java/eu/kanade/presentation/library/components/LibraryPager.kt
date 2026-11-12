@@ -11,6 +11,8 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -19,7 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import eu.kanade.core.preference.PreferenceMutableState
+import eu.kanade.tachiyomi.ui.library.EggikuCategoryLock
 import eu.kanade.tachiyomi.ui.library.LibraryItem
+import kotlinx.coroutines.delay
 import tachiyomi.domain.category.model.Category
 import tachiyomi.domain.library.model.LibraryDisplayMode
 import tachiyomi.domain.library.model.LibraryManga
@@ -43,6 +47,18 @@ fun LibraryPager(
     onLongClickManga: (Category, LibraryManga) -> Unit,
     onClickContinueReading: ((LibraryManga) -> Unit)?,
 ) {
+    // KMK -->
+    val lockedCategories by remember { EggikuCategoryLock.lockedCategories().changes() }
+        .collectAsState(EggikuCategoryLock.lockedCategories().get())
+    val unlockedUntil by EggikuCategoryLock.unlockedState.collectAsState()
+    LaunchedEffect(unlockedUntil) {
+        val remaining = unlockedUntil - System.currentTimeMillis()
+        if (unlockedUntil != Long.MAX_VALUE && remaining > 0) {
+            delay(remaining)
+            EggikuCategoryLock.lockNow()
+        }
+    }
+    // KMK <--
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
         state = state,
@@ -53,6 +69,12 @@ fun LibraryPager(
             return@HorizontalPager
         }
         val category = getCategoryForPage(page)
+        // KMK -->
+        if (category.id.toString() in lockedCategories && System.currentTimeMillis() >= unlockedUntil) {
+            EggikuLockedCategory(categoryName = category.name, contentPadding = contentPadding)
+            return@HorizontalPager
+        }
+        // KMK <--
         val items = getItemsForCategory(category)
 
         if (items.isEmpty()) {

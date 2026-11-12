@@ -47,14 +47,19 @@ import eu.kanade.tachiyomi.core.security.PrivacyPreferences
 import eu.kanade.tachiyomi.core.security.SecurityPreferences
 import eu.kanade.tachiyomi.ui.base.delegate.SecureActivityDelegate
 import eu.kanade.tachiyomi.ui.category.biometric.BiometricTimesScreen
+import eu.kanade.tachiyomi.ui.library.EggikuCategoryLock
 import eu.kanade.tachiyomi.util.system.AuthenticatorUtil.authenticate
 import eu.kanade.tachiyomi.util.system.AuthenticatorUtil.isAuthenticationSupported
 import eu.kanade.tachiyomi.util.system.telemetryIncluded
+import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableMap
 import mihon.core.archive.CbzCrypto
 import tachiyomi.core.common.i18n.stringResource
+import tachiyomi.domain.category.interactor.GetCategories
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.components.material.Icon
 import tachiyomi.presentation.core.components.material.IconButton
@@ -76,12 +81,63 @@ object SettingsSecurityScreen : SearchableSettings {
     override fun getPreferences(): List<Preference> {
         val securityPreferences = remember { Injekt.get<SecurityPreferences>() }
         val privacyPreferences = remember { Injekt.get<PrivacyPreferences>() }
-        return buildList(2) {
+        return buildList(3) {
             add(getSecurityGroup(securityPreferences))
+            // KMK -->
+            add(getLockedCategoriesGroup())
+            // KMK <--
             if (!telemetryIncluded) return@buildList
             add(getFirebaseGroup(privacyPreferences))
         }
     }
+
+    // KMK -->
+    @Composable
+    private fun getLockedCategoriesGroup(): Preference.PreferenceGroup {
+        val context = LocalContext.current
+        val categories by remember { Injekt.get<GetCategories>().subscribe() }
+            .collectAsState(emptyList())
+        val entries = remember(categories) {
+            categories.filterNot { it.isSystemCategory }
+                .associate { it.id.toString() to it.name }
+                .toImmutableMap()
+        }
+        val askToConfirm: suspend () -> Boolean = {
+            (context as? FragmentActivity)?.authenticate(
+                title = context.stringResource(KMR.strings.pref_locked_categories),
+            ) ?: true
+        }
+        return Preference.PreferenceGroup(
+            title = stringResource(KMR.strings.pref_locked_categories),
+            preferenceItems = persistentListOf(
+                Preference.PreferenceItem.MultiSelectListPreference(
+                    preference = EggikuCategoryLock.lockedCategories(),
+                    entries = entries,
+                    title = stringResource(KMR.strings.pref_locked_categories),
+                    subtitle = stringResource(KMR.strings.pref_locked_categories_summary),
+                    onValueChanged = { askToConfirm() },
+                ),
+                Preference.PreferenceItem.ListPreference(
+                    preference = EggikuCategoryLock.unlockMinutes(),
+                    entries = persistentMapOf(
+                        0 to stringResource(KMR.strings.locked_categories_until_leave),
+                        5 to pluralStringResource(MR.plurals.lock_after_mins, 5, 5),
+                        15 to pluralStringResource(MR.plurals.lock_after_mins, 15, 15),
+                    ),
+                    title = stringResource(KMR.strings.pref_locked_categories_stay_unlocked),
+                    onValueChanged = { askToConfirm() },
+                ),
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.locked_categories_lock_now),
+                    onClick = {
+                        EggikuCategoryLock.lockNow()
+                        context.toast(KMR.strings.locked_categories_locked)
+                    },
+                ),
+            ),
+        )
+    }
+    // KMK <--
 
     @Composable
     private fun getSecurityGroup(

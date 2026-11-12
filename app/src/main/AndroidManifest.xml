@@ -249,6 +249,19 @@
             </intent-filter>
         </receiver>
 
+        <!-- KMK -->
+        <!-- Eggiku Reading music: only used to see and control what's playing in music apps -->
+        <service
+            android:name=".data.music.EggikuMediaListenerService"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+        <!-- KMK -->
+
         <service
             android:name=".extension.util.ExtensionInstallService"
             android:exported="false"

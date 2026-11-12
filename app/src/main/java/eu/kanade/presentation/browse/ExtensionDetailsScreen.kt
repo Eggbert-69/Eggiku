@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import eu.kanade.domain.extension.interactor.ExtensionSourceItem
+import eu.kanade.presentation.browse.components.EggikuOrphanBanner
 import eu.kanade.presentation.browse.components.ExtensionIcon
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.AppBarActions
@@ -194,7 +195,9 @@ private fun ExtensionDetails(
         // SY <--
         if (extension.isObsolete) {
             item {
-                WarningBanner(MR.strings.obsolete_extension_message)
+                // KMK -->
+                EggikuOrphanBanner(extension = extension)
+                // KMK <--
             }
         }
 

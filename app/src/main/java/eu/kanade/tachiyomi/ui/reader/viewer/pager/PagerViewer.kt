@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.download.DownloadManager
+import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.reader.ReaderActivity
 import eu.kanade.tachiyomi.ui.reader.model.ChapterTransition
 import eu.kanade.tachiyomi.ui.reader.model.InsertPage
@@ -106,7 +107,27 @@ abstract class PagerViewer(
 
         override fun onPageScrollStateChanged(state: Int) {
             isIdle = state == ViewPager.SCROLL_STATE_IDLE
+            // KMK -->
+            when (state) {
+                ViewPager.SCROLL_STATE_DRAGGING -> eggikuDragging = true
+                ViewPager.SCROLL_STATE_IDLE -> eggikuDragging = false
+            }
+            // KMK <--
         }
+
+        // KMK -->
+        private var eggikuDragging = false
+        private var eggikuLastScroll = -1f
+
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            // Count how far the page moves under a finger; tap turns are counted as taps instead
+            val absolute = position * pager.width.toFloat() + positionOffsetPixels
+            if (eggikuDragging && eggikuLastScroll >= 0f) {
+                EggikuReadingLog.swiped(absolute - eggikuLastScroll)
+            }
+            eggikuLastScroll = absolute
+        }
+        // KMK <--
     }
 
     init {
@@ -133,6 +154,9 @@ abstract class PagerViewer(
                 NavigationRegion.RIGHT -> moveRight()
                 NavigationRegion.LEFT -> moveLeft()
             }
+            // KMK -->
+            if (config.navigator.getAction(pos) != NavigationRegion.MENU) EggikuReadingLog.tapped()
+            // KMK <--
         }
         pager.longTapListener = f@{
             if (activity.viewModel.state.value.menuVisible || config.longTapEnabled) {

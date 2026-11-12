@@ -138,6 +138,9 @@ private fun ExtensionStoresListItem(
                         textDecoration = TextDecoration.LineThrough.takeIf { isDisabled },
                         // KMK <--
                     )
+                    // KMK -->
+                    EggikuRepoLabelChip(indexUrl = store.indexUrl)
+                    // KMK <--
                 }
 
                 Row(

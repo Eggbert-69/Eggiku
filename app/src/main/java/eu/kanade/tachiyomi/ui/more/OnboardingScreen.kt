@@ -1,6 +1,8 @@
 package eu.kanade.tachiyomi.ui.more
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -10,6 +12,7 @@ import eu.kanade.domain.base.BasePreferences
 import eu.kanade.presentation.more.onboarding.OnboardingScreen
 import eu.kanade.presentation.more.settings.screen.SearchableSettings
 import eu.kanade.presentation.more.settings.screen.SettingsDataScreen
+import eu.kanade.presentation.more.settings.screen.data.RestoreBackupScreen
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.ui.setting.SettingsScreen
 import tachiyomi.presentation.core.i18n.stringResource
@@ -33,6 +36,14 @@ class OnboardingScreen : Screen() {
 
         val restoreSettingKey = stringResource(SettingsDataScreen.restorePreferenceKeyString)
 
+        // KMK -->
+        val pickBackup = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri == null) return@rememberLauncherForActivityResult
+            finishOnboarding()
+            navigator.push(RestoreBackupScreen(uri.toString()))
+        }
+        // KMK <--
+
         BackHandler(enabled = !shownOnboardingFlow) {
             // Prevent exiting if onboarding hasn't been completed
         }
@@ -40,9 +51,17 @@ class OnboardingScreen : Screen() {
         OnboardingScreen(
             onComplete = finishOnboarding,
             onRestoreBackup = {
-                finishOnboarding()
-                SearchableSettings.highlightKey = restoreSettingKey
-                navigator.push(SettingsScreen(SettingsScreen.Destination.DataAndStorage))
+                // KMK -->
+                // Eggiku: open the file picker straight away; Google Drive shows up there,
+                // so a new phone can be restored from the Drive copy in one step
+                try {
+                    pickBackup.launch(arrayOf("*/*"))
+                } catch (_: Exception) {
+                    finishOnboarding()
+                    SearchableSettings.highlightKey = restoreSettingKey
+                    navigator.push(SettingsScreen(SettingsScreen.Destination.DataAndStorage))
+                }
+                // KMK <--
             },
         )
     }

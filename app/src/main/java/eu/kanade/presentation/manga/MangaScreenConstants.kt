@@ -36,5 +36,6 @@ enum class MangaScreenItem {
 
     // KMK -->
     RELATED_MANGAS,
+    READING_PLAYLIST,
     // KMK <--
 }

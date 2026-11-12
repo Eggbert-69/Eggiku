@@ -43,7 +43,13 @@ object EggikuCloudBackup {
             backupPreferences.cloudCopyLastError().set("")
         } catch (e: Exception) {
             logcat(LogPriority.ERROR, e) { "Eggiku: couldn't copy backup to cloud" }
-            backupPreferences.cloudCopyLastError().set(e.message ?: e::class.simpleName.orEmpty())
+            val reason = EggikuBackupHealth.reasonFor(context, e)
+            backupPreferences.cloudCopyLastError().set(reason)
+            try {
+                BackupNotifier(context).showCloudCopyError(reason)
+            } catch (_: Exception) {
+                // Notifications may be off
+            }
         }
     }
 

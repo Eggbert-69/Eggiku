@@ -17,6 +17,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.hippo.unifile.UniFile
 import eu.kanade.tachiyomi.data.backup.BackupNotifier
+import eu.kanade.tachiyomi.data.backup.EggikuBackupHealth
 import eu.kanade.tachiyomi.data.backup.restore.BackupRestoreJob
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.util.system.cancelNotification
@@ -53,13 +54,20 @@ class BackupCreateJob(private val context: Context, workerParams: WorkerParamete
 
         return try {
             val location = BackupCreator(context, isAutoBackup).backup(uri, options)
-            if (!isAutoBackup) {
+            // KMK -->
+            EggikuBackupHealth.recordSuccess()
+            if (!isAutoBackup && location.isNotEmpty()) {
+                // KMK <--
                 notifier.showBackupComplete(UniFile.fromUri(context, location.toUri())!!)
             }
             Result.success()
         } catch (e: Exception) {
             logcat(LogPriority.ERROR, e)
-            if (!isAutoBackup) notifier.showBackupError(e.message)
+            // KMK -->
+            // Automatic backups used to fail silently; now every failure says why
+            val reason = EggikuBackupHealth.recordFailure(context, e)
+            notifier.showBackupError(reason)
+            // KMK <--
             Result.failure()
         } finally {
             context.cancelNotification(Notifications.ID_BACKUP_PROGRESS)

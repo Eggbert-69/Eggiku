@@ -61,6 +61,9 @@ class StatsScreen : Screen() {
             StatsScreenContent(
                 state = state as? StatsScreenState.Success ?: return@Scaffold,
                 paddingValues = paddingValues,
+                // KMK -->
+                onOpenRecaps = { navigator.push(EggikuRecapScreen()) },
+                // KMK <--
             )
         }
     }

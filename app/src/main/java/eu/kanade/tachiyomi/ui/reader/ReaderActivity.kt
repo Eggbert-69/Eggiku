@@ -81,8 +81,10 @@ import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.coil.TachiyomiImageDecoder
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
 import eu.kanade.tachiyomi.data.connections.discord.ReaderData
+import eu.kanade.tachiyomi.data.music.EggikuReaderMusicSession
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.notification.Notifications
+import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.databinding.ReaderActivityBinding
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.online.HttpSource
@@ -528,6 +530,19 @@ class ReaderActivity : BaseActivity() {
         readingModeToast?.cancel()
     }
 
+    // KMK -->
+    override fun onStart() {
+        super.onStart()
+        EggikuReaderMusicSession.onReaderStart(this, lifecycleScope)
+    }
+
+    override fun onStop() {
+        EggikuReaderMusicSession.onReaderStop(isFinishing = isFinishing)
+        lifecycleScope.launchNonCancellable { EggikuReadingLog.flush() }
+        super.onStop()
+    }
+    // KMK <--
+
     override fun onPause() {
         lifecycleScope.launchNonCancellable {
             viewModel.updateHistory()
@@ -757,6 +772,10 @@ class ReaderActivity : BaseActivity() {
             },
             onClickShiftPage = ::shiftDoublePages,
             // SY <--
+            // KMK -->
+            mangaId = state.manga?.id,
+            chapterId = state.currentChapter?.chapter?.id,
+            // KMK <--
         )
     }
 

@@ -36,5 +36,9 @@ class BackupPreferences(
     fun cloudCopyLastTime() = preferenceStore.getLong(Preference.appStateKey("eggiku_cloud_copy_time"), 0L)
 
     fun cloudCopyLastError() = preferenceStore.getString(Preference.appStateKey("eggiku_cloud_copy_error"), "")
+
+    fun lastBackupError() = preferenceStore.getString(Preference.appStateKey("eggiku_last_backup_error"), "")
+
+    fun lastBackupErrorTime() = preferenceStore.getLong(Preference.appStateKey("eggiku_last_backup_error_time"), 0L)
     // KMK <--
 }

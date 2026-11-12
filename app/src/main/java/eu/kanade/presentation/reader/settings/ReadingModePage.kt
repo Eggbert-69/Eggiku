@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
 import eu.kanade.domain.manga.model.readerOrientation
 import eu.kanade.domain.manga.model.readingMode
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
@@ -243,14 +244,30 @@ private fun WebtoonViewerSettings(
     }
     // KMK <--
 
-    val webtoonSidePadding by screenModel.preferences.webtoonSidePadding().collectAsState()
+    // KMK -->
+    val isUnfolded = LocalConfiguration.current.smallestScreenWidthDp >= 600
+    val sidePaddingPref = remember(isUnfolded) {
+        if (isUnfolded) {
+            screenModel.preferences.webtoonSidePaddingUnfolded()
+        } else {
+            screenModel.preferences.webtoonSidePaddingFolded()
+        }
+    }
+    val webtoonSidePadding by sidePaddingPref.collectAsState()
+    // KMK <--
     SliderItem(
         value = webtoonSidePadding,
         valueRange = ReaderPreferences.let { it.WEBTOON_PADDING_MIN..it.WEBTOON_PADDING_MAX },
-        label = stringResource(MR.strings.pref_webtoon_side_padding),
+        // KMK -->
+        label = stringResource(
+            if (isUnfolded) KMR.strings.pref_side_padding_unfolded else KMR.strings.pref_side_padding_folded,
+        ),
+        // KMK <--
         valueString = numberFormat.format(webtoonSidePadding / 100f),
         onChange = {
-            screenModel.preferences.webtoonSidePadding().set(it)
+            // KMK -->
+            sidePaddingPref.set(it)
+            // KMK <--
         },
         pillColor = MaterialTheme.colorScheme.surfaceContainerHighest,
     )

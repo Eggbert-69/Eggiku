@@ -23,11 +23,15 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.reader.components.ChapterNavigator
+import eu.kanade.presentation.reader.music.EggikuReaderMusic
+import eu.kanade.presentation.reader.music.rememberEggikuReaderMusicState
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import eu.kanade.tachiyomi.ui.reader.viewer.Viewer
@@ -99,7 +103,16 @@ fun ReaderAppBars(
     onClickPageLayout: () -> Unit,
     onClickShiftPage: () -> Unit,
     // SY <--
+    // KMK -->
+    mangaId: Long? = null,
+    chapterId: Long? = null,
+    // KMK <--
 ) {
+    // KMK -->
+    val musicState = rememberEggikuReaderMusicState()
+    val musicContext = LocalContext.current
+    val musicScope = rememberCoroutineScope()
+    // KMK <--
     val isRtl = viewer is R2LPagerViewer
     val backgroundColor = MaterialTheme.colorScheme
         .surfaceColorAtElevation(3.dp)
@@ -224,6 +237,16 @@ fun ReaderAppBars(
             else -> Spacer(modifier = Modifier.weight(1f))
         }
 
+        // KMK -->
+        EggikuReaderMusic(
+            state = musicState,
+            menuVisible = visible,
+            mangaId = mangaId,
+            chapterId = chapterId,
+            modifier = if (visible) Modifier else Modifier.windowInsetsPadding(WindowInsets.navigationBars),
+        )
+        // KMK <--
+
         AnimatedVisibility(
             visible = visible,
             enter = slideInVertically(initialOffsetY = { it }, animationSpec = readerBarsSlideAnimationSpec) +
@@ -275,6 +298,9 @@ fun ReaderAppBars(
                     onClickPageLayout = onClickPageLayout,
                     onClickShiftPage = onClickShiftPage,
                     // SY <--
+                    // KMK -->
+                    onClickMusic = { musicState.onMusicButton(musicContext, musicScope) },
+                    // KMK <--
                 )
             }
         }

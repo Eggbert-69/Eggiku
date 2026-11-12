@@ -1815,6 +1815,8 @@ class LibraryScreenModel(
             libraryData.favorites
                 .asSequence()
                 .filter { it.libraryManga.lastRead > 0 && it.libraryManga.unreadCount > 0 }
+                // Eggiku: entries in locked categories never show up here
+                .filterNot { EggikuCategoryLock.isPrivate(it.libraryManga.categories) }
                 .sortedByDescending { it.libraryManga.lastRead }
                 .take(CONTINUE_READING_LIMIT)
                 .toList()

@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.WebtoonLayoutManager
 import eu.kanade.tachiyomi.data.download.DownloadManager
+import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.reader.ReaderActivity
 import eu.kanade.tachiyomi.ui.reader.model.ChapterTransition
 import eu.kanade.tachiyomi.ui.reader.model.ReaderPage
@@ -108,8 +109,23 @@ class WebtoonViewer(
         recycler.adapter = adapter
         recycler.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
+                // KMK -->
+                private var eggikuDragging = false
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    when (newState) {
+                        RecyclerView.SCROLL_STATE_DRAGGING -> eggikuDragging = true
+                        RecyclerView.SCROLL_STATE_IDLE -> eggikuDragging = false
+                    }
+                }
+                // KMK <--
+
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     onScrolled()
+                    // KMK -->
+                    // Only movement that started with a finger counts as swiping (flings included)
+                    if (eggikuDragging) EggikuReadingLog.swiped(dy.toFloat())
+                    // KMK <--
 
                     if ((dy > threshold || dy < -threshold) && activity.viewModel.state.value.menuVisible) {
                         activity.hideMenu()
@@ -142,8 +158,18 @@ class WebtoonViewer(
             )
             when (config.navigator.getAction(pos)) {
                 NavigationRegion.MENU -> activity.toggleMenu()
-                NavigationRegion.NEXT, NavigationRegion.RIGHT -> scrollDown()
-                NavigationRegion.PREV, NavigationRegion.LEFT -> scrollUp()
+                NavigationRegion.NEXT, NavigationRegion.RIGHT -> {
+                    // KMK -->
+                    EggikuReadingLog.tapped()
+                    // KMK <--
+                    scrollDown()
+                }
+                NavigationRegion.PREV, NavigationRegion.LEFT -> {
+                    // KMK -->
+                    EggikuReadingLog.tapped()
+                    // KMK <--
+                    scrollUp()
+                }
             }
         }
         recycler.longTapListener = f@{ event ->

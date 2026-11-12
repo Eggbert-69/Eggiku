@@ -18,6 +18,7 @@ import tachiyomi.core.common.i18n.pluralStringResource
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.storage.displayablePath
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
@@ -82,6 +83,19 @@ class BackupNotifier(private val context: Context) {
             show(Notifications.ID_BACKUP_COMPLETE)
         }
     }
+
+    // KMK -->
+    fun showCloudCopyError(reason: String) {
+        with(completeNotificationBuilder) {
+            setContentTitle(context.stringResource(KMR.strings.cloud_backup_copy_failed_title))
+            setContentText(reason)
+            setStyle(NotificationCompat.BigTextStyle().bigText(reason))
+            clearActions()
+
+            show(Notifications.ID_BACKUP_COMPLETE)
+        }
+    }
+    // KMK <--
 
     fun showBackupComplete(file: UniFile) {
         context.cancelNotification(Notifications.ID_BACKUP_PROGRESS)
