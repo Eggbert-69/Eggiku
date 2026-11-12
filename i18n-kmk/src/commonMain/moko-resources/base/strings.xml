@@ -80,6 +80,14 @@
     <string name="theme_kanagawa">Kanagawa</string>
     <string name="theme_onedark">One Dark</string>
     <string name="theme_solarized">Solarized</string>
+    <string name="filter_ongoing">Ongoing</string>
+    <string name="filter_paused_cancelled">On hiatus or cancelled</string>
+    <string name="filter_missing_source">Source not installed</string>
+    <string name="filter_not_read_recently">Not read in 30 days</string>
+    <string name="filter_no_new_chapters">No new chapters in 6 months</string>
+    <string name="filter_genres">Genres</string>
+    <string name="filter_genres_summary">Tap to include, again to exclude, again to clear</string>
+    <string name="filter_genres_clear">Clear genres</string>
     <string name="continue_reading_row_title">Continue reading</string>
     <string name="continue_reading_unread">%1$d unread</string>
     <string name="pref_continue_reading_row">Continue reading row</string>

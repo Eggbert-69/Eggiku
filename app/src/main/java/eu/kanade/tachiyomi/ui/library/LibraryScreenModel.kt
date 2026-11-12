@@ -190,9 +190,10 @@ class LibraryScreenModel(
                     state.map { it.excludedCategories }.distinctUntilChanged(),
                     ::Pair,
                 ),
+                // KMK -->
+                combine(getLibraryItemPreferencesFlow(), libraryPreferences.eggikuFiltersFlow(), ::Pair),
                 // KMK <--
-                getLibraryItemPreferencesFlow(),
-            ) { (searchQuery, categories, favorites), (tracksMap, trackingFilters), (includedCategories, excludedCategories), itemPreferences ->
+            ) { (searchQuery, categories, favorites), (tracksMap, trackingFilters), (includedCategories, excludedCategories), (itemPreferences, eggikuFilters) ->
                 val filteredFavorites = favorites
                     .applyFilters(
                         tracksMap,
@@ -203,6 +204,9 @@ class LibraryScreenModel(
                         excludedCategories,
                         // KMK <--
                     )
+                    // KMK -->
+                    .applyEggikuFilters(eggikuFilters, sourceManager)
+                    // KMK <--
                     .let {
                         if (searchQuery == null) {
                             // Don't do anything
@@ -333,7 +337,10 @@ class LibraryScreenModel(
         combine(
             getLibraryItemPreferencesFlow(),
             getTrackingFiltersFlow(),
-        ) { prefs, trackFilters ->
+            // KMK -->
+            libraryPreferences.eggikuFiltersFlow(),
+            // KMK <--
+        ) { prefs, trackFilters, eggikuFilters ->
             listOf(
                 prefs.filterDownloaded,
                 prefs.filterUnread,
@@ -348,7 +355,8 @@ class LibraryScreenModel(
             )
                 .fastAny { it != TriState.DISABLED } ||
                 // KMK -->
-                prefs.filterCategories
+                prefs.filterCategories ||
+                eggikuFilters.isActive
             // KMK <--
         }
             .distinctUntilChanged()

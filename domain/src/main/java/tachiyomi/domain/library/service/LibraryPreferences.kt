@@ -134,6 +134,20 @@ class LibraryPreferences(
     fun filterCategoriesInclude() = preferenceStore.getStringSet(FILTER_LIBRARY_CATEGORIES_INCLUDE_PREF_KEY, emptySet())
 
     fun filterCategoriesExclude() = preferenceStore.getStringSet(FILTER_LIBRARY_CATEGORIES_EXCLUDE_PREF_KEY, emptySet())
+
+    fun filterOngoing() = preferenceStore.getEnum("eggiku_filter_ongoing", TriState.DISABLED)
+
+    fun filterPausedOrCancelled() = preferenceStore.getEnum("eggiku_filter_paused_cancelled", TriState.DISABLED)
+
+    fun filterMissingSource() = preferenceStore.getEnum("eggiku_filter_missing_source", TriState.DISABLED)
+
+    fun filterNotReadRecently() = preferenceStore.getEnum("eggiku_filter_not_read_recently", TriState.DISABLED)
+
+    fun filterNoNewChapters() = preferenceStore.getEnum("eggiku_filter_no_new_chapters", TriState.DISABLED)
+
+    fun filterGenresInclude() = preferenceStore.getStringSet("eggiku_filter_genres_include", emptySet())
+
+    fun filterGenresExclude() = preferenceStore.getStringSet("eggiku_filter_genres_exclude", emptySet())
     // KMK <--
 
     fun filterTracking(id: Int) = preferenceStore.getEnum(
