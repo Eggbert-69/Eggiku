@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FormatListNumbered
+import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
@@ -20,6 +21,7 @@ import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import kotlinx.collections.immutable.ImmutableSet
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.components.material.Icon
 import tachiyomi.presentation.core.components.material.IconButton
@@ -49,6 +51,9 @@ fun ReaderBottomBar(
     onClickShiftPage: () -> Unit,
     // SY <--
     modifier: Modifier = Modifier,
+    // KMK -->
+    onClickMusic: (() -> Unit)? = null,
+    // KMK <--
 ) {
     // KMK -->
     val iconColor = MaterialTheme.colorScheme.primary
@@ -178,6 +183,18 @@ fun ReaderBottomBar(
                 )
             }
         }
+
+        // KMK -->
+        if (onClickMusic != null) {
+            IconButton(onClick = onClickMusic) {
+                Icon(
+                    imageVector = Icons.Outlined.MusicNote,
+                    contentDescription = stringResource(KMR.strings.music_reader_button),
+                    tint = iconColor,
+                )
+            }
+        }
+        // KMK <--
 
         IconButton(onClick = onClickSettings) {
             Icon(

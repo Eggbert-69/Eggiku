@@ -59,6 +59,11 @@ class PreferenceModule(val app: Application) : InjektModule {
         addSingletonFactory {
             ReaderPreferences(get())
         }
+        // KMK -->
+        addSingletonFactory {
+            eu.kanade.tachiyomi.data.music.EggikuMusicPreferences(get())
+        }
+        // KMK <--
         addSingletonFactory {
             TrackPreferences(get())
         }

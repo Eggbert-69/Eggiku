@@ -83,6 +83,7 @@ import eu.kanade.presentation.manga.components.PagePreviewItems
 import eu.kanade.presentation.manga.components.PagePreviews
 import eu.kanade.presentation.manga.components.RelatedMangasRow
 import eu.kanade.presentation.manga.components.SearchMetadataChips
+import eu.kanade.presentation.music.EggikuReadingPlaylistCard
 import eu.kanade.presentation.util.formatChapterNumber
 import eu.kanade.tachiyomi.data.download.model.Download
 import eu.kanade.tachiyomi.source.Source
@@ -696,6 +697,17 @@ private fun MangaScreenSmallImpl(
                     }
 
                     // KMK -->
+                    if (state.manga.favorite) {
+                        item(
+                            key = MangaScreenItem.READING_PLAYLIST,
+                            contentType = MangaScreenItem.READING_PLAYLIST,
+                        ) {
+                            EggikuReadingPlaylistCard(mangaId = state.manga.id)
+                        }
+                    }
+                    // KMK <--
+
+                    // KMK -->
                     if (state.source !is StubSource &&
                         relatedMangasEnabled &&
                         state.manga.source != MERGED_SOURCE_ID
@@ -1125,6 +1137,11 @@ private fun MangaScreenLargeImpl(
                             },
                             // SY <--
                         )
+                        // KMK -->
+                        if (state.manga.favorite) {
+                            EggikuReadingPlaylistCard(mangaId = state.manga.id)
+                        }
+                        // KMK <--
                         // SY -->
                         if (!state.showRecommendationsInOverflow || state.showMergeWithAnother) {
                             MangaInfoButtons(

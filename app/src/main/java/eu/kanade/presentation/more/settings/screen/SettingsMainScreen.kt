@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.GetApp
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Link
+import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Security
@@ -224,6 +225,14 @@ object SettingsMainScreen : Screen() {
             icon = Icons.AutoMirrored.Outlined.ChromeReaderMode,
             screen = SettingsReaderScreen,
         ),
+        // KMK -->
+        Item(
+            titleRes = KMR.strings.pref_category_music,
+            subtitleRes = KMR.strings.pref_music_summary,
+            icon = Icons.Outlined.MusicNote,
+            screen = SettingsMusicScreen,
+        ),
+        // KMK <--
         Item(
             titleRes = MR.strings.pref_category_downloads,
             subtitleRes = MR.strings.pref_downloads_summary,

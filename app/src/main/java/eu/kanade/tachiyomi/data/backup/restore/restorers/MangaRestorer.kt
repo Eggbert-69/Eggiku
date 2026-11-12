@@ -8,6 +8,7 @@ import eu.kanade.tachiyomi.data.backup.models.BackupHistory
 import eu.kanade.tachiyomi.data.backup.models.BackupManga
 import eu.kanade.tachiyomi.data.backup.models.BackupMergedMangaReference
 import eu.kanade.tachiyomi.data.backup.models.BackupTracking
+import eu.kanade.tachiyomi.data.music.EggikuMusicPreferences
 import exh.EXHMigrations
 import exh.source.MERGED_SOURCE_ID
 import tachiyomi.data.DatabaseHandler
@@ -107,6 +108,14 @@ class MangaRestorer(
                 customManga = backupManga.getCustomMangaInfo(),
                 // SY <--
             )
+
+            // KMK -->
+            backupManga.eggikuPlaylist?.takeIf { it.isNotBlank() }?.let { link ->
+                val musicPreferences = Injekt.get<EggikuMusicPreferences>()
+                musicPreferences.seriesPlaylist(restoredManga.id).set(link)
+                musicPreferences.seriesAutoStart(restoredManga.id).set(backupManga.eggikuPlaylistAutoStart)
+            }
+            // KMK <--
 
             if (isSync) {
                 mangasQueries.resetIsSyncing()
