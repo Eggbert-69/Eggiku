@@ -37,6 +37,7 @@ import com.github.chrisbanes.photoview.PhotoView
 import eu.kanade.domain.base.BasePreferences
 import eu.kanade.tachiyomi.data.coil.cropBorders
 import eu.kanade.tachiyomi.data.coil.customDecoder
+import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences.LandscapeZoomScaleType
 import eu.kanade.tachiyomi.ui.reader.viewer.webtoon.WebtoonSubsamplingImageView
 import eu.kanade.tachiyomi.util.system.animatorDurationScale
@@ -282,10 +283,26 @@ open class ReaderPageImageView @JvmOverloads constructor(
                 object : SubsamplingScaleImageView.OnStateChangedListener {
                     override fun onScaleChanged(newScale: Float, origin: Int) {
                         this@ReaderPageImageView.onScaleChanged(newScale)
+                        // KMK -->
+                        if (origin == SubsamplingScaleImageView.ORIGIN_TOUCH) EggikuReadingLog.zoomGesture()
+                        // KMK <--
                     }
 
+                    // KMK -->
+                    private var lastCenter: PointF? = null
+                    // KMK <--
+
                     override fun onCenterChanged(newCenter: PointF?, origin: Int) {
-                        // Not used
+                        // KMK -->
+                        // Moving around a zoomed page: source-image distance times scale = screen pixels
+                        val previous = lastCenter
+                        if (newCenter != null && previous != null && origin == SubsamplingScaleImageView.ORIGIN_TOUCH) {
+                            val dx = newCenter.x - previous.x
+                            val dy = newCenter.y - previous.y
+                            EggikuReadingLog.panned(kotlin.math.hypot(dx, dy) * scale)
+                        }
+                        lastCenter = newCenter?.let { PointF(it.x, it.y) }
+                        // KMK <--
                     }
                 },
             )

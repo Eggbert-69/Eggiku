@@ -6,6 +6,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.widget.FrameLayout
+import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 
 /**
  * Frame layout which contains a [WebtoonRecyclerView]. It's needed to handle touch events,
@@ -83,6 +84,9 @@ class WebtoonFrame(context: Context) : FrameLayout(context) {
      */
     inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+            // KMK -->
+            EggikuReadingLog.zoomGesture()
+            // KMK <--
             recycler?.onScaleBegin()
             return true
         }

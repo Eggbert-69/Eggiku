@@ -32,11 +32,19 @@ import kotlin.time.toDuration
 fun StatsScreenContent(
     state: StatsScreenState.Success,
     paddingValues: PaddingValues,
+    // KMK -->
+    onOpenRecaps: () -> Unit = {},
+    // KMK <--
 ) {
     LazyColumn(
         contentPadding = paddingValues,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
     ) {
+        // KMK -->
+        item {
+            EggikuReadingStatsSection(onOpenRecaps = onOpenRecaps)
+        }
+        // KMK <--
         item {
             OverviewSection(state.overview)
         }

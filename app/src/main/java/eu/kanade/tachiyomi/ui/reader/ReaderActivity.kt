@@ -84,6 +84,7 @@ import eu.kanade.tachiyomi.data.connections.discord.ReaderData
 import eu.kanade.tachiyomi.data.music.EggikuReaderMusicSession
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.notification.Notifications
+import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.databinding.ReaderActivityBinding
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.online.HttpSource
@@ -537,6 +538,7 @@ class ReaderActivity : BaseActivity() {
 
     override fun onStop() {
         EggikuReaderMusicSession.onReaderStop(isFinishing = isFinishing)
+        lifecycleScope.launchNonCancellable { EggikuReadingLog.flush() }
         super.onStop()
     }
     // KMK <--

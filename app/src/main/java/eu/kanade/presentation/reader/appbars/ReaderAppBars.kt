@@ -299,8 +299,7 @@ fun ReaderAppBars(
                     onClickShiftPage = onClickShiftPage,
                     // SY <--
                     // KMK -->
-                    onClickMusic = { musicState.onMusicButton(musicContext, musicScope) }
-                        .takeIf { musicState.enabled },
+                    onClickMusic = { musicState.onMusicButton(musicContext, musicScope) },
                     // KMK <--
                 )
             }

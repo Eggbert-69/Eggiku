@@ -81,6 +81,7 @@ import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
 import eu.kanade.tachiyomi.data.download.DownloadCache
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
+import eu.kanade.tachiyomi.data.stats.EggikuStatsWorker
 import eu.kanade.tachiyomi.data.updater.AppUpdateChecker
 import eu.kanade.tachiyomi.data.updater.AppUpdateJob
 import eu.kanade.tachiyomi.extension.api.ExtensionApi
@@ -523,6 +524,13 @@ class MainActivity : BaseActivity() {
                         ).show()
                     }
                 }
+                // KMK -->
+                try {
+                    EggikuStatsWorker.setup(context)
+                } catch (e: Exception) {
+                    logcat(LogPriority.ERROR, e)
+                }
+                // KMK <--
                 try {
                     if (!BackupCreateJob.isPeriodicBackupScheduled(context)) {
                         BackupCreateJob.setupTask(context)

@@ -33,10 +33,8 @@ class EggikuReaderMusicState {
     /** Whether the player (capsule or note) is meant to be on screen */
     var shown by mutableStateOf(false)
 
-    /** The series' reading playlist, or its category's */
-    var playlistLink by mutableStateOf<String?>(null)
-
-    var enabled by mutableStateOf(true)
+    /** The series' reading playlist, or its category's (only read when the button is tapped) */
+    var playlistLink: String? = null
 
     /** The music-note button in the reader menu */
     fun onMusicButton(context: Context, scope: CoroutineScope) {
@@ -85,7 +83,6 @@ fun EggikuReaderMusic(
     val bounce by preferences.bounceWhenSettling().collectPrefAsState()
     val collapsed by preferences.miniPlayerCollapsed().collectPrefAsState()
     val nowPlaying by EggikuMusic.nowPlaying.collectAsState()
-    state.enabled = miniPlayer
 
     // Work out the playlist: the series' own wins over its category's
     val seriesLink by remember(mangaId) {

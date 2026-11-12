@@ -26,11 +26,13 @@ import eu.kanade.tachiyomi.data.download.model.Download
 import eu.kanade.tachiyomi.data.saver.Image
 import eu.kanade.tachiyomi.data.saver.ImageSaver
 import eu.kanade.tachiyomi.data.saver.Location
+import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.source.online.MetadataSource
 import eu.kanade.tachiyomi.source.online.all.MergedSource
+import eu.kanade.tachiyomi.ui.library.EggikuCategoryLock
 import eu.kanade.tachiyomi.ui.reader.chapter.ReaderChapterItem
 import eu.kanade.tachiyomi.ui.reader.loader.ChapterLoader
 import eu.kanade.tachiyomi.ui.reader.loader.DownloadPageLoader
@@ -44,6 +46,7 @@ import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import eu.kanade.tachiyomi.ui.reader.viewer.Viewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerViewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.R2LPagerViewer
+import eu.kanade.tachiyomi.ui.reader.viewer.webtoon.WebtoonViewer
 import eu.kanade.tachiyomi.util.chapter.filterDownloaded
 import eu.kanade.tachiyomi.util.chapter.removeDuplicates
 import eu.kanade.tachiyomi.util.editCover
@@ -51,6 +54,7 @@ import eu.kanade.tachiyomi.util.lang.byteSize
 import eu.kanade.tachiyomi.util.storage.DiskUtil
 import eu.kanade.tachiyomi.util.storage.DiskUtil.MAX_FILE_NAME_BYTES
 import eu.kanade.tachiyomi.util.storage.cacheImageDir
+import eu.kanade.tachiyomi.util.system.EggikuFoldState
 import exh.metadata.metadata.RaisedSearchMetadata
 import exh.source.MERGED_SOURCE_ID
 import exh.source.getMainSource
@@ -84,6 +88,7 @@ import tachiyomi.core.common.util.lang.withUIContext
 import tachiyomi.core.common.util.system.ImageUtil
 import tachiyomi.core.common.util.system.logcat
 import tachiyomi.decoder.ImageDecoder
+import tachiyomi.domain.category.interactor.GetCategories
 import tachiyomi.domain.chapter.interactor.GetChaptersByMangaId
 import tachiyomi.domain.chapter.interactor.GetMergedChaptersByMangaId
 import tachiyomi.domain.chapter.interactor.UpdateChapter
@@ -857,6 +862,15 @@ class ReaderViewModel @JvmOverloads constructor(
     }
 
     private suspend fun updateChapterProgressOnComplete(readerChapter: ReaderChapter) {
+        // KMK -->
+        // Eggiku reading log: count each chapter once per reading session
+        val loggedChapterId = readerChapter.chapter.id
+        if (loggedChapterId != null && eggikuLoggedChapters.add(loggedChapterId)) {
+            manga?.id?.let { mangaId ->
+                EggikuReadingLog.chapterRead(mangaId, eggikuIsPrivate(mangaId))
+            }
+        }
+        // KMK <--
         readerChapter.chapter.read = true
         // SY -->
         if (manga?.isEhBasedManga() == true) {
@@ -896,7 +910,26 @@ class ReaderViewModel @JvmOverloads constructor(
         updateChapter.awaitAll(duplicateUnreadChapters)
     }
 
+    // KMK -->
+    private val eggikuLoggedChapters = mutableSetOf<Long>()
+
+    private suspend fun eggikuIsPrivate(mangaId: Long): Boolean {
+        return try {
+            val categories = Injekt.get<GetCategories>().await(mangaId).map { it.id }
+            EggikuCategoryLock.isPrivate(categories)
+        } catch (_: Exception) {
+            false
+        }
+    }
+    // KMK <--
+
     fun restartReadTimer() {
+        // KMK -->
+        manga?.id?.let { mangaId ->
+            EggikuReadingLog.readerMangaId = mangaId
+            viewModelScope.launchIO { EggikuReadingLog.readerMangaPrivate = eggikuIsPrivate(mangaId) }
+        }
+        // KMK <--
         chapterReadStartTime = Instant.now().toEpochMilli()
     }
 
@@ -913,6 +946,16 @@ class ReaderViewModel @JvmOverloads constructor(
 
             upsertHistory.await(HistoryUpdate(chapterId, endTime, sessionReadDuration))
             chapterReadStartTime = null
+            // KMK -->
+            val paddingKey = if (state.value.viewer is WebtoonViewer) {
+                val fold = if (EggikuFoldState.isUnfolded()) "unfolded" else "folded"
+                "$fold:${readerPreferences.webtoonSidePadding().get()}"
+            } else {
+                null
+            }
+            EggikuReadingLog.timeRead(sessionReadDuration / 1000, paddingKey)
+            EggikuReadingLog.flush()
+            // KMK <--
         }
     }
 
