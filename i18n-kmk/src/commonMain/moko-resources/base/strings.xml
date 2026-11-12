@@ -567,4 +567,7 @@
     <string name="migration_undone">Undid the last migration (%1$d series)</string>
     <string name="migration_preview">%1$d chapters here, %2$d on the new source. %3$d of your %4$d read chapters will carry over.</string>
     <string name="migration_preview_unloaded">%1$d chapters here (%2$d read). The new source\'s chapters load during migration, and read chapters carry over by chapter number.</string>
+    <string name="cloud_backup_send_drive">Send latest backup to Google Drive</string>
+    <string name="cloud_backup_send_drive_summary">For phones where Drive isn\'t in the save screen: opens Drive\'s "Upload" with your newest backup. Pick a folder and Save.</string>
+    <string name="cloud_backup_send_drive_none">No backup yet. Make one first with Create backup.</string>
 </resources>

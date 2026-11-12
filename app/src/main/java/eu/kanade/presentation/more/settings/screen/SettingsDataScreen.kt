@@ -485,6 +485,17 @@ object SettingsDataScreen : SearchableSettings {
                     onClick = { showDriveHelp = true },
                 ),
             )
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.cloud_backup_send_drive),
+                    subtitle = stringResource(KMR.strings.cloud_backup_send_drive_summary),
+                    onClick = {
+                        if (!EggikuCloudBackup.sendLatestToDrive(context)) {
+                            context.toast(KMR.strings.cloud_backup_send_drive_none)
+                        }
+                    },
+                ),
+            )
             if (cloudParsed != null) {
                 add(
                     Preference.PreferenceItem.TextPreference(
