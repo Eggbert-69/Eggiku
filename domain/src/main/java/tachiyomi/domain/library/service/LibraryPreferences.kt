@@ -158,6 +158,8 @@ class LibraryPreferences(
     fun filterGenresInclude() = preferenceStore.getStringSet("eggiku_filter_genres_include", emptySet())
 
     fun filterGenresExclude() = preferenceStore.getStringSet("eggiku_filter_genres_exclude", emptySet())
+
+    fun savedFilters() = preferenceStore.getStringSet("eggiku_saved_filters", emptySet())
     // KMK <--
 
     fun filterTracking(id: Int) = preferenceStore.getEnum(

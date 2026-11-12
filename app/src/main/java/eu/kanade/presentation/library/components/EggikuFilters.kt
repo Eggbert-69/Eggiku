@@ -1,6 +1,7 @@
 package eu.kanade.presentation.library.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -9,28 +10,38 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import eu.kanade.tachiyomi.ui.library.EggikuSavedFilter
+import eu.kanade.tachiyomi.ui.library.EggikuSavedFilters
 import eu.kanade.tachiyomi.ui.library.LibrarySettingsScreenModel
 import tachiyomi.core.common.preference.TriState
 import tachiyomi.domain.library.service.LibraryPreferences
+import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.SettingsItemsPaddings
 import tachiyomi.presentation.core.components.TriStateItem
@@ -169,6 +180,118 @@ private fun GenreFilter(screenModel: LibrarySettingsScreenModel) {
         ) {
             Text(stringResource(KMR.strings.filter_genres_clear))
         }
+    }
+}
+
+/**
+ * One-tap saved filter sets at the top of the filter sheet.
+ * Tap to apply, press and hold to delete, "Save current" to add one.
+ */
+@Composable
+fun SavedFiltersRow(screenModel: LibrarySettingsScreenModel) {
+    val prefs = screenModel.libraryPreferences
+    val savedRaw by prefs.savedFilters().collectAsState()
+    val saved = remember(savedRaw) { EggikuSavedFilters.load(prefs) }
+    var showSaveDialog by remember { mutableStateOf(false) }
+    var toDelete by remember { mutableStateOf<EggikuSavedFilter?>(null) }
+
+    Text(
+        text = stringResource(KMR.strings.saved_filters),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(horizontal = SettingsItemsPaddings.Horizontal, vertical = 4.dp),
+    )
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = SettingsItemsPaddings.Horizontal - 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        saved.forEach { filter ->
+            // A plain surface so both tap and press-and-hold work
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .combinedClickable(
+                        onClick = { EggikuSavedFilters.apply(prefs, filter) },
+                        onLongClick = { toDelete = filter },
+                    ),
+            ) {
+                Text(
+                    text = filter.name,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                )
+            }
+        }
+        AssistChip(
+            onClick = { showSaveDialog = true },
+            label = { Text(stringResource(KMR.strings.saved_filters_save)) },
+            leadingIcon = { Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(16.dp)) },
+        )
+        AssistChip(
+            onClick = { EggikuSavedFilters.clear(prefs) },
+            label = { Text(stringResource(KMR.strings.saved_filters_clear)) },
+        )
+    }
+
+    if (showSaveDialog) {
+        var name by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { showSaveDialog = false },
+            title = { Text(stringResource(KMR.strings.saved_filters_save)) },
+            text = {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    singleLine = true,
+                    placeholder = { Text(stringResource(KMR.strings.saved_filters_name_hint)) },
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = name.isNotBlank(),
+                    onClick = {
+                        EggikuSavedFilters.saveCurrent(prefs, name)
+                        showSaveDialog = false
+                    },
+                ) {
+                    Text(stringResource(MR.strings.action_save))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showSaveDialog = false }) {
+                    Text(stringResource(MR.strings.action_cancel))
+                }
+            },
+        )
+    }
+
+    toDelete?.let { filter ->
+        AlertDialog(
+            onDismissRequest = { toDelete = null },
+            title = { Text(filter.name) },
+            text = { Text(stringResource(KMR.strings.saved_filters_delete_confirm)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        EggikuSavedFilters.delete(prefs, filter)
+                        toDelete = null
+                    },
+                ) {
+                    Text(stringResource(MR.strings.action_delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { toDelete = null }) {
+                    Text(stringResource(MR.strings.action_cancel))
+                }
+            },
+        )
     }
 }
 // KMK <--

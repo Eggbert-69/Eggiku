@@ -181,11 +181,14 @@ private fun getThemeColorScheme(
             colorSchemes.getOrDefault(appTheme, TachiyomiColorScheme)
         }
     }
-    return colorScheme.getColorScheme(
+    // KMK -->
+    val scheme = colorScheme.getColorScheme(
         isDark = isDark,
         isAmoled = isAmoled,
         overrideDarkSurfaceContainers = appTheme != AppTheme.MONET,
     )
+    return if (appTheme == AppTheme.CUSTOM) scheme.withEggikuOverrides() else scheme
+    // KMK <--
 }
 
 private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(

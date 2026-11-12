@@ -35,6 +35,7 @@ import eu.kanade.presentation.category.visualName
 import eu.kanade.presentation.components.TabbedDialog
 import eu.kanade.presentation.components.TabbedDialogPaddings
 import eu.kanade.presentation.library.components.EggikuFilters
+import eu.kanade.presentation.library.components.SavedFiltersRow
 import eu.kanade.presentation.more.settings.widget.TriStateListDialog
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.ui.library.LibrarySettingsScreenModel
@@ -125,6 +126,10 @@ private fun ColumnScope.FilterPage(
     screenModel: LibrarySettingsScreenModel,
     categories: List<Category>,
 ) {
+    // KMK -->
+    SavedFiltersRow(screenModel = screenModel)
+    // KMK <--
+
     val filterDownloaded by screenModel.libraryPreferences.filterDownloaded().collectAsState()
     val downloadedOnly by screenModel.preferences.downloadedOnly().collectAsState()
     val autoUpdateMangaRestrictions by screenModel.libraryPreferences.autoUpdateMangaRestrictions().collectAsState()

@@ -22,6 +22,7 @@ import eu.kanade.domain.ui.model.setAppCompatDelegateThemeMode
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.screen.appearance.AppCustomThemeColorPickerScreen
 import eu.kanade.presentation.more.settings.screen.appearance.AppLanguageScreen
+import eu.kanade.presentation.more.settings.screen.appearance.EggikuThemeEditorScreen
 import eu.kanade.presentation.more.settings.widget.AppThemeModePreferenceWidget
 import eu.kanade.presentation.more.settings.widget.AppThemePreferenceWidget
 import eu.kanade.tachiyomi.util.system.toast
@@ -109,6 +110,11 @@ object SettingsAppearanceScreen : SearchableSettings {
                     subtitle = stringResource(KMR.strings.custom_color_description),
                     enabled = appTheme == AppTheme.CUSTOM,
                     onClick = { navigator.push(AppCustomThemeColorPickerScreen()) },
+                ),
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.theme_editor_title),
+                    subtitle = stringResource(KMR.strings.theme_editor_entry_summary),
+                    onClick = { navigator.push(EggikuThemeEditorScreen()) },
                 ),
                 Preference.PreferenceItem.ListPreference(
                     preference = uiPreferences.customThemeStyle(),

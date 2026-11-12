@@ -42,6 +42,12 @@ class UiPreferences(
     fun darkScheduleStartHour() = preferenceStore.getInt("eggiku_dark_schedule_start", 19)
 
     fun darkScheduleEndHour() = preferenceStore.getInt("eggiku_dark_schedule_end", 7)
+
+    fun customThemeBackground() = preferenceStore.getInt("eggiku_custom_theme_background", 0)
+
+    fun customThemeAccent() = preferenceStore.getInt("eggiku_custom_theme_accent", 0)
+
+    fun customThemeText() = preferenceStore.getInt("eggiku_custom_theme_text", 0)
     // KMK <--
 
     fun relativeTime() = preferenceStore.getBoolean("relative_time_v2", true)
