@@ -53,8 +53,8 @@ import tachiyomi.core.common.Constants
 import tachiyomi.core.common.preference.Preference
 import tachiyomi.core.common.preference.PreferenceStore
 import tachiyomi.core.common.util.lang.withIOContext
-import tachiyomi.domain.manga.interactor.GetManga
 import tachiyomi.domain.manga.model.asMangaCover
+import tachiyomi.domain.manga.repository.MangaRepository
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.widget.R
@@ -191,12 +191,17 @@ class EggikuReadingWidget : GlanceAppWidget() {
     @OptIn(ExperimentalCoilApi::class)
     private suspend fun loadCovers(context: Context): List<Pair<Long, Bitmap?>> = withIOContext {
         val ids = EggikuWidgetData.continueIds().get().split(',').mapNotNull { it.toLongOrNull() }.take(4)
-        val getManga = Injekt.get<GetManga>()
+        // The repository directly: GetManga drags in the extension API, which widgets don't have
+        val mangaRepository = Injekt.get<MangaRepository>()
         val widthPx = CoverWidth.value.toInt().dpToPx
         val heightPx = CoverHeight.value.toInt().dpToPx
         val roundPx = context.resources.getDimension(R.dimen.appwidget_inner_radius)
         ids.mapNotNull { id ->
-            val manga = getManga.await(id) ?: return@mapNotNull null
+            val manga = try {
+                mangaRepository.getMangaById(id)
+            } catch (_: Exception) {
+                return@mapNotNull null
+            }
             val request = ImageRequest.Builder(context)
                 .data(manga.asMangaCover())
                 .memoryCachePolicy(CachePolicy.DISABLED)

@@ -513,4 +513,17 @@
     <string name="sunny_taps_left">%1$d more…</string>
     <string name="arcade_insert_coin">INSERT COIN</string>
     <string name="arcade_hint">Tap the coin.</string>
+    <string name="quick_sort_title">Quick sort into categories</string>
+    <string name="quick_sort_undo">Undo</string>
+    <string name="quick_sort_uncategorized">Uncategorized</string>
+    <string name="quick_sort_everything">Everything</string>
+    <string name="quick_sort_no_categories">Make some categories first (Library settings, then Categories), then come back to sort.</string>
+    <string name="quick_sort_nothing">Nothing to sort here. Everything already has a category.</string>
+    <string name="quick_sort_done">All done! %1$d series sorted.</string>
+    <string name="quick_sort_finish">Back to library</string>
+    <string name="quick_sort_progress">%1$d of %2$d</string>
+    <string name="quick_sort_hint">Tap a category to put it there and move on</string>
+    <string name="quick_sort_skip">Skip</string>
+    <string name="quick_sort_several">Pick several</string>
+    <string name="quick_sort_next">Next</string>
 </resources>

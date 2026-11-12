@@ -20,9 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.LocalNavigator
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
+import eu.kanade.tachiyomi.ui.library.EggikuQuickSortScreen
 import kotlinx.collections.immutable.persistentListOf
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
@@ -108,6 +110,9 @@ private fun LibraryRegularToolbar(
     onClickToggleDisplayMode: (() -> Unit)?,
     // KMK <--
 ) {
+    // KMK -->
+    val navigator = LocalNavigator.current
+    // KMK <--
     val context = LocalContext.current
     val pillAlpha = if (isSystemInDarkTheme()) 0.12f else 0.08f
     SearchToolbar(
@@ -152,6 +157,12 @@ private fun LibraryRegularToolbar(
                         title = stringResource(MR.strings.action_open_random_manga),
                         onClick = onClickOpenRandomManga,
                     ),
+                    // KMK -->
+                    AppBar.OverflowAction(
+                        title = stringResource(KMR.strings.quick_sort_title),
+                        onClick = { navigator?.push(EggikuQuickSortScreen()) },
+                    ),
+                    // KMK <--
                     AppBar.OverflowAction(
                         title = stringResource(MR.strings.pref_invalidate_download_cache),
                         onClick = {
