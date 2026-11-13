@@ -1,79 +1,83 @@
 package eu.kanade.tachiyomi.ui.reader.eggiku
 
+import android.app.Activity
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.LruCache
-import eu.kanade.tachiyomi.source.model.Page
-import eu.kanade.tachiyomi.ui.reader.model.ReaderPage
+import android.os.Handler
+import android.os.Looper
+import android.view.PixelCopy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.math.max
 
 // KMK -->
 
 /**
- * Eggiku page tint: picks the main colour of the page you're on so the reader's menus, bars and
- * mini player can take it on. Black-and-white pages give null, and the reader falls back to its
- * usual colours (or the cover colour).
+ * Eggiku page tint: picks the main colour of what's on screen in the reader so its menus, bars and
+ * mini player can take it on. It copies the screen into a tiny picture rather than reading page
+ * files itself, so it never competes with the reader for them. Black-and-white pages give null,
+ * and the reader falls back to its usual colours (or the cover colour).
  */
 object EggikuPageTint {
 
     private val mutableColor = MutableStateFlow<Int?>(null)
     val color: StateFlow<Int?> = mutableColor.asStateFlow()
 
-    private val cache = LruCache<String, Int>(128)
-    private const val NO_COLOR = 0
-    private var job: Job? = null
-
-    fun onPage(page: ReaderPage, scope: CoroutineScope) {
-        job?.cancel()
-        job = scope.launch(Dispatchers.IO) {
-            withTimeoutOrNull(20_000) { page.statusFlow.first { it == Page.State.Ready } } ?: return@launch
-            val key = "${page.chapter.chapter.id}:${page.index}"
-            val sampled = cache.get(key) ?: (sample(page) ?: NO_COLOR).also { cache.put(key, it) }
-            mutableColor.value = sampled.takeIf { it != NO_COLOR }
-        }
-    }
-
     fun reset() {
-        job?.cancel()
         mutableColor.value = null
     }
 
-    private fun sample(page: ReaderPage): Int? = try {
-        val stream = page.stream ?: return null
-        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        stream().use { BitmapFactory.decodeStream(it, null, bounds) }
-        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
-        var sampleSize = 1
-        while ((bounds.outWidth / sampleSize).toLong() * (bounds.outHeight / sampleSize) > 24_000) sampleSize *= 2
-        val options = BitmapFactory.Options().apply {
-            inSampleSize = sampleSize
-            inPreferredConfig = Bitmap.Config.ARGB_8888
+    /** Samples the reader's window; call with the menu hidden so the bars aren't in the picture */
+    fun sampleWindow(activity: Activity, scope: CoroutineScope) {
+        val window = activity.window ?: return
+        val decor = window.peekDecorView() ?: return
+        if (decor.width <= 0 || decor.height <= 0 || !decor.isAttachedToWindow) return
+        val bitmap = try {
+            Bitmap.createBitmap(SAMPLE_WIDTH, SAMPLE_HEIGHT, Bitmap.Config.ARGB_8888)
+        } catch (_: Throwable) {
+            return
         }
-        val bitmap = stream().use { BitmapFactory.decodeStream(it, null, options) } ?: return null
         try {
-            mainColor(bitmap)
-        } finally {
+            PixelCopy.request(
+                window,
+                bitmap,
+                { result ->
+                    if (result != PixelCopy.SUCCESS) {
+                        bitmap.recycle()
+                        return@request
+                    }
+                    scope.launch(Dispatchers.Default) {
+                        val picked = try {
+                            mainColor(bitmap)
+                        } finally {
+                            bitmap.recycle()
+                        }
+                        mutableColor.value = picked
+                    }
+                },
+                Handler(Looper.getMainLooper()),
+            )
+        } catch (_: Throwable) {
             bitmap.recycle()
         }
-    } catch (_: Throwable) {
-        null
     }
+
+    private const val SAMPLE_WIDTH = 48
+    private const val SAMPLE_HEIGHT = 96
 
     /** The strongest hue on the page, if enough of it is in colour */
     private fun mainColor(bitmap: Bitmap): Int? {
+        // Skip the top and bottom strips, where the egg timer, page number and mini player sit,
+        // so the tint doesn't end up copying itself
         val width = bitmap.width
-        val height = bitmap.height
+        val top = (bitmap.height * 0.08f).toInt()
+        val height = (bitmap.height * 0.85f).toInt() - top
+        if (width <= 0 || height <= 0) return null
         val pixels = IntArray(width * height)
-        bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+        bitmap.getPixels(pixels, 0, width, 0, top, width, height)
         val bins = 24
         val weight = FloatArray(bins)
         val red = FloatArray(bins)

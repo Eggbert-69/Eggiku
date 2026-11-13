@@ -140,6 +140,7 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -259,6 +260,21 @@ class ReaderActivity : BaseActivity() {
         setContentView(binding.root)
         binding.setComposeOverlay()
         // KMK -->
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.state
+                    .map { it.currentPage to it.menuVisible }
+                    .distinctUntilChanged()
+                    .collectLatest { (_, menuVisible) ->
+                        if (menuVisible || !readerPreferences.eggikuPageTint().get()) return@collectLatest
+                        // Once the page has settled, and again in case it was still loading
+                        delay(450)
+                        EggikuPageTint.sampleWindow(this@ReaderActivity, lifecycleScope)
+                        delay(1_800)
+                        EggikuPageTint.sampleWindow(this@ReaderActivity, lifecycleScope)
+                    }
+            }
+        }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 try {

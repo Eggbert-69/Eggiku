@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import logcat.LogPriority
+import tachiyomi.core.common.util.system.logcat
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -25,7 +27,7 @@ object EggikuSharpen {
     /** True while the "hold to compare" button is pressed, which shows the page without sharpening */
     val comparing = MutableStateFlow(false)
 
-    val isSupported: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+    val isSupported: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !shaderBroken
 
     // Strength at 100% on the slider, and how wide (in screen pixels) the edges it looks for are.
     // Pages are usually stretched to fit the screen, so their edges are a few pixels wide; a
@@ -78,6 +80,27 @@ object EggikuSharpen {
             .launchIn(scope)
     }
 
+    // Some Android versions only understand the older "sample(shader, point)" spelling. Remember
+    // which one works; if neither does, sharpening quietly turns itself off instead of crashing.
+    private var shaderSource: String? = null
+    private var shaderBroken = false
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun createShader(): RuntimeShader? {
+        if (shaderBroken) return null
+        shaderSource?.let { return RuntimeShader(it) }
+        val legacy = SHADER.replace("content.eval(", "sample(content, ")
+        for (source in listOf(SHADER, legacy)) {
+            try {
+                return RuntimeShader(source).also { shaderSource = source }
+            } catch (e: IllegalArgumentException) {
+                logcat(LogPriority.WARN, e) { "Eggiku sharpen shader didn't compile" }
+            }
+        }
+        shaderBroken = true
+        return null
+    }
+
     private fun apply(view: View, strength: Int) {
         if (!isSupported) return
         applyEffect(view, strength)
@@ -89,7 +112,11 @@ object EggikuSharpen {
             view.setRenderEffect(null)
             return
         }
-        val shader = RuntimeShader(SHADER).apply {
+        val shader = createShader() ?: run {
+            view.setRenderEffect(null)
+            return
+        }
+        shader.apply {
             setFloatUniform("amount", strength / 100f * MAX_AMOUNT)
             setFloatUniform("radius", RADIUS_PX)
             setFloatUniform("size", view.width.toFloat(), view.height.toFloat())
