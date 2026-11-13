@@ -207,7 +207,7 @@ fun ReaderAppBars(
         ) {
             when (effectiveNavBarType) {
                 NavBarType.VerticalLeft -> {
-                    AnimatedVisibility(
+                    androidx.compose.animation.AnimatedVisibility(
                         visible = visible,
                         enter = slideInHorizontally(
                             initialOffsetX = { -it },
@@ -241,7 +241,7 @@ fun ReaderAppBars(
                 }
 
                 NavBarType.VerticalRight -> {
-                    AnimatedVisibility(
+                    androidx.compose.animation.AnimatedVisibility(
                         visible = visible,
                         enter = slideInHorizontally(
                             initialOffsetX = { it },
