@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.data.duplicates
 import eu.kanade.domain.manga.interactor.UpdateManga
 import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.rating.EggikuRatings
+import eu.kanade.tachiyomi.data.tags.EggikuTags
 import tachiyomi.core.common.preference.PreferenceStore
 import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.domain.category.interactor.SetMangaCategories
@@ -94,6 +95,7 @@ object EggikuDuplicates {
             EggikuAchievements.bump(EggikuAchievements.COUNT_MERGES)
             others.forEach { other ->
                 EggikuRatings.move(other.id, keeper.id)
+                EggikuTags.move(other.id, keeper.id)
                 if (updateManga.awaitUpdateFavorite(other.id, false)) {
                     removedCount++
                     removedIds += other.id

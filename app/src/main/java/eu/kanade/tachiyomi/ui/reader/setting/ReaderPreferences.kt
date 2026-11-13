@@ -127,6 +127,15 @@ class ReaderPreferences(
 
     // Ask before reading on when an earlier chapter was skipped
     fun eggikuSkipWarning() = preferenceStore.getBoolean("eggiku_skip_warning", true)
+
+    // A soft glow at the screen edge on the last page of a chapter
+    fun eggikuEdgeGlow() = preferenceStore.getBoolean("eggiku_edge_glow", true)
+
+    // Holding a page pops the panel under your finger up full-screen (instead of page actions)
+    fun eggikuHoldToPeek() = preferenceStore.getBoolean("eggiku_hold_to_peek", true)
+
+    // Vibration on page turns: 0 off, 1 light, 2 medium, 3 strong
+    fun eggikuPageHaptics() = preferenceStore.getInt("eggiku_page_haptics", 1)
     // KMK <--
 
     fun readerHideThreshold() = preferenceStore.getEnum("reader_hide_threshold", ReaderHideThreshold.LOW)

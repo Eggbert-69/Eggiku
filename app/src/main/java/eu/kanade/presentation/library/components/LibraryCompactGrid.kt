@@ -47,6 +47,9 @@ internal fun LibraryCompactGrid(
                 coverBadgeStart = {
                     DownloadsBadge(count = libraryItem.downloadCount)
                     UnreadBadge(count = libraryItem.unreadCount)
+                    // KMK -->
+                    EggikuTagBadges(mangaId = libraryItem.libraryManga.id)
+                    // KMK <--
                 },
                 coverBadgeEnd = {
                     LanguageBadge(

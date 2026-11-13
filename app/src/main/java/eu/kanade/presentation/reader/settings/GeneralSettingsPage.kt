@@ -71,6 +71,29 @@ internal fun GeneralPage(screenModel: ReaderSettingsScreenModel) {
         label = stringResource(KMR.strings.eggiku_skip_warning),
         pref = screenModel.preferences.eggikuSkipWarning(),
     )
+    CheckboxItem(
+        label = stringResource(KMR.strings.eggiku_edge_glow),
+        pref = screenModel.preferences.eggikuEdgeGlow(),
+    )
+    CheckboxItem(
+        label = stringResource(KMR.strings.eggiku_hold_to_peek),
+        pref = screenModel.preferences.eggikuHoldToPeek(),
+    )
+    val haptics by screenModel.preferences.eggikuPageHaptics().collectAsState()
+    SettingsChipRow(KMR.strings.eggiku_page_haptics) {
+        listOf(
+            KMR.strings.eggiku_off to 0,
+            KMR.strings.eggiku_haptics_light to 1,
+            KMR.strings.eggiku_haptics_medium to 2,
+            KMR.strings.eggiku_haptics_strong to 3,
+        ).map { (labelRes, value) ->
+            FilterChip(
+                selected = haptics == value,
+                onClick = { screenModel.preferences.eggikuPageHaptics().set(value) },
+                label = { Text(stringResource(labelRes)) },
+            )
+        }
+    }
     // KMK <--
 
     // SY -->

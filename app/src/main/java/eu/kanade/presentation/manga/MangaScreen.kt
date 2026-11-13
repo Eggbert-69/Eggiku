@@ -71,7 +71,8 @@ import eu.kanade.presentation.components.relativeDateText
 import eu.kanade.presentation.manga.components.ChapterDownloadAction
 import eu.kanade.presentation.manga.components.ChapterHeader
 import eu.kanade.presentation.manga.components.EggikuCookTimerCard
-import eu.kanade.presentation.manga.components.EggikuRatingCard
+import eu.kanade.presentation.manga.components.EggikuRatingRow
+import eu.kanade.presentation.manga.components.EggikuTimelineCard
 import eu.kanade.presentation.manga.components.ExpandableMangaDescription
 import eu.kanade.presentation.manga.components.MangaActionRow
 import eu.kanade.presentation.manga.components.MangaBottomActionMenu
@@ -636,6 +637,12 @@ private fun MangaScreenSmallImpl(
                         )
                     }
 
+                    // KMK -->
+                    item(key = "eggiku-rating") {
+                        EggikuRatingRow(mangaId = state.manga.id)
+                    }
+                    // KMK <--
+
                     item(
                         key = MangaScreenItem.ACTION_ROW,
                         contentType = MangaScreenItem.ACTION_ROW,
@@ -709,8 +716,8 @@ private fun MangaScreenSmallImpl(
                         item(key = "eggiku-cook-timer") {
                             EggikuCookTimerCard(mangaId = state.manga.id)
                         }
-                        item(key = "eggiku-rating") {
-                            EggikuRatingCard(mangaId = state.manga.id)
+                        item(key = "eggiku-timeline") {
+                            EggikuTimelineCard(mangaId = state.manga.id)
                         }
                     }
                     // KMK <--
@@ -1103,6 +1110,9 @@ private fun MangaScreenLargeImpl(
                             coverRatio = coverRatio,
                             // KMK <--
                         )
+                        // KMK -->
+                        EggikuRatingRow(mangaId = state.manga.id)
+                        // KMK <--
                         MangaActionRow(
                             favorite = state.manga.favorite,
                             trackingCount = state.trackingCount,
@@ -1149,8 +1159,8 @@ private fun MangaScreenLargeImpl(
                         if (state.manga.favorite) {
                             EggikuReadingPlaylistCard(mangaId = state.manga.id)
                             EggikuCookTimerCard(mangaId = state.manga.id)
-                            EggikuRatingCard(mangaId = state.manga.id)
                         }
+                        EggikuTimelineCard(mangaId = state.manga.id)
                         // KMK <--
                         // SY -->
                         if (!state.showRecommendationsInOverflow || state.showMergeWithAnother) {

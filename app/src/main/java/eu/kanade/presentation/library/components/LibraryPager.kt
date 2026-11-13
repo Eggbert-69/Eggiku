@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import eu.kanade.core.preference.PreferenceMutableState
+import eu.kanade.tachiyomi.data.smart.EggikuSmart
 import eu.kanade.tachiyomi.ui.library.EggikuCategoryLock
 import eu.kanade.tachiyomi.ui.library.LibraryItem
 import kotlinx.coroutines.delay
@@ -72,6 +73,15 @@ fun LibraryPager(
         // KMK -->
         if (category.id.toString() in lockedCategories && System.currentTimeMillis() >= unlockedUntil) {
             EggikuLockedCategory(categoryName = category.name, contentPadding = contentPadding)
+            return@HorizontalPager
+        }
+        if (category.id == EggikuSmart.TAB_ID) {
+            EggikuSmartTab(
+                items = getItemsForCategory(category),
+                contentPadding = contentPadding,
+                onClickManga = { onClickManga(category, it) },
+                onLongClickManga = { onLongClickManga(category, it) },
+            )
             return@HorizontalPager
         }
         // KMK <--

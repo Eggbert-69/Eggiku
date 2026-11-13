@@ -67,6 +67,9 @@ class BackupManga(
     @ProtoNumber(1101) var eggikuPlaylistAutoStart: Boolean = false,
     // Eggiku: your own 1-5 star rating (0 = none)
     @ProtoNumber(1102) var eggikuRating: Int = 0,
+
+    // Eggiku: your own tags on this series
+    @ProtoNumber(1103) var eggikuTags: List<String> = emptyList(),
     // KMK <--
 
 ) {

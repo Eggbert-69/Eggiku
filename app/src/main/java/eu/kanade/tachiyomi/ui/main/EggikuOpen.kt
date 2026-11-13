@@ -7,6 +7,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import eu.kanade.tachiyomi.ui.browse.migration.manga.MigrateMangaScreen
 import eu.kanade.tachiyomi.ui.library.EggikuDeadSeriesScreen
 import eu.kanade.tachiyomi.ui.stats.EggikuAchievementsScreen
+import eu.kanade.tachiyomi.ui.stats.EggikuRecapScreen
 import mihon.feature.migration.config.MigrationConfigScreen
 
 // KMK -->
@@ -21,6 +22,7 @@ object EggikuOpen {
     const val MIGRATE_SOURCE = "migrate_source"
     const val DEAD_SERIES = "dead_series"
     const val ACHIEVEMENTS = "achievements"
+    const val LAST_MONTH_WRAP = "last_month_wrap"
 
     fun pendingIntent(context: Context, requestCode: Int, screen: String, id: Long = 0L): PendingIntent {
         val intent = Intent(context, MainActivity::class.java)
@@ -46,6 +48,7 @@ object EggikuOpen {
             MIGRATE_SOURCE -> navigator.push(MigrateMangaScreen(id))
             DEAD_SERIES -> navigator.push(EggikuDeadSeriesScreen())
             ACHIEVEMENTS -> navigator.push(EggikuAchievementsScreen())
+            LAST_MONTH_WRAP -> navigator.push(EggikuRecapScreen(startMonthOffset = -1))
         }
         return true
     }

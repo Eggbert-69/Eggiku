@@ -8,9 +8,12 @@ import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.LocalLibrary
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -18,9 +21,11 @@ import eu.kanade.domain.extension.interactor.GetExtensionLanguages.Companion.get
 import eu.kanade.domain.source.model.icon
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.data.tags.EggikuTags
 import tachiyomi.domain.source.model.Source
 import tachiyomi.presentation.core.components.Badge
 import tachiyomi.presentation.core.components.BadgeGroup
+import tachiyomi.presentation.core.util.collectAsState
 import tachiyomi.source.local.isLocal
 
 @Composable
@@ -127,3 +132,26 @@ private fun BadgePreview() {
         }
     }
 }
+
+// KMK -->
+/** Eggiku: your own tags on a cover, first one by name, then how many more */
+@Composable
+internal fun EggikuTagBadges(mangaId: Long) {
+    val definitions by EggikuTags.definitionsPref().collectAsState()
+    val assignments by EggikuTags.assignmentsPref().collectAsState()
+    val names = remember(assignments, mangaId) {
+        EggikuTags.parseAssignments(assignments)[mangaId].orEmpty()
+    }
+    if (names.isEmpty()) return
+    val colors = remember(definitions) {
+        EggikuTags.parseDefinitions(definitions).associate { it.name to it.color }
+    }
+    val first = names.first()
+    val color = Color(colors[first] ?: 0xFF90A4AE)
+    Badge(
+        text = first.take(12) + if (names.size > 1) " +${names.size - 1}" else "",
+        color = color,
+        textColor = if (color.luminance() > 0.5f) Color.Black else Color.White,
+    )
+}
+// KMK <--

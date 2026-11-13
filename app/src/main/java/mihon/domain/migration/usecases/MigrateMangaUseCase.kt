@@ -7,6 +7,7 @@ import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.rating.EggikuRatings
+import eu.kanade.tachiyomi.data.tags.EggikuTags
 import eu.kanade.tachiyomi.data.track.EnhancedTracker
 import eu.kanade.tachiyomi.data.track.TrackerManager
 import kotlinx.coroutines.CancellationException
@@ -230,6 +231,7 @@ class MigrateMangaUseCase(
 
             // KMK -->
             EggikuRatings.move(current.id, target.id)
+            EggikuTags.move(current.id, target.id)
             EggikuAchievements.bump(EggikuAchievements.COUNT_MIGRATED)
             EggikuMigrationUndo.record(
                 oldId = current.id,

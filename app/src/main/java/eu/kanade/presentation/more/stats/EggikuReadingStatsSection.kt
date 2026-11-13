@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.stats.EggikuAchievementsScreen
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
@@ -142,6 +143,14 @@ fun EggikuReadingStatsSection(
                 StatBlock(value = "${allTime.taps}", label = stringResource(KMR.strings.stats_taps))
             }
             PaddingLine(allTime.padding)
+            EggikuReadingSpeed.pagesPerMinute()?.let { ppm ->
+                Text(
+                    text = stringResource(KMR.strings.eggiku_reading_speed, String.format(java.util.Locale.getDefault(), "%.1f", ppm)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            EggikuGenreBreakdown()
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilledTonalButton(onClick = onOpenRecaps) {

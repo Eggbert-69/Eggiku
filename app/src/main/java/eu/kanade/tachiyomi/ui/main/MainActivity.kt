@@ -74,6 +74,7 @@ import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.data.BackupRestoreStatus
 import eu.kanade.tachiyomi.data.LibraryUpdateStatus
 import eu.kanade.tachiyomi.data.SyncStatus
+import eu.kanade.tachiyomi.data.achievements.EggikuCompare
 import eu.kanade.tachiyomi.data.backup.create.BackupCreateJob
 import eu.kanade.tachiyomi.data.cache.ChapterCache
 import eu.kanade.tachiyomi.data.coil.MangaCoverMetadata
@@ -97,6 +98,7 @@ import eu.kanade.tachiyomi.ui.manga.MangaScreen
 import eu.kanade.tachiyomi.ui.more.NewUpdateScreen
 import eu.kanade.tachiyomi.ui.more.OnboardingScreen
 import eu.kanade.tachiyomi.ui.more.WhatsNewScreen
+import eu.kanade.tachiyomi.ui.stats.EggikuCompareScreen
 import eu.kanade.tachiyomi.util.EggikuShare
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.isDebugBuildType
@@ -703,7 +705,11 @@ class MainActivity : BaseActivity() {
                 val query = intent.getStringExtra(SearchManager.QUERY) ?: intent.getStringExtra(Intent.EXTRA_TEXT)
                 // KMK -->
                 val shared = EggikuShare.fromText(query)
-                if (shared != null) {
+                val friend = EggikuCompare.decode(query)
+                if (friend != null) {
+                    navigator.popUntilRoot()
+                    navigator.push(EggikuCompareScreen(friend))
+                } else if (shared != null) {
                     navigator.popUntilRoot()
                     navigator.push(DeepLinkScreen(shared.url, shared.title))
                 } else {
@@ -728,7 +734,11 @@ class MainActivity : BaseActivity() {
                 // KMK -->
                 // A series a friend shared from Eggiku
                 val shared = EggikuShare.fromUri(intent.data)
-                if (shared != null) {
+                val friend = EggikuCompare.fromUri(intent.data)
+                if (friend != null) {
+                    navigator.popUntilRoot()
+                    navigator.push(EggikuCompareScreen(friend))
+                } else if (shared != null) {
                     navigator.popUntilRoot()
                     navigator.push(DeepLinkScreen(shared.url, shared.title))
                 } else {
