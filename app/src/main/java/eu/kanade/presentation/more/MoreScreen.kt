@@ -39,11 +39,13 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import eu.kanade.presentation.avatar.EggikuAvatarMoreCard
 import eu.kanade.presentation.more.settings.widget.SwitchPreferenceWidget
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
+import eu.kanade.tachiyomi.ui.avatar.EggikuAvatarEditorScreen
 import eu.kanade.tachiyomi.ui.more.DownloadQueueState
 import eu.kanade.tachiyomi.ui.more.EggikuUpdateScreen
 import eu.kanade.tachiyomi.util.system.openInBrowser
@@ -101,6 +103,12 @@ fun MoreScreen(
             item {
                 LogoHeader()
             }
+            // KMK -->
+            item {
+                val navigator = LocalNavigator.current
+                EggikuAvatarMoreCard(onClick = { navigator?.push(EggikuAvatarEditorScreen()) })
+            }
+            // KMK <--
             item {
                 SwitchPreferenceWidget(
                     title = stringResource(MR.strings.label_downloaded_only),

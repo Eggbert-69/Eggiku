@@ -172,6 +172,15 @@ class AppUpdateDownloadJob(private val context: Context, workerParams: WorkerPar
             val apkFile = File(context.externalCacheDir, "update.apk")
 
             // KMK -->
+            // Only resume a partial download of this same file. A leftover update.apk from the
+            // last update used to get the new APK's tail appended to it, so the first install of
+            // every update failed and only the second download worked.
+            val urlFile = File(context.externalCacheDir, "update.apk.url")
+            val previousUrl = if (urlFile.exists()) urlFile.readText() else null
+            if (previousUrl != url) {
+                apkFile.delete()
+                urlFile.writeText(url)
+            }
             network.downloadFileWithResume(url, apkFile, progressListener)
             if (isStopped) {
                 cancel()

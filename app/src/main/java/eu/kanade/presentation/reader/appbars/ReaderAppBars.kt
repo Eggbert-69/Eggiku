@@ -12,8 +12,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -198,76 +198,84 @@ fun ReaderAppBars(
         // KMK <--
 
         // KMK -->
-        when (effectiveNavBarType) {
-            NavBarType.VerticalLeft -> {
-                AnimatedVisibility(
-                    visible = visible,
-                    enter = slideInHorizontally(
-                        initialOffsetX = { -it },
-                        animationSpec = readerBarsSlideAnimationSpec,
-                    ) +
-                        fadeIn(animationSpec = readerBarsFadeAnimationSpec),
-                    exit = slideOutHorizontally(
-                        targetOffsetX = { -it },
-                        animationSpec = readerBarsSlideAnimationSpec,
-                    ) +
-                        fadeOut(animationSpec = readerBarsFadeAnimationSpec),
-                    modifier = Modifier
-                        .weight(1f)
-                        .align(Alignment.Start),
-                ) {
-                    ChapterNavigator(
-                        isRtl = isRtl,
-                        onNextChapter = onNextChapter,
-                        enabledNext = enabledNext,
-                        onPreviousChapter = onPreviousChapter,
-                        enabledPrevious = enabledPrevious,
-                        currentPage = currentPage,
-                        totalPages = totalPages,
-                        onPageIndexChange = onPageIndexChange,
-                        // SY -->
-                        isVerticalSlider = true,
-                        currentPageText = currentPageText,
-                        // SY <--
-                    )
+        // The box always takes the middle space. Before, a hidden side navigator took no space and
+        // the music player below it jumped up under the top bar.
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+        ) {
+            when (effectiveNavBarType) {
+                NavBarType.VerticalLeft -> {
+                    AnimatedVisibility(
+                        visible = visible,
+                        enter = slideInHorizontally(
+                            initialOffsetX = { -it },
+                            animationSpec = readerBarsSlideAnimationSpec,
+                        ) +
+                            fadeIn(animationSpec = readerBarsFadeAnimationSpec),
+                        exit = slideOutHorizontally(
+                            targetOffsetX = { -it },
+                            animationSpec = readerBarsSlideAnimationSpec,
+                        ) +
+                            fadeOut(animationSpec = readerBarsFadeAnimationSpec),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .align(Alignment.CenterStart),
+                    ) {
+                        ChapterNavigator(
+                            isRtl = isRtl,
+                            onNextChapter = onNextChapter,
+                            enabledNext = enabledNext,
+                            onPreviousChapter = onPreviousChapter,
+                            enabledPrevious = enabledPrevious,
+                            currentPage = currentPage,
+                            totalPages = totalPages,
+                            onPageIndexChange = onPageIndexChange,
+                            // SY -->
+                            isVerticalSlider = true,
+                            currentPageText = currentPageText,
+                            // SY <--
+                        )
+                    }
                 }
-            }
 
-            NavBarType.VerticalRight -> {
-                AnimatedVisibility(
-                    visible = visible,
-                    enter = slideInHorizontally(
-                        initialOffsetX = { it },
-                        animationSpec = readerBarsSlideAnimationSpec,
-                    ) +
-                        fadeIn(animationSpec = readerBarsFadeAnimationSpec),
-                    exit = slideOutHorizontally(
-                        targetOffsetX = { it },
-                        animationSpec = readerBarsSlideAnimationSpec,
-                    ) +
-                        fadeOut(animationSpec = readerBarsFadeAnimationSpec),
-                    modifier = Modifier
-                        .weight(1f)
-                        .align(Alignment.End),
-                ) {
-                    ChapterNavigator(
-                        isRtl = isRtl,
-                        onNextChapter = onNextChapter,
-                        enabledNext = enabledNext,
-                        onPreviousChapter = onPreviousChapter,
-                        enabledPrevious = enabledPrevious,
-                        currentPage = currentPage,
-                        totalPages = totalPages,
-                        onPageIndexChange = onPageIndexChange,
-                        // SY -->
-                        isVerticalSlider = true,
-                        currentPageText = currentPageText,
-                        // SY <--
-                    )
+                NavBarType.VerticalRight -> {
+                    AnimatedVisibility(
+                        visible = visible,
+                        enter = slideInHorizontally(
+                            initialOffsetX = { it },
+                            animationSpec = readerBarsSlideAnimationSpec,
+                        ) +
+                            fadeIn(animationSpec = readerBarsFadeAnimationSpec),
+                        exit = slideOutHorizontally(
+                            targetOffsetX = { it },
+                            animationSpec = readerBarsSlideAnimationSpec,
+                        ) +
+                            fadeOut(animationSpec = readerBarsFadeAnimationSpec),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .align(Alignment.CenterEnd),
+                    ) {
+                        ChapterNavigator(
+                            isRtl = isRtl,
+                            onNextChapter = onNextChapter,
+                            enabledNext = enabledNext,
+                            onPreviousChapter = onPreviousChapter,
+                            enabledPrevious = enabledPrevious,
+                            currentPage = currentPage,
+                            totalPages = totalPages,
+                            onPageIndexChange = onPageIndexChange,
+                            // SY -->
+                            isVerticalSlider = true,
+                            currentPageText = currentPageText,
+                            // SY <--
+                        )
+                    }
                 }
+                // KMK <--
+                else -> Unit
             }
-            // KMK <--
-            else -> Spacer(modifier = Modifier.weight(1f))
         }
 
         // KMK -->

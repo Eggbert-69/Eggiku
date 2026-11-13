@@ -128,7 +128,10 @@ import kotlin.random.Random
                 var failed = false
                 client.newCachelessCallWithProgress(request, progressListener).execute().use { response ->
                     if (response.isSuccessful || response.code == 206) { // 206 indicates partial content
-                        saveResponseToFile(response, outputFile, downloadedBytes)
+                        // KMK -->
+                        // A full response (200) ignores the Range header: start the file over
+                        saveResponseToFile(response, outputFile, if (response.code == 206) downloadedBytes else 0L)
+                        // KMK <--
                         if (response.isSuccessful) {
                             return
                         }
@@ -159,6 +162,9 @@ import kotlin.random.Random
 
         // Use RandomAccessFile to write from specific position
         RandomAccessFile(outputFile, "rw").use { file ->
+            // KMK -->
+            if (startPosition == 0L) file.setLength(0L)
+            // KMK <--
             file.seek(startPosition)
             body.byteStream().use { input ->
                 val buffer = ByteArray(8 * 1024)
