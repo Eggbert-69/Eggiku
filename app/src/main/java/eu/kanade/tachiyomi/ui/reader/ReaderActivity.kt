@@ -240,7 +240,8 @@ class ReaderActivity : BaseActivity() {
         setContentView(binding.root)
         binding.setComposeOverlay()
         // KMK -->
-        EggikuSharpen.attach(binding.viewerContainer, lifecycleScope)
+        // On the outer frame: the inner one carries the colour-filter layer, which can swallow the effect
+        EggikuSharpen.attach(binding.readerContainer, lifecycleScope)
         // KMK <--
 
         if (viewModel.needsInit()) {
