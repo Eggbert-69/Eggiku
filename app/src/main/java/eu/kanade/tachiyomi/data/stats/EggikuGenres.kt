@@ -1,5 +1,7 @@
 package eu.kanade.tachiyomi.data.stats
 
+import eu.kanade.tachiyomi.extension.EggikuNsfwOverride
+import eu.kanade.tachiyomi.extension.ExtensionManager
 import tachiyomi.data.DatabaseHandler
 import tachiyomi.domain.manga.interactor.GetLibraryManga
 import tachiyomi.domain.manga.interactor.GetReadMangaNotInLibraryView
@@ -15,14 +17,39 @@ object EggikuGenres {
     /** Genres that say little about what a series is like */
     private val ignored = setOf("manga", "manhwa", "manhua", "webtoon", "webtoons", "comic", "comics", "full color", "long strip")
 
+    /** Adult tags never show up in genre stats */
+    private val adultWords = listOf(
+        "adult", "mature", "smut", "hentai", "ecchi", "erotic", "sexual", "sex", "nsfw", "18+", "r-18", "r18",
+        "explicit", "lewd", "porn", "nude", "nudity", "yaoi", "yuri", "doujin", "ahegao", "milf",
+    )
+
+    private fun isAdult(genre: String): Boolean {
+        val g = genre.lowercase()
+        return adultWords.any { g.contains(it) }
+    }
+
+    /** Sources from extensions marked 18+ (counting your own overrides) */
+    private fun adultSourceIds(): Set<Long> = try {
+        val overrides = EggikuNsfwOverride.overrides().get()
+        Injekt.get<ExtensionManager>().installedExtensionsFlow.value
+            .filter { EggikuNsfwOverride.isNsfw(it, overrides) }
+            .flatMap { ext -> ext.sources.map { it.id } }
+            .toSet()
+    } catch (_: Exception) {
+        emptySet()
+    }
+
     /** [from]/[to] are epoch millis; null means no limit */
     suspend fun shares(from: Long? = null, to: Long? = null, limit: Int = 6): List<Share> {
+        val adultSources = adultSourceIds()
         val everything = (Injekt.get<GetLibraryManga>().await() + Injekt.get<GetReadMangaNotInLibraryView>().await())
             .distinctBy { it.id }
+            // Series from 18+ sources are left out of genre stats entirely
+            .filterNot { it.manga.source in adultSources }
         val genresById = everything.associate { item ->
             item.id to item.manga.genre.orEmpty()
                 .map { it.trim() }
-                .filter { it.isNotEmpty() && it.lowercase() !in ignored }
+                .filter { it.isNotEmpty() && it.lowercase() !in ignored && !isAdult(it) }
                 .map { g -> g.lowercase().replaceFirstChar { it.titlecase() } }
                 .distinct()
         }
