@@ -1,0 +1,76 @@
+[
+  {
+    "build": 27,
+    "date": "2026-11-13",
+    "changes": [
+      "Patch notes: after an update you see everything new since the last version you opened, even if you skipped a few",
+      "Settings → About → What's new now shows every Eggiku update"
+    ]
+  },
+  {
+    "build": 26,
+    "date": "2026-11-13",
+    "changes": [
+      "Smart tab in the Library: ready-made smart categories (Ready to binge, Nearly caught up, Dropped?, Stalled, Finished but never read, Top shelf, Fresh, Ready for offline) plus your own, built from rules. Nothing ever moves out of your categories",
+      "Your own coloured tags on series, shown on covers. Search #tagname in the Library to find them",
+      "Star rating and tags now sit right under the cover; a reading timeline on series pages",
+      "Reader: chapter-end card with time spent, streak and a bookmark button",
+      "Reader: hold a page to pop the panel up; let go to close it",
+      "Reader: about how many minutes are left in the chapter, a glow on the last page, page-turn vibration",
+      "Stats: genre breakdown, reading speed, and a monthly Wrapped notification",
+      "Compare achievements with a friend using a code",
+      "Glass look on pop-up sheets, three new hidden themes, app icon choices and app fonts",
+      "Browse: source speed test, recent and saved searches",
+      "Undo after marking read or deleting downloads on series pages and in Updates"
+    ]
+  },
+  {
+    "build": 25,
+    "date": "2026-11-12",
+    "changes": [
+      "Achievement ladders with lots of small tiers, counting all your reading history",
+      "18 badges plus 5 secret ones, and a shareable achievements card",
+      "Reworked sharpening that's much easier to see"
+    ]
+  },
+  {
+    "build": 24,
+    "date": "2026-11-12",
+    "changes": [
+      "Live sharpening and full-resolution long strip pages for sharper zoom (separate for folded and unfolded)",
+      "One-hand mode and a skipped chapter warning in the reader",
+      "Migrations: best source pick with side-by-side comparison, unsure matches held back, chapter numbering lined up, move a whole source at once, nudges when a series keeps failing",
+      "Star ratings, Top shelf, Dead series finder, achievements, Wrapped card you can save, smart downloads",
+      "The egg intro now plays on every phone"
+    ]
+  },
+  {
+    "build": 23,
+    "date": "2026-11-12",
+    "changes": [
+      "Fixed Find duplicates closing the app",
+      "Fixed Settings closing the app with the phone unfolded",
+      "Egg intro animation when the app opens"
+    ]
+  },
+  {
+    "build": 22,
+    "date": "2026-11-12",
+    "changes": [
+      "Eggiku updates in More: see your build against the newest one and install it in one tap",
+      "Find duplicates: keeps the one you've read most and merges progress, with undo",
+      "Migration preview, report and Undo last migration",
+      "Send your latest backup straight to Google Drive"
+    ]
+  },
+  {
+    "build": 21,
+    "date": "2026-11-12",
+    "changes": [
+      "Home screen widget with your streak, weekly goal and continue-reading covers",
+      "Cooking shelf and \"cook until X new chapters\"",
+      "Continue reading: swipe to skip, plus nudges for series you binged then dropped",
+      "Quick sort your library into categories, share a series with a friend, two more hidden themes"
+    ]
+  }
+]

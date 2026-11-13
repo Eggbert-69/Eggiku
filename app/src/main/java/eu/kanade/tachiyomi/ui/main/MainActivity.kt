@@ -63,6 +63,7 @@ import eu.kanade.presentation.components.IndexingBannerBackgroundColor
 import eu.kanade.presentation.components.RestoringBannerBackgroundColor
 import eu.kanade.presentation.components.SyncingBannerBackgroundColor
 import eu.kanade.presentation.components.UpdatingBannerBackgroundColor
+import eu.kanade.presentation.more.EggikuPatchNotesDialog
 import eu.kanade.presentation.more.settings.screen.ConfigureExhDialog
 import eu.kanade.presentation.more.settings.screen.about.AboutScreen.Companion.getReleaseNotes
 import eu.kanade.presentation.more.settings.screen.about.WhatsNewDialog
@@ -77,6 +78,7 @@ import eu.kanade.tachiyomi.data.SyncStatus
 import eu.kanade.tachiyomi.data.achievements.EggikuCompare
 import eu.kanade.tachiyomi.data.backup.create.BackupCreateJob
 import eu.kanade.tachiyomi.data.cache.ChapterCache
+import eu.kanade.tachiyomi.data.changelog.EggikuChangelog
 import eu.kanade.tachiyomi.data.coil.MangaCoverMetadata
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
@@ -205,6 +207,7 @@ class MainActivity : BaseActivity() {
         val splashScreen = if (isLaunch) installSplashScreen() else null
         // KMK -->
         EggikuIntro.splashGone.value = false
+        EggikuIntro.introDone.value = false
         // KMK <--
 
         super.onCreate(savedInstanceState)
@@ -427,11 +430,25 @@ class MainActivity : BaseActivity() {
             var showChangelog by remember {
                 mutableStateOf(
                     // KMK -->
-                    (isReleaseBuildType && didMigration) ||
-                        (isPreviewBuildType && previewCurrentVersion > previewLastVersion.get()),
+                    // Eggiku shows its own patch notes below instead of Komikku's
+                    false && (
+                        (isReleaseBuildType && didMigration) ||
+                            (isPreviewBuildType && previewCurrentVersion > previewLastVersion.get())
+                        ),
                     // KMK <--
                 )
             }
+            // KMK -->
+            // Eggiku patch notes: everything since the last build you opened, after the intro
+            var eggikuNotes by remember { mutableStateOf(EggikuChangelog.unseen(context)) }
+            val introDone by EggikuIntro.introDone
+            if (eggikuNotes.isNotEmpty() && (introDone || !isLaunch)) {
+                EggikuPatchNotesDialog(eggikuNotes) {
+                    EggikuChangelog.markSeen(context)
+                    eggikuNotes = emptyList()
+                }
+            }
+            // KMK <--
             if (showChangelog) {
                 // KMK -->
                 WhatsNewDialog(

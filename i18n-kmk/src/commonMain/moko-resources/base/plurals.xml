@@ -52,4 +52,8 @@
         <item quantity="one">About %d minute left in this chapter</item>
         <item quantity="other">About %d minutes left in this chapter</item>
     </plurals>
+    <plurals name="patch_notes_missed">
+        <item quantity="one">What's new in Eggiku</item>
+        <item quantity="other">What's new in your last %d updates</item>
+    </plurals>
 </resources>

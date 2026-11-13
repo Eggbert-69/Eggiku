@@ -852,4 +852,7 @@
     <string name="search_recent">Recent searches</string>
     <string name="search_clear">Clear</string>
     <string name="search_hold_hint">Hold a search to save it or unsave it.</string>
+    <string name="patch_notes_title">What's new in Eggiku</string>
+    <string name="patch_notes_build">Build %1$d</string>
+    <string name="patch_notes_ok">Got it</string>
 </resources>

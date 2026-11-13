@@ -27,6 +27,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.domain.ui.model.AppTheme
 import eu.kanade.presentation.components.AppBar
+import eu.kanade.presentation.more.EggikuPatchNotesScreen
 import eu.kanade.presentation.more.LogoHeader
 import eu.kanade.presentation.more.settings.screen.EggikuHiddenThemes
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
@@ -179,29 +180,8 @@ class AboutScreen : Screen() {
                                 )
                             }
                         },
-                        onPreferenceClick = {
-                            if (!isCheckingWhatsNew) {
-                                scope.launch {
-                                    isCheckingWhatsNew = true
-
-                                    getReleaseNotes(
-                                        context = context,
-                                        onAvailableUpdate = { result ->
-                                            val whatsNewScreen = WhatsNewScreen(
-                                                currentVersion = BuildConfig.VERSION_NAME,
-                                                versionName = result.release.version,
-                                                changelogInfo = result.release.info,
-                                                releaseLink = result.release.releaseLink,
-                                            )
-                                            navigator.push(whatsNewScreen)
-                                        },
-                                        onFinish = {
-                                            isCheckingWhatsNew = false
-                                        },
-                                    )
-                                }
-                            }
-                        },
+                        // Eggiku: our own patch notes for every update
+                        onPreferenceClick = { navigator.push(EggikuPatchNotesScreen()) },
                     )
                 }
 

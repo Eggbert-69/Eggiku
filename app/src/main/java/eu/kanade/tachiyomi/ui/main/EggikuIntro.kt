@@ -40,6 +40,9 @@ import uy.kohesive.injekt.api.get
 object EggikuIntro {
     /** Flipped by MainActivity the moment the system launch screen lets go */
     val splashGone = mutableStateOf(false)
+
+    /** True once the intro has finished (or was skipped or turned off) */
+    val introDone = mutableStateOf(false)
 }
 
 private val SplashBackground = Color(0xFF111111)
@@ -51,6 +54,7 @@ fun EggikuIntroOverlay() {
     val enabled = remember { Injekt.get<UiPreferences>().eggikuIntroAnimation().get() }
     val reduceMotion = rememberReduceMotion()
     var show by rememberSaveable { mutableStateOf(enabled && !reduceMotion) }
+    LaunchedEffect(show) { if (!show) EggikuIntro.introDone.value = true }
     if (!show) return
 
     val image = AnimatedImageVector.animatedVectorResource(R.drawable.eggiku_splash_egg)
