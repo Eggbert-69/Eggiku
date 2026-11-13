@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku golden egg icon (unlocked through achievements) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillType="evenOdd"
+        android:pathData="M54,25C67,25 76,44 76,58C76,72 66.5,82 54,82C41.5,82 32,72 32,58C32,44 41,25 54,25ZM52.6,53.5C48.5,50.6 43.5,50 39.5,51.2L39.5,66.8C43.5,65.6 48.5,66.2 52.6,69.2ZM55.4,53.5C59.5,50.6 64.5,50 68.5,51.2L68.5,66.8C64.5,65.6 59.5,66.2 55.4,69.2Z">
+        <aapt:attr xmlns:aapt="http://schemas.android.com/aapt" name="android:fillColor">
+            <gradient android:type="linear" android:startX="36" android:startY="28" android:endX="72" android:endY="82">
+                <item android:offset="0" android:color="#FFFFF1B0" />
+                <item android:offset="0.45" android:color="#FFFFC23D" />
+                <item android:offset="1" android:color="#FFB8860B" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#FFFFF8DC" android:pathData="M28,36l1.2,3l3,1.2l-3,1.2l-1.2,3l-1.2,-3l-3,-1.2l3,-1.2zM80,30l1,2.4l2.4,1l-2.4,1l-1,2.4l-1,-2.4l-2.4,-1l2.4,-1zM82,70l0.8,2l2,0.8l-2,0.8l-0.8,2l-0.8,-2l-2,-0.8l2,-0.8z" />
+</vector>

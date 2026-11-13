@@ -5,6 +5,7 @@ import com.materialkolor.PaletteStyle
 import eu.kanade.domain.ui.model.AppTheme
 import eu.kanade.domain.ui.model.TabletUiMode
 import eu.kanade.domain.ui.model.ThemeMode
+import eu.kanade.presentation.theme.EggikuFont
 import tachiyomi.core.common.preference.Preference
 import tachiyomi.core.common.preference.PreferenceStore
 import tachiyomi.core.common.preference.getEnum
@@ -49,6 +50,9 @@ class UiPreferences(
         AppTheme.GLIB_GLORB -> glibGlorbUnlocked().get()
         else -> theme.name in unlockedHiddenThemes().get()
     }
+
+    // App font (bundled open fonts, or the phone's own)
+    fun eggikuFont() = preferenceStore.getEnum("eggiku_font", EggikuFont.SYSTEM)
 
     // Plays the egg-cracking intro all the way through when the app opens
     fun eggikuIntroAnimation() = preferenceStore.getBoolean("eggiku_intro_animation", true)

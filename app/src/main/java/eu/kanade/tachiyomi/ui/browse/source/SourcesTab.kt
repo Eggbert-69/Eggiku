@@ -66,6 +66,10 @@ fun Screen.sourcesTab(
                 iconTint = if (state.hideNsfw) LocalContentColor.current else Color.Unspecified,
                 onClick = { screenModel.toggleNsfwOnly() },
             ),
+            AppBar.OverflowAction(
+                title = stringResource(KMR.strings.speed_title),
+                onClick = { navigator.push(EggikuSpeedTestScreen()) },
+            ),
             // KMK <--
         ).let {
             when (smartSearchConfig) {

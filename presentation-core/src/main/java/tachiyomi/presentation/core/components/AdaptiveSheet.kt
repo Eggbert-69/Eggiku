@@ -47,6 +47,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import tachiyomi.presentation.core.components.material.LocalGlassEnabled
 import kotlin.math.roundToInt
 
 @Composable
@@ -95,7 +96,13 @@ fun AdaptiveSheet(
                     .padding(vertical = 16.dp)
                     .then(modifier),
                 shape = MaterialTheme.shapes.extraLarge,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                // KMK -->
+                color = if (LocalGlassEnabled.current) {
+                    MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.88f)
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHigh
+                },
+                // KMK <--
                 content = {
                     BackHandler(
                         enabled = remember { derivedStateOf { alpha > 0f } }.value,
@@ -180,7 +187,13 @@ fun AdaptiveSheet(
                     .navigationBarsPadding()
                     .statusBarsPadding(),
                 shape = MaterialTheme.shapes.extraLarge,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                // KMK -->
+                color = if (LocalGlassEnabled.current) {
+                    MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.88f)
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHigh
+                },
+                // KMK <--
                 content = {
                     BackHandler(
                         enabled = anchoredDraggableState.targetValue == 0,

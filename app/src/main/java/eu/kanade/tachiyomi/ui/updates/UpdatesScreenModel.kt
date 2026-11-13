@@ -1,7 +1,9 @@
 package eu.kanade.tachiyomi.ui.updates
 
 import android.app.Application
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.util.fastFilter
@@ -40,6 +42,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import logcat.LogPriority
+import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.preference.TriState
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.core.common.util.lang.launchNonCancellable
@@ -54,6 +57,8 @@ import tachiyomi.domain.source.service.SourceManager
 import tachiyomi.domain.updates.interactor.GetUpdates
 import tachiyomi.domain.updates.model.UpdatesWithRelations
 import tachiyomi.domain.updates.service.UpdatesPreferences
+import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.time.ZonedDateTime
@@ -285,12 +290,27 @@ class UpdatesScreenModel(
      */
     fun markUpdatesRead(updates: List<UpdatesItem>, read: Boolean) {
         screenModelScope.launchIO {
+            // KMK -->
+            val chapters = updates.mapNotNull { getChapter.await(it.update.chapterId) }
+            val previous = chapters.map { ChapterUpdate(id = it.id, read = it.read, lastPageRead = it.lastPageRead) }
+            // KMK <--
             setReadStatus.await(
                 read = read,
-                chapters = updates
-                    .mapNotNull { getChapter.await(it.update.chapterId) }
-                    .toTypedArray(),
+                chapters = chapters.toTypedArray(),
             )
+            // KMK -->
+            val app = Injekt.get<Application>()
+            val result = snackbarHostState.showSnackbar(
+                message = app.stringResource(
+                    if (read) KMR.strings.undo_marked_read else KMR.strings.undo_marked_unread,
+                    chapters.size,
+                ),
+                actionLabel = app.stringResource(MR.strings.action_undo),
+                duration = SnackbarDuration.Short,
+                withDismissAction = true,
+            )
+            if (result == SnackbarResult.ActionPerformed) updateChapter.awaitAll(previous)
+            // KMK <--
         }
         toggleAllSelection(false)
     }

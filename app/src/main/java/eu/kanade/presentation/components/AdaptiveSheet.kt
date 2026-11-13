@@ -14,6 +14,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import eu.kanade.presentation.util.ScreenTransition
 import eu.kanade.presentation.util.isTabletUi
+import tachiyomi.presentation.core.components.material.EggikuBlurBehind
 import tachiyomi.presentation.core.components.AdaptiveSheet as AdaptiveSheetImpl
 
 @OptIn(InternalVoyagerApi::class)
@@ -72,6 +73,9 @@ fun AdaptiveSheet(
         onDismissRequest = onDismissRequest,
         properties = dialogProperties,
     ) {
+        // KMK -->
+        EggikuBlurBehind()
+        // KMK <--
         AdaptiveSheetImpl(
             isTabletUi = isTabletUi,
             enableSwipeDismiss = enableSwipeDismiss,

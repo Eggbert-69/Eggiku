@@ -24,12 +24,15 @@ import eu.kanade.presentation.theme.colorscheme.CatppuccinColorScheme
 import eu.kanade.presentation.theme.colorscheme.CloudflareColorScheme
 import eu.kanade.presentation.theme.colorscheme.CottoncandyColorScheme
 import eu.kanade.presentation.theme.colorscheme.CustomColorScheme
+import eu.kanade.presentation.theme.colorscheme.DinoEggColorScheme
 import eu.kanade.presentation.theme.colorscheme.DoomColorScheme
 import eu.kanade.presentation.theme.colorscheme.DraculaColorScheme
 import eu.kanade.presentation.theme.colorscheme.EverforestColorScheme
 import eu.kanade.presentation.theme.colorscheme.GlibGlorbColorScheme
+import eu.kanade.presentation.theme.colorscheme.GoldenHourColorScheme
 import eu.kanade.presentation.theme.colorscheme.GreenAppleColorScheme
 import eu.kanade.presentation.theme.colorscheme.GruvboxColorScheme
+import eu.kanade.presentation.theme.colorscheme.HotSauceColorScheme
 import eu.kanade.presentation.theme.colorscheme.KanagawaColorScheme
 import eu.kanade.presentation.theme.colorscheme.LavenderColorScheme
 import eu.kanade.presentation.theme.colorscheme.MatrixColorScheme
@@ -111,12 +114,13 @@ private fun GlassProvider(content: @Composable () -> Unit) {
         LocalGlassEnabled provides glassEnabled,
         LocalLargeBadges provides largeBadges,
     ) {
-        if (glassEnabled) {
-            // Rounder, bubblier corners on cards, covers, menus, sheets and dialogs
+        val font = remember { Injekt.get<UiPreferences>().eggikuFont().get() }
+        if (glassEnabled || font != EggikuFont.SYSTEM) {
             MaterialTheme(
                 colorScheme = MaterialTheme.colorScheme,
-                shapes = BubblyShapes,
-                typography = MaterialTheme.typography,
+                // Rounder, bubblier corners on cards, covers, menus, sheets and dialogs
+                shapes = if (glassEnabled) BubblyShapes else MaterialTheme.shapes,
+                typography = EggikuFonts.apply(MaterialTheme.typography, font),
                 content = content,
             )
         } else {
@@ -235,5 +239,8 @@ private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(
     AppTheme.GLIB_GLORB to GlibGlorbColorScheme,
     AppTheme.SUNNY_SIDE_UP to SunnySideUpColorScheme,
     AppTheme.MIDNIGHT_ARCADE to MidnightArcadeColorScheme,
+    AppTheme.HOT_SAUCE to HotSauceColorScheme,
+    AppTheme.GOLDEN_HOUR to GoldenHourColorScheme,
+    AppTheme.DINO_EGG to DinoEggColorScheme,
     // KMK <--
 )

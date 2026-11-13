@@ -146,6 +146,11 @@ class SettingsSearchScreen : Screen() {
                 EggikuSecretRocket(modifier = Modifier.padding(contentPadding))
                 return@Scaffold
             }
+            if (EggikuHiddenThemes.isDinoSecret(textFieldState.text.toString())) {
+                focusManager.clearFocus()
+                EggikuSecretDinoEgg(modifier = Modifier.padding(contentPadding))
+                return@Scaffold
+            }
             if (EggikuHiddenThemes.isArcadeSecret(textFieldState.text.toString())) {
                 focusManager.clearFocus()
                 EggikuSecretCoin(modifier = Modifier.padding(contentPadding))

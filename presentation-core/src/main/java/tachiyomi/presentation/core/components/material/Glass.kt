@@ -1,10 +1,13 @@
 package tachiyomi.presentation.core.components.material
 
+import android.os.Build
+import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
@@ -16,8 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogWindowProvider
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
@@ -107,6 +112,26 @@ fun Modifier.glass(
                     strokeWidth = 1.dp.toPx(),
                 )
             }
+    }
+}
+// KMK <--
+
+// KMK -->
+/**
+ * Eggiku: frosts everything behind a dialog or sheet window (Android 12 and newer). Call it from
+ * inside the dialog's content; does nothing when the glass look is off.
+ */
+@Composable
+fun EggikuBlurBehind(radiusPx: Int = 60) {
+    if (!LocalGlassEnabled.current || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val window = (view.parent as? DialogWindowProvider)?.window
+        if (window != null && window.windowManager.isCrossWindowBlurEnabled) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
+            window.attributes = window.attributes.apply { blurBehindRadius = radiusPx }
+        }
+        onDispose {}
     }
 }
 // KMK <--

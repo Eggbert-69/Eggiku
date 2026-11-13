@@ -92,6 +92,15 @@ fun GlobalSearchScreen(
             }
         },
     ) { paddingValues ->
+        // KMK -->
+        if (state.items.isEmpty()) {
+            EggikuSearchHistoryPanel(contentPadding = paddingValues) { query ->
+                onChangeSearchQuery(query)
+                onSearch(query)
+            }
+            return@Scaffold
+        }
+        // KMK <--
         GlobalSearchContent(
             items = state.filteredItems,
             contentPadding = paddingValues,

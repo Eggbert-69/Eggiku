@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku alien egg icon -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- antennae -->
+    <path android:strokeColor="#FF7CFF6B" android:strokeWidth="2.5" android:strokeLineCap="round" android:pathData="M46,30L41,20M62,30L67,20" />
+    <path android:fillColor="#FF7CFF6B" android:pathData="M41,20m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0M67,20m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <!-- egg with two big alien eyes cut out -->
+    <path android:fillType="evenOdd" android:fillColor="#FF7CFF6B"
+        android:pathData="M54,25C67,25 76,44 76,58C76,72 66.5,82 54,82C41.5,82 32,72 32,58C32,44 41,25 54,25ZM40,54C40,49 44,47 48,49C51,51 52,56 50,60C48,63 42,62 40.5,58ZM68,54C68,49 64,47 60,49C57,51 56,56 58,60C60,63 66,62 67.5,58Z" />
+    <!-- stars -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M24,30l1,2.5l2.5,1l-2.5,1l-1,2.5l-1,-2.5l-2.5,-1l2.5,-1zM84,40l0.8,2l2,0.8l-2,0.8l-0.8,2l-0.8,-2l-2,-0.8l2,-0.8zM80,78l0.7,1.6l1.6,0.7l-1.6,0.7l-0.7,1.6l-0.7,-1.6l-1.6,-0.7l1.6,-0.7z" />
+</vector>
