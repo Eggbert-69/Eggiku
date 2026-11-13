@@ -67,6 +67,7 @@ import dev.chrisbanes.haze.hazeSource
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.browse.RelatedMangaTitle
+import eu.kanade.presentation.components.EggikuSpoilerShield
 import eu.kanade.presentation.components.relativeDateText
 import eu.kanade.presentation.manga.components.ChapterDownloadAction
 import eu.kanade.presentation.manga.components.ChapterHeader
@@ -1335,6 +1336,14 @@ private fun LazyListScope.sharedChapterItems(
     onChapterSelected: (ChapterList.Item, Boolean, Boolean) -> Unit,
     onChapterSwipe: (ChapterList.Item, LibraryPreferences.ChapterSwipeAction) -> Unit,
 ) {
+    // KMK -->
+    // The next chapter to read stays visible; unread ones after it are shielded
+    val nextUnreadId = chapters.asSequence()
+        .filterIsInstance<ChapterList.Item>()
+        .filter { !it.chapter.read }
+        .minWithOrNull(compareBy({ it.chapter.chapterNumber < 0 }, { it.chapter.chapterNumber }, { -it.chapter.sourceOrder }))
+        ?.id
+    // KMK <--
     items(
         items = chapters,
         key = { item ->
@@ -1348,6 +1357,9 @@ private fun LazyListScope.sharedChapterItems(
         contentType = { MangaScreenItem.CHAPTER },
     ) { item ->
         val haptic = LocalHapticFeedback.current
+        // KMK -->
+        val spoilerShield by remember { EggikuSpoilerShield.pref() }.collectAsState()
+        // KMK <--
 
         when (item) {
             is ChapterList.MissingCount -> {
@@ -1396,6 +1408,9 @@ private fun LazyListScope.sharedChapterItems(
                     selected = item.selected,
                     downloadIndicatorEnabled =
                     !isAnyChapterSelected && !(mergedData?.manga?.get(item.chapter.mangaId) ?: manga).isLocal(),
+                    // KMK -->
+                    spoiler = spoilerShield && !item.chapter.read && item.id != nextUnreadId,
+                    // KMK <--
                     downloadStateProvider = { item.downloadState },
                     downloadProgressProvider = { item.downloadProgress },
                     chapterSwipeStartAction = chapterSwipeStartAction,

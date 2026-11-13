@@ -16,6 +16,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.category.visualName
+import eu.kanade.presentation.components.EggikuSpoilerShield
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.widget.TriStateListDialog
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
@@ -288,6 +289,11 @@ object SettingsLibraryScreen : SearchableSettings {
                     title = stringResource(MR.strings.pref_hide_missing_chapter_indicators),
                 ),
                 // KMK -->
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = EggikuSpoilerShield.pref(),
+                    title = stringResource(KMR.strings.spoiler_shield),
+                    subtitle = stringResource(KMR.strings.spoiler_shield_summary),
+                ),
                 Preference.PreferenceItem.SwitchPreference(
                     preference = libraryPreferences.showEmptyCategoriesSearch(),
                     title = stringResource(KMR.strings.pref_show_empty_categories_search),

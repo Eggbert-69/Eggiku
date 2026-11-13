@@ -76,6 +76,24 @@ internal fun GeneralPage(screenModel: ReaderSettingsScreenModel) {
         pref = screenModel.preferences.eggikuEdgeGlow(),
     )
     CheckboxItem(
+        label = stringResource(KMR.strings.eggiku_page_tint),
+        pref = screenModel.preferences.eggikuPageTint(),
+    )
+    val tiltSpeed by screenModel.preferences.eggikuTiltSpeed().collectAsState()
+    SettingsChipRow(KMR.strings.tilt_scroll_speed) {
+        listOf(
+            KMR.strings.tilt_speed_gentle to 1,
+            KMR.strings.tilt_speed_normal to 2,
+            KMR.strings.tilt_speed_fast to 3,
+        ).map { (labelRes, value) ->
+            FilterChip(
+                selected = tiltSpeed == value,
+                onClick = { screenModel.preferences.eggikuTiltSpeed().set(value) },
+                label = { Text(stringResource(labelRes)) },
+            )
+        }
+    }
+    CheckboxItem(
         label = stringResource(KMR.strings.eggiku_hold_to_peek),
         pref = screenModel.preferences.eggikuHoldToPeek(),
     )

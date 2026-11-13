@@ -136,6 +136,12 @@ class ReaderPreferences(
 
     // Vibration on page turns: 0 off, 1 light, 2 medium, 3 strong
     fun eggikuPageHaptics() = preferenceStore.getInt("eggiku_page_haptics", 1)
+
+    // Menus, bars and the mini player take on the colours of the page you're reading
+    fun eggikuPageTint() = preferenceStore.getBoolean("eggiku_page_tint", true)
+
+    // How strongly tilting scrolls webtoons: 1 gentle, 2 normal, 3 fast
+    fun eggikuTiltSpeed() = preferenceStore.getInt("eggiku_tilt_speed", 2)
     // KMK <--
 
     fun readerHideThreshold() = preferenceStore.getEnum("reader_hide_threshold", ReaderHideThreshold.LOW)

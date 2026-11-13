@@ -75,8 +75,10 @@ import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.reader.ChapterListDialog
 import eu.kanade.presentation.reader.DisplayRefreshHost
 import eu.kanade.presentation.reader.EggikuEdgeGlow
+import eu.kanade.presentation.reader.EggikuEggTimerOverlay
 import eu.kanade.presentation.reader.EggikuGlowEdge
 import eu.kanade.presentation.reader.EggikuPeekOverlay
+import eu.kanade.presentation.reader.EggikuTiltIndicator
 import eu.kanade.presentation.reader.OrientationSelectDialog
 import eu.kanade.presentation.reader.ReaderContentOverlay
 import eu.kanade.presentation.reader.ReaderPageActionsDialog
@@ -103,10 +105,14 @@ import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.AddToLibraryFirst
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Error
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Success
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuEggTimer
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuHaptics
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPageTint
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPanelPeek
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuSharpen
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuTilt
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuTiltScroller
 import eu.kanade.tachiyomi.ui.reader.loader.HttpPageLoader
 import eu.kanade.tachiyomi.ui.reader.model.ReaderChapter
 import eu.kanade.tachiyomi.ui.reader.model.ReaderPage
@@ -253,6 +259,17 @@ class ReaderActivity : BaseActivity() {
         setContentView(binding.root)
         binding.setComposeOverlay()
         // KMK -->
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                try {
+                    EggikuTilt.active.collect { on -> if (on) eggikuTiltScroller.start() else eggikuTiltScroller.stop() }
+                } finally {
+                    eggikuTiltScroller.stop()
+                }
+            }
+        }
+        // KMK <--
+        // KMK -->
         // On the outer frame: the inner one carries the colour-filter layer, which can swallow the effect
         EggikuSharpen.attach(binding.readerContainer, lifecycleScope)
         // A little tap on each page turn, a firmer one at the end of a chapter
@@ -364,8 +381,11 @@ class ReaderActivity : BaseActivity() {
 
     private fun ReaderActivityBinding.setComposeOverlay(): Unit = composeOverlay.setComposeContent {
         // KMK -->
+        val pageTintOn by readerPreferences.eggikuPageTint().collectAsState()
+        val pageTint by EggikuPageTint.color.collectAsState()
         TachiyomiTheme(
-            seedColor = seedColorState().takeIf { themeCoverBased },
+            seedColor = pageTint?.takeIf { pageTintOn }?.let { ComposeColor(it) }
+                ?: seedColorState().takeIf { themeCoverBased },
             typography = MaterialTheme.typography.copy(
                 bodyLarge = MaterialTheme.typography.bodySmall,
             ),
@@ -398,6 +418,11 @@ class ReaderActivity : BaseActivity() {
                 ContentOverlay(state = state)
 
                 AppBars(state = state)
+
+                // KMK -->
+                EggikuTiltIndicator(menuVisible = state.menuVisible, isWebtoon = state.viewer is WebtoonViewer)
+                EggikuEggTimerOverlay(menuVisible = state.menuVisible)
+                // KMK <--
             }
 
             // KMK -->
@@ -599,6 +624,11 @@ class ReaderActivity : BaseActivity() {
      */
     override fun onDestroy() {
         super.onDestroy()
+        // KMK -->
+        EggikuPageTint.reset()
+        EggikuEggTimer.onReaderClosed()
+        EggikuTilt.off()
+        // KMK <--
         viewModel.state.value.viewer?.destroy()
         config = null
         menuToggleToast?.cancel()
@@ -805,6 +835,10 @@ class ReaderActivity : BaseActivity() {
         }
 
         val isHttpSource = viewModel.getSource() is HttpSource
+        // KMK -->
+        val eggSession by EggikuEggTimer.session.collectAsState()
+        val tiltActive by EggikuTilt.active.collectAsState()
+        // KMK <--
 
         val cropBorderPaged by readerPreferences.cropBorders().collectAsState()
         val cropBorderWebtoon by readerPreferences.cropBordersWebtoon().collectAsState()
@@ -863,6 +897,10 @@ class ReaderActivity : BaseActivity() {
             totalPages = state.totalPages,
             // KMK -->
             eggikuMinutesLeft = EggikuReadingSpeed.minutesLeft(state.totalPages - state.currentPage),
+            eggTimerActive = eggSession != null,
+            onClickEggTimer = { EggikuEggTimer.pickerOpen.value = true },
+            tiltActive = tiltActive,
+            onClickTilt = ::toggleEggikuTilt.takeIf { state.viewer is WebtoonViewer },
             // KMK <--
             onPageIndexChange = {
                 isScrollingThroughPages = true
@@ -926,6 +964,23 @@ class ReaderActivity : BaseActivity() {
     }
 
     // KMK -->
+    private val eggikuTiltScroller by lazy {
+        EggikuTiltScroller(
+            context = this,
+            target = { (viewModel.state.value.viewer as? WebtoonViewer)?.recycler },
+            paused = { viewModel.state.value.menuVisible || viewModel.state.value.viewer !is WebtoonViewer },
+            speedLevel = { readerPreferences.eggikuTiltSpeed().get() },
+        )
+    }
+
+    private fun toggleEggikuTilt() {
+        if (!eggikuTiltScroller.available) {
+            toast(KMR.strings.tilt_scroll_unavailable)
+            return
+        }
+        if (EggikuTilt.toggle()) toast(KMR.strings.tilt_scroll_on_hint, Toast.LENGTH_LONG)
+    }
+
     @Composable
     private fun seedColorState(): ComposeColor? {
         val state by viewModel.state.collectAsState()

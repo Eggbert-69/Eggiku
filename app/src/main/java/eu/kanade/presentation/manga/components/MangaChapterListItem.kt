@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import eu.kanade.presentation.components.EggikuSpoilerText
 import eu.kanade.tachiyomi.data.download.model.Download
 import me.saket.swipe.SwipeableActionsBox
 import tachiyomi.domain.library.service.LibraryPreferences
@@ -68,6 +69,9 @@ fun MangaChapterListItem(
     onDownloadClick: ((ChapterDownloadAction) -> Unit)?,
     onChapterSwipe: (LibraryPreferences.ChapterSwipeAction) -> Unit,
     modifier: Modifier = Modifier,
+    // KMK -->
+    spoiler: Boolean = false,
+    // KMK <--
 ) {
     // KMK -->
     val swipeBackground = MaterialTheme.colorScheme.primaryContainer
@@ -139,14 +143,15 @@ fun MangaChapterListItem(
                             tint = MaterialTheme.colorScheme.primary,
                         )
                     }
-                    Text(
+                    // KMK -->
+                    EggikuSpoilerText(
                         text = title,
+                        shielded = spoiler,
                         style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                         onTextLayout = { textHeight = it.size.height },
                         color = LocalContentColor.current.copy(alpha = if (read) DISABLED_ALPHA else 1f),
                     )
+                    // KMK <--
                 }
 
                 Row {

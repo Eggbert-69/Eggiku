@@ -43,6 +43,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import eu.kanade.presentation.components.EggikuSpoilerShield
+import eu.kanade.presentation.components.EggikuSpoilerText
 import eu.kanade.presentation.manga.components.ChapterDownloadAction
 import eu.kanade.presentation.manga.components.ChapterDownloadIndicator
 import eu.kanade.presentation.manga.components.DotSeparatorText
@@ -69,6 +71,7 @@ import tachiyomi.presentation.core.components.material.Icon
 import tachiyomi.presentation.core.components.material.IconButton
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.util.collectAsState
 import tachiyomi.presentation.core.util.selectedBackground
 
 internal fun LazyListScope.updatesLastUpdatedItem(
@@ -397,16 +400,18 @@ private fun UpdatesUiItem(
                         )
                         Spacer(modifier = Modifier.width(2.dp))
                     }
-                    Text(
+                    // KMK -->
+                    val spoilerShield by remember { EggikuSpoilerShield.pref() }.collectAsState()
+                    EggikuSpoilerText(
                         text = update.chapterName,
-                        maxLines = 1,
+                        shielded = spoilerShield && !update.read,
                         style = MaterialTheme.typography.bodySmall,
                         color = LocalContentColor.current.copy(alpha = textAlpha),
-                        overflow = TextOverflow.Ellipsis,
                         onTextLayout = { textHeight = it.size.height },
                         modifier = Modifier
                             .weight(weight = 1f, fill = false),
                     )
+                    // KMK <--
                     if (readProgress != null) {
                         DotSeparatorText()
                         Text(

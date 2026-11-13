@@ -909,4 +909,24 @@
     <string name="avatar_slot_back_effect">Aura</string>
     <string name="avatar_slot_background">Background</string>
     <string name="avatar_slot_border">Border</string>
+    <!-- Page tint, tilt to scroll, egg timer, spoiler shield -->
+    <string name="eggiku_page_tint">Tint menus with the page\'s colors</string>
+    <string name="tilt_scroll">Tilt to scroll</string>
+    <string name="tilt_scroll_speed">Tilt to scroll speed (webtoons)</string>
+    <string name="tilt_speed_gentle">Gentle</string>
+    <string name="tilt_speed_normal">Normal</string>
+    <string name="tilt_speed_fast">Fast</string>
+    <string name="tilt_scroll_unavailable">This phone doesn\'t have the motion sensor tilt to scroll needs</string>
+    <string name="tilt_scroll_on_hint">Tilt to scroll is on. Tip the top of your phone away to scroll down, toward you to go back up.</string>
+    <string name="egg_timer_title">Egg timer</string>
+    <string name="egg_timer_explain">Pick a reading session. An egg cooks in the corner while you read and hatches when you\'re done.</string>
+    <string name="egg_timer_length">%1$d min</string>
+    <string name="egg_timer_cancel">Stop the timer</string>
+    <string name="egg_timer_hatched">Your egg hatched!</string>
+    <string name="egg_timer_again">Go again</string>
+    <string name="egg_carton_title">Egg carton</string>
+    <string name="egg_carton_empty">No eggs this week yet. Start an egg timer from the reader\'s bottom bar.</string>
+    <string name="egg_carton_overflow">(+%1$d more than fit)</string>
+    <string name="spoiler_shield">Spoiler shield</string>
+    <string name="spoiler_shield_summary">Blur the titles of unread chapters past the next one. Tap a title to show it.</string>
 </resources>

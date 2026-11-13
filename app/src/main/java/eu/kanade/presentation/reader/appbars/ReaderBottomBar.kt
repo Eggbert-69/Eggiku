@@ -3,12 +3,16 @@ package eu.kanade.presentation.reader.appbars
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ScreenRotation
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FormatListNumbered
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Public
+import androidx.compose.material.icons.outlined.ScreenRotation
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,6 +57,10 @@ fun ReaderBottomBar(
     modifier: Modifier = Modifier,
     // KMK -->
     onClickMusic: (() -> Unit)? = null,
+    eggTimerActive: Boolean = false,
+    onClickEggTimer: (() -> Unit)? = null,
+    tiltActive: Boolean = false,
+    onClickTilt: (() -> Unit)? = null,
     // KMK <--
 ) {
     // KMK -->
@@ -191,6 +199,24 @@ fun ReaderBottomBar(
                     imageVector = Icons.Outlined.MusicNote,
                     contentDescription = stringResource(KMR.strings.music_reader_button),
                     tint = iconColor,
+                )
+            }
+        }
+        if (onClickEggTimer != null) {
+            IconButton(onClick = onClickEggTimer) {
+                Icon(
+                    imageVector = if (eggTimerActive) Icons.Filled.Timer else Icons.Outlined.Timer,
+                    contentDescription = stringResource(KMR.strings.egg_timer_title),
+                    tint = iconColor,
+                )
+            }
+        }
+        if (onClickTilt != null) {
+            IconButton(onClick = onClickTilt) {
+                Icon(
+                    imageVector = if (tiltActive) Icons.Filled.ScreenRotation else Icons.Outlined.ScreenRotation,
+                    contentDescription = stringResource(KMR.strings.tilt_scroll),
+                    tint = if (tiltActive) iconColor else iconColor.copy(alpha = 0.6f),
                 )
             }
         }

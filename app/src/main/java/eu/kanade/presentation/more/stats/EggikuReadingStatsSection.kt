@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -64,6 +65,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import eu.kanade.presentation.components.drawEggikuHatched
+import eu.kanade.presentation.components.eggikuEggColor
+import eu.kanade.tachiyomi.data.stats.EggikuEggCarton
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.stats.EggikuAchievementsScreen
@@ -126,7 +130,77 @@ fun LazyListScope.eggikuReadingTopItems(data: EggikuReadingData, onOpenRecaps: (
     item(key = "eggiku_week") {
         SectionCard(KMR.strings.stats_this_week) { WeekCard(data) }
     }
+    item(key = "eggiku_carton") {
+        SectionCard(KMR.strings.egg_carton_title) { EggCartonCard() }
+    }
 }
+
+// region Egg carton
+
+/** This week's hatched egg timer sessions, in a 12-egg carton */
+@Composable
+private fun EggCartonCard() {
+    val flow = remember { EggikuEggCarton.changes() }
+    val eggs by flow.collectAsState(initial = remember { EggikuEggCarton.all() })
+    val week = remember(eggs) { EggikuEggCarton.thisWeek(eggs) }
+    val cup = MaterialTheme.colorScheme.surfaceContainerHighest
+    val carton = MaterialTheme.colorScheme.secondaryContainer
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(carton, RoundedCornerShape(18.dp))
+                .padding(10.dp),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                (0 until 2).forEach { row ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        (0 until 6).forEach { column ->
+                            val egg = week.getOrNull(row * 6 + column)
+                            val scale by animateFloatAsState(if (egg != null) 1f else 0.9f, jiggle(), label = "cup")
+                            Canvas(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f)
+                                    .scale(scale),
+                            ) {
+                                drawCircle(cup, radius = size.minDimension / 2f)
+                                if (egg != null) {
+                                    val h = size.height * 0.92f
+                                    val w = h * 36f / 46f
+                                    drawEggikuHatched(
+                                        topLeft = Offset((size.width - w) / 2f, size.height - h * 1.02f),
+                                        size = Size(w, h),
+                                        shell = eggikuEggColor(egg.minutes),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        val minutes = week.sumOf { it.minutes }
+        Text(
+            text = if (week.isEmpty()) {
+                stringResource(KMR.strings.egg_carton_empty)
+            } else {
+                pluralStringResource(KMR.plurals.egg_carton_week, week.size, week.size, minutes) +
+                    if (week.size > 12) " " + stringResource(KMR.strings.egg_carton_overflow, week.size - 12) else ""
+            },
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        if (eggs.isNotEmpty()) {
+            Text(
+                text = pluralStringResource(KMR.plurals.egg_carton_all_time, eggs.size, eggs.size),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+// endregion
 
 /** Reader habits and genres, further down the page */
 fun LazyListScope.eggikuReadingHabitItems(data: EggikuReadingData) {

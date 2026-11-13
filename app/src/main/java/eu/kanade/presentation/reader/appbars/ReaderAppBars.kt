@@ -86,6 +86,10 @@ fun ReaderAppBars(
     totalPages: Int,
     // KMK -->
     eggikuMinutesLeft: Int? = null,
+    eggTimerActive: Boolean = false,
+    onClickEggTimer: (() -> Unit)? = null,
+    tiltActive: Boolean = false,
+    onClickTilt: (() -> Unit)? = null,
     // KMK <--
     onPageIndexChange: (Int) -> Unit,
 
@@ -356,6 +360,10 @@ fun ReaderAppBars(
                     // SY <--
                     // KMK -->
                     onClickMusic = { musicState.onMusicButton(musicContext, musicScope) },
+                    eggTimerActive = eggTimerActive,
+                    onClickEggTimer = onClickEggTimer,
+                    tiltActive = tiltActive,
+                    onClickTilt = onClickTilt,
                     // KMK <--
                 )
             }

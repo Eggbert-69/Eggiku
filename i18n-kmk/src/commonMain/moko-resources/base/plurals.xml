@@ -72,4 +72,20 @@
         <item quantity="one">Last week</item>
         <item quantity="other">Last %d weeks</item>
     </plurals>
+    <plurals name="egg_timer_minutes_left">
+        <item quantity="one">%d min left</item>
+        <item quantity="other">%d min left</item>
+    </plurals>
+    <plurals name="egg_timer_hatched_body">
+        <item quantity="one">%d minute of reading. It\'s in your egg carton in Stats.</item>
+        <item quantity="other">%d minutes of reading. It\'s in your egg carton in Stats.</item>
+    </plurals>
+    <plurals name="egg_carton_week">
+        <item quantity="one">%1$d egg hatched this week (%2$d min)</item>
+        <item quantity="other">%1$d eggs hatched this week (%2$d min)</item>
+    </plurals>
+    <plurals name="egg_carton_all_time">
+        <item quantity="one">%d egg hatched all time</item>
+        <item quantity="other">%d eggs hatched all time</item>
+    </plurals>
 </resources>

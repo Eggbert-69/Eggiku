@@ -36,6 +36,7 @@ import eu.kanade.tachiyomi.source.online.MetadataSource
 import eu.kanade.tachiyomi.source.online.all.MergedSource
 import eu.kanade.tachiyomi.ui.library.EggikuCategoryLock
 import eu.kanade.tachiyomi.ui.reader.chapter.ReaderChapterItem
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPageTint
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.reader.loader.ChapterLoader
 import eu.kanade.tachiyomi.ui.reader.loader.DownloadPageLoader
@@ -767,6 +768,7 @@ class ReaderViewModel @JvmOverloads constructor(
         val pages = selectedChapter.pages ?: return
         // KMK -->
         EggikuReadingSpeed.onPage()
+        if (readerPreferences.eggikuPageTint().get()) EggikuPageTint.onPage(page, viewModelScope)
         // KMK <--
 
         // Save last page read and mark as read if needed
