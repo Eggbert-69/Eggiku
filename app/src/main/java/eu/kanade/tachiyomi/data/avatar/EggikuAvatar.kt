@@ -188,7 +188,7 @@ object EggikuAvatarCatalog {
     private fun Part.shade(svg: Boolean) = files.path("shade", svg = svg)
 
     /** Every asset file of an avatar in drawing order (background colour not included) */
-    fun Catalog.layers(avatar: EggikuAvatar, svg: Boolean = true): List<String> {
+    fun Catalog.drawOrder(avatar: EggikuAvatar, svg: Boolean = true): List<String> {
         val body = part("body", avatar.body) ?: part("body", "shell")
         val pattern = part("pattern", avatar.pattern)
         val dark = (body?.id in darkBodies) || pattern?.darkFace == true

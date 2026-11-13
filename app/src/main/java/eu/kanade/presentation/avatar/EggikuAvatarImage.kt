@@ -34,7 +34,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatar
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatarCatalog
-import eu.kanade.tachiyomi.data.avatar.EggikuAvatarCatalog.layers
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatarCatalog.drawOrder
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatarProgress
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatars
 import tachiyomi.i18n.kmk.KMR
@@ -78,7 +78,7 @@ fun EggikuAvatarImage(
     bounce: Boolean = false,
 ) {
     val catalog = rememberEggikuAvatarCatalog()
-    val layers = remember(catalog, avatar) { catalog.layers(avatar) }
+    val layers = remember(catalog, avatar) { catalog.drawOrder(avatar) }
     val inner = if (border != null) size * (80f / 120f) else size
     Box(modifier = modifier.size(size), contentAlignment = Alignment.Center) {
         Box(
