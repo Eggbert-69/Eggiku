@@ -1,6 +1,8 @@
 package eu.kanade.tachiyomi.data.stats
 
 import android.content.res.Resources
+import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
+import eu.kanade.tachiyomi.data.music.EggikuMusic
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -112,6 +114,9 @@ object EggikuReadingLog {
     }
 
     fun timeRead(seconds: Long, paddingKey: String?) {
+        if (EggikuMusic.nowPlaying.value?.isPlaying == true) {
+            EggikuAchievements.bump(EggikuAchievements.COUNT_MUSIC_SECONDS, seconds)
+        }
         if (seconds <= 0) return
         val hour = LocalDateTime.now().hour
         update { day ->

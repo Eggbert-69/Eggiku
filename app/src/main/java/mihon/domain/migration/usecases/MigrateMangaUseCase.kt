@@ -93,6 +93,12 @@ class MigrateMangaUseCase(
                 // line them up before copying read progress across
                 val offset = EggikuMigrationSmarts.chapterOffset(prevMangaChapters, mangaChapters)
                 if (offset != 0.0) EggikuMigrationSmarts.offsetsApplied.incrementAndGet()
+                // A series that had gone a year without chapters, moved somewhere with more of them
+                val lastOld = prevMangaChapters.maxOfOrNull { it.dateUpload } ?: 0L
+                val yearAgo = System.currentTimeMillis() - 365L * 24 * 60 * 60 * 1000
+                if (lastOld in 1..<yearAgo && mangaChapters.size > prevMangaChapters.size) {
+                    EggikuAchievements.bump(EggikuAchievements.COUNT_REVIVED)
+                }
                 // KMK <--
                 val maxChapterRead = prevMangaChapters
                     .filter { it.read }
@@ -224,7 +230,7 @@ class MigrateMangaUseCase(
 
             // KMK -->
             EggikuRatings.move(current.id, target.id)
-            EggikuAchievements.countMigration()
+            EggikuAchievements.bump(EggikuAchievements.COUNT_MIGRATED)
             EggikuMigrationUndo.record(
                 oldId = current.id,
                 newId = target.id,

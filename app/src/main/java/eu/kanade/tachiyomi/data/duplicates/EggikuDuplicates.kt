@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.data.duplicates
 
 import eu.kanade.domain.manga.interactor.UpdateManga
+import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.rating.EggikuRatings
 import tachiyomi.core.common.preference.PreferenceStore
 import tachiyomi.core.common.util.lang.withIOContext
@@ -90,6 +91,7 @@ object EggikuDuplicates {
             val categories = (keeper.categories + others.flatMap { it.categories }).filter { it != 0L }.distinct()
             if (categories.isNotEmpty()) setCategories.await(keeper.id, categories)
 
+            EggikuAchievements.bump(EggikuAchievements.COUNT_MERGES)
             others.forEach { other ->
                 EggikuRatings.move(other.id, keeper.id)
                 if (updateManga.awaitUpdateFavorite(other.id, false)) {

@@ -78,3 +78,13 @@ WHERE chapter_id = :chapterId;
 getReadDuration:
 SELECT coalesce(sum(time_read), 0)
 FROM history;
+
+-- KMK -->
+-- Eggiku achievements: when each chapter was last read and for how long, with its series
+eggikuReadEvents:
+SELECT C.manga_id, H.last_read, H.time_read
+FROM history H
+JOIN chapters C
+ON H.chapter_id = C._id
+WHERE H.last_read > 0;
+-- KMK <--

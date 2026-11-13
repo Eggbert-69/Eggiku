@@ -29,6 +29,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.more.settings.widget.SwitchPreferenceWidget
 import eu.kanade.presentation.util.Screen
+import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
 import eu.kanade.tachiyomi.data.updater.AppUpdateDownloadJob
 import eu.kanade.tachiyomi.util.system.toast
@@ -129,6 +130,7 @@ class EggikuUpdateScreen : Screen() {
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             AppUpdateDownloadJob.start(context, latest.apkUrl, latest.title)
+                            EggikuAchievements.bump(EggikuAchievements.COUNT_UPDATES)
                             context.toast(KMR.strings.eggiku_update_downloading)
                         },
                     ) {
