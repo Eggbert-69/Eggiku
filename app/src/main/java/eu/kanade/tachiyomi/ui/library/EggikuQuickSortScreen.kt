@@ -45,6 +45,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.manga.components.MangaCover
 import eu.kanade.presentation.util.Screen
+import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import kotlinx.coroutines.launch
 import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.domain.category.interactor.GetCategories
@@ -109,6 +110,7 @@ class EggikuQuickSortScreen(
                 if (assign != null) {
                     history.add(manga to manga.categories.filter { it != 0L })
                     withIOContext { Injekt.get<SetMangaCategories>().await(manga.id, assign) }
+                    EggikuAchievements.bump(EggikuAchievements.COUNT_QUICK_SORTED)
                 } else {
                     history.add(manga to manga.categories.filter { it != 0L })
                 }

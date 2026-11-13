@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.ContextCompat
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.util.system.notify
@@ -97,7 +98,10 @@ object EggikuCookTimer {
 
     /** Called when the series is opened in the reader: it's been eaten */
     fun served(mangaId: Long) {
-        if (isReady(mangaId)) ready().set(ready().get() - mangaId.toString())
+        if (isReady(mangaId)) {
+            ready().set(ready().get() - mangaId.toString())
+            EggikuAchievements.bump(EggikuAchievements.COUNT_COOKED)
+        }
     }
 
     /** Finishes any timers that are due: notifies and moves the series to Continue reading */
