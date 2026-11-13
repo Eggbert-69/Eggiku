@@ -56,4 +56,20 @@
         <item quantity="one">What's new in Eggiku</item>
         <item quantity="other">What's new in your last %d updates</item>
     </plurals>
+    <plurals name="stats_streak_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="stats_best_streak">
+        <item quantity="one">Best: %d day</item>
+        <item quantity="other">Best: %d days</item>
+    </plurals>
+    <plurals name="stats_freezes_saved">
+        <item quantity="one">%d freeze</item>
+        <item quantity="other">%d freezes</item>
+    </plurals>
+    <plurals name="stats_last_weeks">
+        <item quantity="one">Last week</item>
+        <item quantity="other">Last %d weeks</item>
+    </plurals>
 </resources>

@@ -36,18 +36,22 @@ fun StatsScreenContent(
     onOpenRecaps: () -> Unit = {},
     // KMK <--
 ) {
+    // KMK -->
+    val eggiku = rememberEggikuReadingData()
+    // KMK <--
     LazyColumn(
         contentPadding = paddingValues,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
     ) {
         // KMK -->
-        item {
-            EggikuReadingStatsSection(onOpenRecaps = onOpenRecaps)
-        }
+        eggikuReadingTopItems(data = eggiku, onOpenRecaps = onOpenRecaps)
         // KMK <--
         item {
             OverviewSection(state.overview)
         }
+        // KMK -->
+        eggikuReadingHabitItems(data = eggiku)
+        // KMK <--
         item {
             TitlesStats(state.titles)
         }

@@ -1,182 +1,562 @@
 package eu.kanade.presentation.more.stats
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.EmojiEvents
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.stats.EggikuAchievementsScreen
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
+import tachiyomi.presentation.core.components.SectionCard
+import tachiyomi.presentation.core.components.material.padding
+import tachiyomi.presentation.core.i18n.pluralStringResource
 import tachiyomi.presentation.core.i18n.stringResource
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 import tachiyomi.presentation.core.util.collectAsState as collectPrefAsState
 
 // KMK -->
 
-/** Eggiku: streaks, heatmap, weekly goal and this week's numbers at the top of Stats */
+/** Snappy, with a small overshoot so you can see when it has settled */
+private fun <T> jiggle() = spring<T>(dampingRatio = 0.55f, stiffness = Spring.StiffnessMediumLow)
+
+/** Everything the Eggiku stats cards need, read once for the whole page */
+@Immutable
+class EggikuReadingData(
+    val log: Map<LocalDate, EggikuReadingLog.DayStats>,
+    val today: LocalDate,
+    val streak: EggikuReadingLog.Streak,
+    val week: EggikuReadingLog.DayStats,
+    /** Last week up to the same weekday, so early in the week isn't always "down" */
+    val lastWeekSoFar: EggikuReadingLog.DayStats,
+    val allTime: EggikuReadingLog.DayStats,
+    val goal: Int,
+)
+
 @Composable
-fun EggikuReadingStatsSection(
-    onOpenRecaps: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun rememberEggikuReadingData(): EggikuReadingData {
     val version by EggikuReadingLog.changes.collectAsState()
     val goal by EggikuReadingLog.weeklyGoalChapters().collectPrefAsState()
     val dayStart by EggikuReadingLog.dayStartHour().collectPrefAsState()
-    val log = remember(version, dayStart) { EggikuReadingLog.all() }
-    val today = remember(version, dayStart) { EggikuReadingLog.today() }
-    val streak = remember(log, today) { EggikuReadingLog.streak(log, today) }
-    val weekStart = remember(today) { EggikuReadingLog.weekStart(today) }
-    val week = remember(log, weekStart, today) { EggikuReadingLog.sum(log, weekStart, today) }
-    val allTime = remember(log) { EggikuReadingLog.sum(log, java.time.LocalDate.MIN, java.time.LocalDate.MAX) }
+    return remember(version, dayStart, goal) {
+        val log = EggikuReadingLog.all()
+        val today = EggikuReadingLog.today()
+        val weekStart = EggikuReadingLog.weekStart(today)
+        EggikuReadingData(
+            log = log,
+            today = today,
+            streak = EggikuReadingLog.streak(log, today),
+            week = EggikuReadingLog.sum(log, weekStart, today),
+            lastWeekSoFar = EggikuReadingLog.sum(log, weekStart.minusWeeks(1), today.minusWeeks(1)),
+            allTime = EggikuReadingLog.sum(log, LocalDate.MIN, LocalDate.MAX),
+            goal = goal,
+        )
+    }
+}
+
+/** Shortcuts, streak and this week: the top of Stats */
+fun LazyListScope.eggikuReadingTopItems(data: EggikuReadingData, onOpenRecaps: () -> Unit) {
+    item(key = "eggiku_shortcuts") { StatsShortcuts(onOpenRecaps = onOpenRecaps) }
+    item(key = "eggiku_streak") {
+        SectionCard(KMR.strings.stats_streak_title) { StreakCard(data) }
+    }
+    item(key = "eggiku_week") {
+        SectionCard(KMR.strings.stats_this_week) { WeekCard(data) }
+    }
+}
+
+/** Reader habits and genres, further down the page */
+fun LazyListScope.eggikuReadingHabitItems(data: EggikuReadingData) {
+    item(key = "eggiku_habits") {
+        SectionCard(KMR.strings.stats_reading_habits) { HabitsCard(data.allTime) }
+    }
+    item(key = "eggiku_genres") { EggikuGenreBreakdown() }
+}
+
+// region Shortcuts
+
+@Composable
+private fun StatsShortcuts(onOpenRecaps: () -> Unit) {
+    val navigator = LocalNavigator.current
     var showSettings by remember { mutableStateOf(false) }
-    var showGoal by remember { mutableStateOf(false) }
-
     if (showSettings) EggikuStatsSettingsDialog(onDismiss = { showSettings = false })
-    if (showGoal) EggikuGoalDialog(current = goal, onDismiss = { showGoal = false })
 
-    Card(
-        modifier = modifier
+    Row(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+            .padding(horizontal = MaterialTheme.padding.medium, vertical = MaterialTheme.padding.small),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
+    ) {
+        ShortcutTile(Icons.Outlined.History, stringResource(KMR.strings.stats_recaps), onOpenRecaps)
+        ShortcutTile(Icons.Outlined.EmojiEvents, stringResource(KMR.strings.ach_title)) {
+            navigator?.push(EggikuAchievementsScreen())
+        }
+        ShortcutTile(Icons.Outlined.Settings, stringResource(MR.strings.action_settings)) { showSettings = true }
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.RowScope.ShortcutTile(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.weight(1f),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Icon(icon, contentDescription = null)
+            Text(label, style = MaterialTheme.typography.labelMedium, maxLines = 1, textAlign = TextAlign.Center)
+        }
+    }
+}
+
+// endregion
+
+// region Streak
+
+@Composable
+private fun StreakCard(data: EggikuReadingData) {
+    val streak = data.streak
+    var showCalendar by rememberSaveable { mutableStateOf(false) }
+
+    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("🔥", fontSize = 34.sp)
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp),
+            ) {
+                Text(
+                    text = pluralStringResource(KMR.plurals.stats_streak_days, streak.current, streak.current),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = stringResource(
+                        when {
+                            streak.readToday -> KMR.strings.stats_streak_done_today
+                            streak.current > 0 -> KMR.strings.stats_streak_keep_going
+                            else -> KMR.strings.stats_streak_start
+                        },
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (streak.current > 0 && !streak.readToday) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                )
+            }
+            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                SmallPill(pluralStringResource(KMR.plurals.stats_best_streak, streak.longest, streak.longest))
+                SmallPill("❄️ " + pluralStringResource(KMR.plurals.stats_freezes_saved, streak.freezes, streak.freezes))
+            }
+        }
+
+        LastSevenDays(log = data.log, today = data.today)
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showCalendar = !showCalendar }
+                .padding(vertical = 2.dp),
+            horizontalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = stringResource(KMR.strings.stats_your_reading),
-                style = MaterialTheme.typography.titleMedium,
+                text = stringResource(if (showCalendar) KMR.strings.stats_hide_calendar else KMR.strings.stats_show_calendar),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
             )
-
-            // Streak
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                StatBlock(value = "🔥 ${streak.current}", label = stringResource(KMR.strings.stats_streak))
-                StatBlock(value = "${streak.longest}", label = stringResource(KMR.strings.stats_longest_streak))
-                StatBlock(value = "❄️ ${streak.freezes}", label = stringResource(KMR.strings.stats_freezes))
-            }
-            if (streak.current > 0 && !streak.readToday) {
+        }
+        AnimatedVisibility(
+            visible = showCalendar,
+            enter = expandVertically(jiggle()) + fadeIn(),
+            exit = shrinkVertically(spring(stiffness = Spring.StiffnessMedium)) + fadeOut(),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                CompactHeatmap(log = data.log, today = data.today)
                 Text(
                     text = stringResource(KMR.strings.stats_streak_today_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-
-            Heatmap(log = log, today = today)
-
-            // Weekly goal
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { showGoal = true },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                GoalRing(progress = if (goal > 0) week.chapters / goal.toFloat() else 0f)
-                Column(modifier = Modifier.padding(start = 12.dp)) {
-                    Text(
-                        text = if (goal > 0) {
-                            stringResource(KMR.strings.stats_goal_progress, week.chapters, goal)
-                        } else {
-                            stringResource(KMR.strings.stats_goal_none)
-                        },
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                    Text(
-                        text = stringResource(KMR.strings.stats_goal_tap),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-
-            // This week and all time
-            Text(stringResource(KMR.strings.stats_this_week), style = MaterialTheme.typography.titleSmall)
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                StatBlock(value = "${week.chapters}", label = stringResource(KMR.strings.stats_chapters))
-                val (h, m) = EggikuStatsFormat.hoursAndMinutes(week.seconds)
-                StatBlock(value = stringResource(KMR.strings.stats_duration, h, m), label = stringResource(KMR.strings.stats_time))
-                StatBlock(value = EggikuStatsFormat.distance(week.swipeMm), label = stringResource(KMR.strings.stats_swiped))
-            }
-            Text(stringResource(KMR.strings.stats_all_time), style = MaterialTheme.typography.titleSmall)
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                StatBlock(value = EggikuStatsFormat.distance(allTime.swipeMm), label = stringResource(KMR.strings.stats_swiped))
-                StatBlock(value = EggikuStatsFormat.distance(allTime.panMm), label = stringResource(KMR.strings.stats_panned))
-                StatBlock(value = "${allTime.zooms}", label = stringResource(KMR.strings.stats_zooms))
-                StatBlock(value = "${allTime.taps}", label = stringResource(KMR.strings.stats_taps))
-            }
-            PaddingLine(allTime.padding)
-            EggikuReadingSpeed.pagesPerMinute()?.let { ppm ->
-                Text(
-                    text = stringResource(KMR.strings.eggiku_reading_speed, String.format(java.util.Locale.getDefault(), "%.1f", ppm)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            EggikuGenreBreakdown()
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilledTonalButton(onClick = onOpenRecaps) {
-                    Text(stringResource(KMR.strings.stats_recaps))
-                }
-                val navigator = LocalNavigator.current
-                FilledTonalButton(onClick = { navigator?.push(EggikuAchievementsScreen()) }) {
-                    Text(stringResource(KMR.strings.ach_title))
-                }
-                OutlinedButton(onClick = { showSettings = true }) {
-                    Text(stringResource(MR.strings.action_settings))
-                }
-            }
         }
     }
 }
 
 @Composable
-private fun StatBlock(value: String, label: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+private fun SmallPill(text: String) {
+    Surface(shape = CircleShape, color = MaterialTheme.colorScheme.surfaceContainerHighest) {
         Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
+            text = text,
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+        )
+    }
+}
+
+/** One dot per day for the last week, today on the right */
+@Composable
+private fun LastSevenDays(log: Map<LocalDate, EggikuReadingLog.DayStats>, today: LocalDate) {
+    val locale = Locale.getDefault()
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        (6 downTo 0).forEach { back ->
+            val day = today.minusDays(back.toLong())
+            val counted = log[day]?.counts == true
+            val isToday = back == 0
+            val scale by animateFloatAsState(if (counted) 1f else 0.86f, jiggle(), label = "day")
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Box(
+                    modifier = Modifier
+                        .size(34.dp)
+                        .scale(scale)
+                        .background(
+                            if (counted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                            CircleShape,
+                        )
+                        .then(
+                            if (isToday && !counted) {
+                                Modifier.border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                            } else {
+                                Modifier
+                            },
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (counted) {
+                        Icon(
+                            Icons.Filled.Check,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(18.dp),
+                        )
+                    }
+                }
+                Text(
+                    text = day.dayOfWeek.getDisplayName(TextStyle.SHORT, locale).take(3),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                    color = if (isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+/** Small fixed-size squares, as many weeks as fit the width (up to half a year) */
+@Composable
+private fun CompactHeatmap(log: Map<LocalDate, EggikuReadingLog.DayStats>, today: LocalDate) {
+    val cell = 12.dp
+    val gap = 3.dp
+    val primary = MaterialTheme.colorScheme.primary
+    val empty = MaterialTheme.colorScheme.surfaceVariant
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val weeks = ((maxWidth + gap) / (cell + gap)).toInt().coerceIn(8, 26)
+        val start = EggikuReadingLog.weekStart(today).minusWeeks((weeks - 1).toLong())
+        val levels = remember(log, today, weeks) {
+            (0 until weeks * 7).map { offset ->
+                val day = start.plusDays(offset.toLong())
+                if (day.isAfter(today)) -1 else heatLevel(log[day])
+            }
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Canvas(
+                modifier = Modifier
+                    .width(cell * weeks + gap * (weeks - 1))
+                    .height(cell * 7 + gap * 6),
+            ) {
+                val c = cell.toPx()
+                val g = gap.toPx()
+                levels.forEachIndexed { index, level ->
+                    if (level < 0) return@forEachIndexed
+                    drawRoundRect(
+                        color = heatColor(level, primary, empty),
+                        topLeft = Offset((index / 7) * (c + g), (index % 7) * (c + g)),
+                        size = Size(c, c),
+                        cornerRadius = CornerRadius(c / 3.5f),
+                    )
+                }
+            }
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = pluralStringResource(KMR.plurals.stats_last_weeks, weeks, weeks),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    stringResource(KMR.strings.stats_less),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                (0..4).forEach { level ->
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 2.dp)
+                            .size(10.dp)
+                            .background(heatColor(level, primary, empty), RoundedCornerShape(3.dp)),
+                    )
+                }
+                Text(
+                    stringResource(KMR.strings.stats_more),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+/** 0 = nothing, then under 15 min, under 45 min, under 90 min, more */
+private fun heatLevel(day: EggikuReadingLog.DayStats?): Int {
+    if (day == null || (day.seconds <= 0 && day.chapters <= 0)) return 0
+    val minutes = day.seconds / 60
+    return when {
+        minutes < 15 -> 1
+        minutes < 45 -> 2
+        minutes < 90 -> 3
+        else -> 4
+    }
+}
+
+private fun heatColor(level: Int, primary: Color, empty: Color): Color = when (level) {
+    0 -> empty
+    1 -> primary.copy(alpha = 0.3f)
+    2 -> primary.copy(alpha = 0.55f)
+    3 -> primary.copy(alpha = 0.8f)
+    else -> primary
+}
+
+// endregion
+
+// region This week
+
+@Composable
+private fun WeekCard(data: EggikuReadingData) {
+    var showGoal by remember { mutableStateOf(false) }
+    if (showGoal) EggikuGoalDialog(current = data.goal, onDismiss = { showGoal = false })
+
+    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        // Weekly goal
+        if (data.goal > 0) {
+            val progress = data.week.chapters / data.goal.toFloat()
+            val animated by animateFloatAsState(progress.coerceIn(0f, 1f), jiggle(), label = "goal")
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showGoal = true },
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(KMR.strings.stats_goal_progress, data.week.chapters, data.goal),
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        text = if (progress >= 1f) "✓" else "${(progress * 100).toInt()}%",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+                LinearProgressIndicator(
+                    progress = { animated },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp),
+                    strokeCap = StrokeCap.Round,
+                    gapSize = 0.dp,
+                    drawStopIndicator = {},
+                )
+                Text(
+                    text = stringResource(KMR.strings.stats_goal_tap_change),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        } else {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(KMR.strings.stats_goal_none),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                FilledTonalButton(onClick = { showGoal = true }) {
+                    Text(stringResource(KMR.strings.stats_goal_set))
+                }
+            }
+        }
+
+        HorizontalDivider()
+
+        // This week's numbers, compared with this time last week
+        Row(modifier = Modifier.fillMaxWidth()) {
+            WeekTile(
+                value = "${data.week.chapters}",
+                label = stringResource(KMR.strings.stats_chapters),
+                delta = (data.week.chapters - data.lastWeekSoFar.chapters).toLong(),
+                deltaText = { "${kotlin.math.abs(it)}" },
+            )
+            WeekTile(
+                value = durationTextPlain(data.week.seconds),
+                label = stringResource(KMR.strings.stats_time),
+                delta = (data.week.seconds - data.lastWeekSoFar.seconds) / 60,
+                deltaText = { minutes -> durationTextPlain(kotlin.math.abs(minutes) * 60) },
+            )
+            WeekTile(
+                value = EggikuStatsFormat.distance(data.week.swipeMm),
+                label = stringResource(KMR.strings.stats_swiped),
+                delta = null,
+                deltaText = { "" },
+            )
+        }
+        Text(
+            text = stringResource(KMR.strings.stats_vs_last_week_hint),
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.RowScope.WeekTile(
+    value: String,
+    label: String,
+    delta: Long?,
+    deltaText: @Composable (Long) -> String,
+) {
+    Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(value, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, maxLines = 1)
+        Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (delta != null) {
+            Text(
+                text = when {
+                    delta > 0 -> "▲ " + deltaText(delta)
+                    delta < 0 -> "▼ " + deltaText(delta)
+                    else -> "–"
+                },
+                style = MaterialTheme.typography.labelMedium,
+                color = if (delta > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun durationTextPlain(seconds: Long): String {
+    val (h, m) = EggikuStatsFormat.hoursAndMinutes(seconds)
+    return if (h > 0) {
+        stringResource(KMR.strings.stats_duration, h, m)
+    } else {
+        stringResource(KMR.strings.stats_minutes, m)
+    }
+}
+
+// endregion
+
+// region Habits
+
+@Composable
+private fun HabitsCard(allTime: EggikuReadingLog.DayStats) {
+    Column {
+        HabitRow(stringResource(KMR.strings.stats_swiped), EggikuStatsFormat.distance(allTime.swipeMm))
+        HabitRow(stringResource(KMR.strings.stats_panned), EggikuStatsFormat.distance(allTime.panMm))
+        HabitRow(stringResource(KMR.strings.stats_zooms), "%,d".format(Locale.getDefault(), allTime.zooms))
+        HabitRow(stringResource(KMR.strings.stats_taps), "%,d".format(Locale.getDefault(), allTime.taps))
+        EggikuReadingSpeed.pagesPerMinute()?.let { ppm ->
+            HabitRow(
+                stringResource(KMR.strings.stats_reading_speed),
+                stringResource(KMR.strings.stats_pages_per_minute, String.format(Locale.getDefault(), "%.1f", ppm)),
+            )
+        }
+        PaddingLine(allTime.padding)
+    }
+}
+
+@Composable
+private fun HabitRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -187,6 +567,7 @@ private fun PaddingLine(padding: Map<String, Long>) {
     val unfolded = padding.filterKeys { it.startsWith("unfolded") }.values.sum()
     val topUnfolded = padding.filterKeys { it.startsWith("unfolded") }.maxByOrNull { it.value }?.key
         ?.substringAfter(':')
+    Spacer(Modifier.height(4.dp))
     Text(
         text = stringResource(
             KMR.strings.stats_padding_line,
@@ -198,65 +579,9 @@ private fun PaddingLine(padding: Map<String, Long>) {
     )
 }
 
-/** The last 12 weeks, one square per day, darker for more reading */
-@Composable
-private fun Heatmap(log: Map<java.time.LocalDate, EggikuReadingLog.DayStats>, today: java.time.LocalDate) {
-    val weeks = 12
-    val start = EggikuReadingLog.weekStart(today).minusWeeks((weeks - 1).toLong())
-    val cells = remember(log, today) {
-        (0 until weeks * 7).map { offset ->
-            val day = start.plusDays(offset.toLong())
-            if (day.isAfter(today)) -1L else (log[day]?.seconds ?: 0L)
-        }
-    }
-    val maxSeconds = (cells.maxOrNull() ?: 0L).coerceAtLeast(1L)
-    val primary = MaterialTheme.colorScheme.primary
-    val empty = MaterialTheme.colorScheme.surfaceVariant
-    Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(weeks / 7f),
-    ) {
-        val gap = 3.dp.toPx()
-        val cell = (size.width - gap * (weeks - 1)) / weeks
-        cells.forEachIndexed { index, seconds ->
-            if (seconds < 0) return@forEachIndexed
-            val column = index / 7
-            val row = index % 7
-            val color = if (seconds == 0L) {
-                empty
-            } else {
-                primary.copy(alpha = 0.25f + 0.75f * (seconds.toFloat() / maxSeconds))
-            }
-            drawRoundRect(
-                color = color,
-                topLeft = Offset(column * (cell + gap), row * (cell + gap)),
-                size = Size(cell, cell),
-                cornerRadius = CornerRadius(cell / 4),
-            )
-        }
-    }
-}
+// endregion
 
-@Composable
-private fun GoalRing(progress: Float) {
-    val primary = MaterialTheme.colorScheme.primary
-    val track = MaterialTheme.colorScheme.surfaceVariant
-    Box(modifier = Modifier.size(44.dp), contentAlignment = Alignment.Center) {
-        Canvas(modifier = Modifier.size(44.dp)) {
-            val stroke = 5.dp.toPx()
-            drawArc(track, 0f, 360f, false, style = Stroke(stroke))
-            drawArc(
-                primary,
-                -90f,
-                360f * progress.coerceIn(0f, 1f),
-                false,
-                style = Stroke(stroke, cap = StrokeCap.Round),
-            )
-        }
-        if (progress >= 1f) Text("✓", color = primary)
-    }
-}
+// region Dialogs
 
 @Composable
 private fun EggikuGoalDialog(current: Int, onDismiss: () -> Unit) {
@@ -353,4 +678,6 @@ private fun SettingSwitch(title: String, checked: Boolean, onChange: (Boolean) -
         Switch(checked = checked, onCheckedChange = onChange)
     }
 }
+
+// endregion
 // KMK <--
