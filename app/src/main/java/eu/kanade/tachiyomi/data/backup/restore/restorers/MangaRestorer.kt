@@ -10,6 +10,7 @@ import eu.kanade.tachiyomi.data.backup.models.BackupMergedMangaReference
 import eu.kanade.tachiyomi.data.backup.models.BackupTracking
 import eu.kanade.tachiyomi.data.music.EggikuMusicPreferences
 import eu.kanade.tachiyomi.data.rating.EggikuRatings
+import eu.kanade.tachiyomi.data.tags.EggikuTags
 import exh.EXHMigrations
 import exh.source.MERGED_SOURCE_ID
 import tachiyomi.data.DatabaseHandler
@@ -118,6 +119,13 @@ class MangaRestorer(
             }
             if (backupManga.eggikuRating in 1..5) {
                 EggikuRatings.set(restoredManga.id, backupManga.eggikuRating)
+            }
+            if (backupManga.eggikuTags.isNotEmpty()) {
+                val known = EggikuTags.all().map { it.name }.toSet()
+                backupManga.eggikuTags.forEach { tag ->
+                    if (tag !in known) EggikuTags.create(tag, EggikuTags.palette.first())
+                    if (tag !in EggikuTags.assignments()[restoredManga.id].orEmpty()) EggikuTags.toggle(restoredManga.id, tag)
+                }
             }
             // KMK <--
 

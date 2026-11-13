@@ -7,6 +7,7 @@ import dev.icerock.moko.resources.StringResource
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.domain.ui.model.AppTheme
 import eu.kanade.domain.ui.model.HiddenAppThemes
+import eu.kanade.presentation.more.settings.screen.EggikuHiddenThemes
 import eu.kanade.presentation.more.stats.EggikuStatsFormat
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.notification.Notifications
@@ -468,7 +469,27 @@ object EggikuAchievements {
 
     /** Checks and sends one notification for anything newly earned */
     suspend fun checkAndNotify(context: Context) {
-        val newOnes = checkNew()
+        val facts = facts()
+        val newOnes = checkNew(facts)
+        // Hidden themes earned by reading
+        val themes = buildList {
+            if (facts.longestStreak >= 7 && EggikuHiddenThemes.grant(AppTheme.HOT_SAUCE)) add(AppTheme.HOT_SAUCE)
+            if (earned().size >= 50 && EggikuHiddenThemes.grant(AppTheme.GOLDEN_HOUR)) add(AppTheme.GOLDEN_HOUR)
+        }
+        themes.forEach { theme ->
+            context.notify(ID_THEME + theme.ordinal, Notifications.CHANNEL_COMMON) {
+                setSmallIcon(R.drawable.ic_komikku)
+                setColor(ContextCompat.getColor(context, R.color.ic_launcher))
+                setContentTitle(
+                    context.stringResource(
+                        KMR.strings.hidden_theme_earned,
+                        context.stringResource(theme.titleRes ?: KMR.strings.theme_custom),
+                    ),
+                )
+                setContentText(context.stringResource(KMR.strings.hidden_theme_earned_text))
+                setAutoCancel(true)
+            }
+        }
         // The first check after installing counts all past reading at once: no flood of notifications
         if (!seeded().get()) {
             seeded().set(true)
@@ -496,5 +517,6 @@ object EggikuAchievements {
     }
 
     private const val ID = -1912
+    private const val ID_THEME = -1950
 }
 // KMK <--

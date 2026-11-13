@@ -1370,11 +1370,22 @@ class MangaScreenModel(
     fun markChaptersRead(chapters: List<Chapter>, read: Boolean) {
         toggleAllSelection(false)
         if (chapters.isEmpty()) return
+        // KMK -->
+        val previous = chapters.map { ChapterUpdate(id = it.id, read = it.read, lastPageRead = it.lastPageRead) }
+        // KMK <--
         screenModelScope.launchIO {
             setReadStatus.await(
                 read = read,
                 chapters = chapters.toTypedArray(),
             )
+            // KMK -->
+            eggikuOfferUndo(
+                context.stringResource(
+                    if (read) KMR.strings.undo_marked_read else KMR.strings.undo_marked_unread,
+                    chapters.size,
+                ),
+            ) { updateChapter.awaitAll(previous) }
+            // KMK <--
 
             if (!read || successState?.hasLoggedInTrackers == false || autoTrackState == AutoTrackState.NEVER) {
                 return@launchIO
@@ -1474,6 +1485,13 @@ class MangaScreenModel(
      * @param chapters the list of chapters to delete.
      */
     fun deleteChapters(chapters: List<Chapter>) {
+        // KMK -->
+        screenModelScope.launchIO {
+            eggikuOfferUndo(context.stringResource(KMR.strings.undo_deleted, chapters.size)) {
+                downloadChapters(chapters)
+            }
+        }
+        // KMK <--
         screenModelScope.launchNonCancellable {
             try {
                 successState?.let { state ->
@@ -1526,6 +1544,19 @@ class MangaScreenModel(
     }
 
     // KMK -->
+    /** A snackbar with Undo; [undo] runs if it's tapped. Doesn't wait, so other messages still show. */
+    private fun eggikuOfferUndo(message: String, undo: suspend () -> Unit) {
+        screenModelScope.launchIO {
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                actionLabel = context.stringResource(MR.strings.action_undo),
+                duration = SnackbarDuration.Short,
+                withDismissAction = true,
+            )
+            if (result == SnackbarResult.ActionPerformed) undo()
+        }
+    }
+
     fun clearManga(
         deleteDownload: Boolean,
         removeChapters: Boolean,

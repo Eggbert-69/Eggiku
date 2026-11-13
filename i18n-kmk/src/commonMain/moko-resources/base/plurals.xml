@@ -40,4 +40,16 @@
         <item quantity="one">last chapter %d month ago</item>
         <item quantity="other">last chapter %d months ago</item>
     </plurals>
+    <plurals name="timeline_binge">
+        <item quantity="one">Binged %d chapter</item>
+        <item quantity="other">Binged %d chapters</item>
+    </plurals>
+    <plurals name="timeline_break">
+        <item quantity="one">Took a %d-day break</item>
+        <item quantity="other">Took a %d-day break</item>
+    </plurals>
+    <plurals name="eggiku_minutes_left">
+        <item quantity="one">About %d minute left in this chapter</item>
+        <item quantity="other">About %d minutes left in this chapter</item>
+    </plurals>
 </resources>

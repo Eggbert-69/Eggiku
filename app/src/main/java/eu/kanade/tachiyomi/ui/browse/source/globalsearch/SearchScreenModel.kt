@@ -7,6 +7,7 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.presentation.util.ioCoroutineScope
+import eu.kanade.tachiyomi.data.search.EggikuSearchHistory
 import eu.kanade.tachiyomi.extension.EggikuNsfwOverride
 import eu.kanade.tachiyomi.extension.ExtensionManager
 import eu.kanade.tachiyomi.source.Source
@@ -162,6 +163,9 @@ abstract class SearchScreenModel(
         val sourceFilter = state.value.sourceFilter
 
         if (query.isNullOrBlank()) return
+        // KMK -->
+        EggikuSearchHistory.record(query)
+        // KMK <--
 
         val sameQuery = this.lastQuery == query
         if (sameQuery && this.lastSourceFilter == sourceFilter) return

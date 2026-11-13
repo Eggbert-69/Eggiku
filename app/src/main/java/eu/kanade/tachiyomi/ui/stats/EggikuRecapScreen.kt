@@ -61,6 +61,7 @@ import eu.kanade.presentation.more.stats.EggikuStatsFormat
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.rating.EggikuRatings
+import eu.kanade.tachiyomi.data.stats.EggikuGenres
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.library.EggikuCategoryLock
 import eu.kanade.tachiyomi.util.storage.getUriCompat
@@ -89,8 +90,11 @@ import tachiyomi.presentation.core.util.collectAsState as collectPrefAsState
 
 // KMK -->
 
-/** Eggiku: swipeable weekly, monthly and yearly reading recaps that can be shared as images */
-class EggikuRecapScreen : Screen() {
+/**
+ * Eggiku: swipeable weekly, monthly and yearly reading recaps that can be shared as images.
+ * [startMonthOffset] opens a past month straight away, e.g. -1 for last month from the monthly wrap.
+ */
+class EggikuRecapScreen(private val startMonthOffset: Int = 0) : Screen() {
 
     private enum class Period { WEEK, MONTH, YEAR }
 
@@ -101,7 +105,7 @@ class EggikuRecapScreen : Screen() {
         val scope = rememberCoroutineScope()
 
         var period by rememberSaveable { mutableStateOf(Period.MONTH) }
-        var offset by rememberSaveable { mutableIntStateOf(0) }
+        var offset by rememberSaveable { mutableIntStateOf(startMonthOffset) }
 
         val version by EggikuReadingLog.changes.collectAsState()
         val log = remember(version) { EggikuReadingLog.all() }
@@ -137,6 +141,20 @@ class EggikuRecapScreen : Screen() {
         val periodLabel = label(period, from, to)
         val ratingEntries by EggikuRatings.pref().collectPrefAsState()
         val ratings = remember(ratingEntries) { EggikuRatings.parse(ratingEntries) }
+        val topGenre by produceState<String?>(null, from, to) {
+            value = withIOContext {
+                try {
+                    val zone = java.time.ZoneId.systemDefault()
+                    EggikuGenres.shares(
+                        from = from.atStartOfDay(zone).toInstant().toEpochMilli(),
+                        to = to.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli() - 1,
+                        limit = 1,
+                    ).firstOrNull()?.genre
+                } catch (_: Exception) {
+                    null
+                }
+            }
+        }
         val badgesEarned = remember(from, to, version) {
             EggikuAchievements.earned().values.count { !it.isBefore(from) && !it.isAfter(to) }
         }
@@ -155,6 +173,7 @@ class EggikuRecapScreen : Screen() {
                         ?.let { fav ->
                             Line("⭐ " + stringResource(KMR.strings.recap_wrapped_favourite, titles[fav].orEmpty(), "★".repeat(ratings[fav] ?: 0)))
                         }
+                    topGenre?.let { Line("🏷️ " + stringResource(KMR.strings.recap_wrapped_genre, it)) }
                     Line("🔥 " + stringResource(KMR.strings.recap_longest_streak, streak.longest))
                     Line("👍 " + stringResource(KMR.strings.recap_wrapped_swiped, EggikuStatsFormat.distance(total.swipeMm)))
                     if (newSeries > 0) Line("🆕 " + pluralStringResource(KMR.plurals.recap_new_series, newSeries, newSeries))

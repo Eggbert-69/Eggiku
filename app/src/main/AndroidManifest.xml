@@ -67,11 +67,7 @@
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Tachiyomi.SplashScreen">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- KMK: the launcher entry lives on the icon aliases below so the app icon can be changed -->
 
             <!-- Legacy deeplink to add extension store -->
             <intent-filter android:label="@string/action_addExtensionStore">
@@ -127,6 +123,69 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
+        <!-- KMK -->
+        <!-- Eggiku app icons: exactly one of these is enabled at a time -->
+        <activity-alias
+            android:name=".EggikuIconClassic"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconCracked"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_cracked"
+            android:roundIcon="@mipmap/eggiku_icon_cracked"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconAlien"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_alien"
+            android:roundIcon="@mipmap/eggiku_icon_alien"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconGolden"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_golden"
+            android:roundIcon="@mipmap/eggiku_icon_golden"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <!-- KMK -->
 
         <activity
             android:name=".crash.CrashActivity"
@@ -161,6 +220,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="eggiku" android:host="open" />
+                <data android:scheme="eggiku" android:host="compare" />
             </intent-filter>
             <!-- KMK -->
 

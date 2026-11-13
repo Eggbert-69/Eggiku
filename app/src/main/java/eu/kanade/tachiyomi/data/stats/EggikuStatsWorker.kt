@@ -13,6 +13,7 @@ import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
 import eu.kanade.tachiyomi.data.notification.Notifications
+import eu.kanade.tachiyomi.ui.main.EggikuOpen
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.util.system.notify
 import eu.kanade.tachiyomi.util.system.workManager
@@ -26,6 +27,8 @@ import uy.kohesive.injekt.api.get
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.format.TextStyle
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 // KMK -->
@@ -116,6 +119,30 @@ class EggikuStatsWorker(context: Context, params: WorkerParameters) : CoroutineW
             }
             sentWeek.set(weekStart.toString())
         }
+
+        // Monthly wrap: on the 1st, last month's Wrapped card is ready to share
+        val sentMonth = Injekt.get<PreferenceStore>()
+            .getString(Preference.appStateKey("eggiku_stats_wrap_sent_month"), "")
+        val lastMonthStart = today.withDayOfMonth(1).minusMonths(1)
+        if (EggikuReadingLog.weeklyRecap().get() && today.dayOfMonth <= 3 && sentMonth.get() != lastMonthStart.toString()) {
+            val month = EggikuReadingLog.sum(log, lastMonthStart, today.withDayOfMonth(1).minusDays(1))
+            if (month.chapters > 0) {
+                val monthName = lastMonthStart.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+                applicationContext.notify(ID_MONTHLY_WRAP, Notifications.CHANNEL_COMMON) {
+                    setSmallIcon(R.drawable.ic_komikku)
+                    setColor(ContextCompat.getColor(applicationContext, R.color.ic_launcher))
+                    setContentTitle(applicationContext.stringResource(KMR.strings.stats_monthly_wrap_title, monthName))
+                    setContentText(
+                        applicationContext.stringResource(KMR.strings.stats_monthly_wrap_text, month.chapters, month.seconds / 3600),
+                    )
+                    setContentIntent(
+                        EggikuOpen.pendingIntent(applicationContext, ID_MONTHLY_WRAP, EggikuOpen.LAST_MONTH_WRAP),
+                    )
+                    setAutoCancel(true)
+                }
+            }
+            sentMonth.set(lastMonthStart.toString())
+        }
         return Result.success()
     }
 
@@ -131,6 +158,7 @@ class EggikuStatsWorker(context: Context, params: WorkerParameters) : CoroutineW
         private const val ID_REMINDER = -1901
         private const val ID_WEEKLY_RECAP = -1902
         private const val ID_UPDATE = -1903
+        private const val ID_MONTHLY_WRAP = -1913
 
         /** Runs every day around 8 PM */
         fun setup(context: Context) {

@@ -57,6 +57,16 @@ object EggikuHiddenThemes {
 
     fun isArcadeSecret(query: String) = query.trim().equals(ARCADE_WORDS, ignoreCase = true)
 
+    fun isDinoSecret(query: String) = query.trim().equals("rawr", ignoreCase = true)
+
+    /** Unlocks [theme] quietly, without switching to it. Returns true if it was new. */
+    fun grant(theme: AppTheme): Boolean {
+        val uiPreferences = Injekt.get<UiPreferences>()
+        if (uiPreferences.isHiddenThemeUnlocked(theme)) return false
+        uiPreferences.unlockedHiddenThemes().set(uiPreferences.unlockedHiddenThemes().get() + theme.name)
+        return true
+    }
+
     /** Unlocks [theme], switches to it and says so */
     fun unlock(context: Context, theme: AppTheme) {
         val uiPreferences = Injekt.get<UiPreferences>()
@@ -163,6 +173,54 @@ fun EggikuSecretCoin(modifier: Modifier = Modifier) {
         // Screen flash when the coin lands
         Canvas(modifier = Modifier.fillMaxSize()) {
             if (flash.value > 0f) drawRect(NeonPink, alpha = flash.value * 0.6f)
+        }
+    }
+}
+
+/**
+ * Eggiku: shown when you search "rawr" in settings. A speckled egg; tap it three times and it
+ * wobbles, cracks and hatches a dino, and Dino Egg switches on.
+ */
+@Composable
+fun EggikuSecretDinoEgg(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    var taps by remember { mutableStateOf(0) }
+    val wobble = remember { Animatable(0f) }
+    val hatched = taps >= 3
+
+    LaunchedEffect(taps) {
+        if (taps == 0) return@LaunchedEffect
+        wobble.animateTo(1f, tween(90))
+        wobble.animateTo(-1f, tween(120))
+        wobble.animateTo(0f, tween(90))
+        if (taps >= 3) {
+            delay(700)
+            EggikuHiddenThemes.unlock(context, AppTheme.DINO_EGG)
+        }
+    }
+
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
+            Text(
+                text = when {
+                    hatched -> "🦖"
+                    taps == 2 -> "🥚💥"
+                    else -> "🥚"
+                },
+                fontSize = 96.sp,
+                modifier = Modifier
+                    .graphicsLayer { rotationZ = wobble.value * 14f }
+                    .clickable(enabled = !hatched) { taps++ },
+            )
+            Text(
+                text = stringResource(if (hatched) KMR.strings.dino_hatched else KMR.strings.dino_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 24.dp),
+            )
         }
     }
 }

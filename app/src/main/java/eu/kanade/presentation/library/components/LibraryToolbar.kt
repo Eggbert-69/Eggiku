@@ -28,6 +28,7 @@ import eu.kanade.presentation.components.SearchToolbar
 import eu.kanade.tachiyomi.ui.library.EggikuDeadSeriesScreen
 import eu.kanade.tachiyomi.ui.library.EggikuDuplicatesScreen
 import eu.kanade.tachiyomi.ui.library.EggikuQuickSortScreen
+import eu.kanade.tachiyomi.ui.library.EggikuSmartRulesScreen
 import eu.kanade.tachiyomi.ui.library.EggikuTopShelfScreen
 import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.persistentListOf
@@ -174,6 +175,10 @@ private fun LibraryRegularToolbar(
                     AppBar.OverflowAction(
                         title = stringResource(KMR.strings.duplicates_title),
                         onClick = { navigator?.push(EggikuDuplicatesScreen()) },
+                    ),
+                    AppBar.OverflowAction(
+                        title = stringResource(KMR.strings.smart_edit),
+                        onClick = { navigator?.push(EggikuSmartRulesScreen()) },
                     ),
                     AppBar.OverflowAction(
                         title = stringResource(KMR.strings.eggiku_top_shelf),

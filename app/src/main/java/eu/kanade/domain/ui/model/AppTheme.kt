@@ -53,6 +53,15 @@ enum class AppTheme(val titleRes: StringResource?) {
 
     /** Hidden until unlocked: search "insert coin" in settings */
     MIDNIGHT_ARCADE(KMR.strings.theme_midnightarcade),
+
+    /** Hidden until unlocked: read 7 days in a row */
+    HOT_SAUCE(KMR.strings.theme_hotsauce),
+
+    /** Hidden until unlocked: earn 50 achievements */
+    GOLDEN_HOUR(KMR.strings.theme_goldenhour),
+
+    /** Hidden until unlocked: search "rawr" in settings and hatch the egg */
+    DINO_EGG(KMR.strings.theme_dinoegg),
     // KMK <--
 
     // Deprecated
@@ -67,5 +76,12 @@ enum class AppTheme(val titleRes: StringResource?) {
 
 // KMK -->
 /** Eggiku themes that stay out of the theme list until you find them */
-val HiddenAppThemes = setOf(AppTheme.GLIB_GLORB, AppTheme.SUNNY_SIDE_UP, AppTheme.MIDNIGHT_ARCADE)
+val HiddenAppThemes = setOf(
+    AppTheme.GLIB_GLORB,
+    AppTheme.SUNNY_SIDE_UP,
+    AppTheme.MIDNIGHT_ARCADE,
+    AppTheme.HOT_SAUCE,
+    AppTheme.GOLDEN_HOUR,
+    AppTheme.DINO_EGG,
+)
 // KMK <--

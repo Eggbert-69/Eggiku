@@ -69,16 +69,23 @@ fun ChapterTransition(
                 )
             }
             is ChapterTransition.Next -> {
-                TransitionText(
-                    topLabel = stringResource(MR.strings.transition_finished),
-                    topChapter = currChapter,
-                    topChapterDownloaded = currChapterDownloaded,
-                    bottomLabel = stringResource(MR.strings.transition_next),
-                    bottomChapter = goingToChapter,
-                    bottomChapterDownloaded = goingToChapterDownloaded,
-                    fallbackLabel = stringResource(MR.strings.transition_no_next),
-                    chapterGap = calculateChapterGap(goingToChapter, currChapter),
-                )
+                // KMK -->
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    // KMK <--
+                    TransitionText(
+                        topLabel = stringResource(MR.strings.transition_finished),
+                        topChapter = currChapter,
+                        topChapterDownloaded = currChapterDownloaded,
+                        bottomLabel = stringResource(MR.strings.transition_next),
+                        bottomChapter = goingToChapter,
+                        bottomChapterDownloaded = goingToChapterDownloaded,
+                        fallbackLabel = stringResource(MR.strings.transition_no_next),
+                        chapterGap = calculateChapterGap(goingToChapter, currChapter),
+                    )
+                    // KMK -->
+                    EggikuChapterEndCard(finished = currChapter)
+                }
+                // KMK <--
             }
         }
     }

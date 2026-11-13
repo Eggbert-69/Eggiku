@@ -9,15 +9,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.PixelCopy
 import android.view.View
 import android.view.View.LAYER_TYPE_HARDWARE
 import android.view.WindowManager
@@ -68,6 +74,9 @@ import eu.kanade.domain.manga.model.readingMode
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.reader.ChapterListDialog
 import eu.kanade.presentation.reader.DisplayRefreshHost
+import eu.kanade.presentation.reader.EggikuEdgeGlow
+import eu.kanade.presentation.reader.EggikuGlowEdge
+import eu.kanade.presentation.reader.EggikuPeekOverlay
 import eu.kanade.presentation.reader.OrientationSelectDialog
 import eu.kanade.presentation.reader.ReaderContentOverlay
 import eu.kanade.presentation.reader.ReaderPageActionsDialog
@@ -94,6 +103,9 @@ import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.AddToLibraryFirst
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Error
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Success
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuHaptics
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPanelPeek
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuSharpen
 import eu.kanade.tachiyomi.ui.reader.loader.HttpPageLoader
 import eu.kanade.tachiyomi.ui.reader.model.ReaderChapter
@@ -106,6 +118,7 @@ import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import eu.kanade.tachiyomi.ui.reader.viewer.ReaderProgressIndicator
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerConfig
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerViewer
+import eu.kanade.tachiyomi.ui.reader.viewer.pager.R2LPagerViewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.VerticalPagerViewer
 import eu.kanade.tachiyomi.ui.reader.viewer.webtoon.WebtoonViewer
 import eu.kanade.tachiyomi.ui.webview.WebViewActivity
@@ -242,6 +255,17 @@ class ReaderActivity : BaseActivity() {
         // KMK -->
         // On the outer frame: the inner one carries the colour-filter layer, which can swallow the effect
         EggikuSharpen.attach(binding.readerContainer, lifecycleScope)
+        // A little tap on each page turn, a firmer one at the end of a chapter
+        viewModel.state
+            .map { it.currentPage to it.totalPages }
+            .distinctUntilChanged()
+            .drop(1)
+            .onEach { (page, total) ->
+                if (page > 0) {
+                    EggikuHaptics.pageTurn(binding.root, readerPreferences.eggikuPageHaptics().get(), page == total)
+                }
+            }
+            .launchIn(lifecycleScope)
         // KMK <--
 
         if (viewModel.needsInit()) {
@@ -679,6 +703,61 @@ class ReaderActivity : BaseActivity() {
      * Dispatches a generic motion event. If the viewer doesn't handle it, call the default
      * implementation.
      */
+    // KMK -->
+    // Remembers where a finger went down (for panel peek) and closes the peek when it lifts
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                EggikuPanelPeek.lastDownX = ev.x
+                EggikuPanelPeek.lastDownY = ev.y
+                EggikuPanelPeek.fingerDown = true
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                EggikuPanelPeek.fingerDown = false
+                if (EggikuPanelPeek.showing.value != null) {
+                    EggikuPanelPeek.close()
+                    // Let the page know the touch is over, without it counting as a tap
+                    val cancel = MotionEvent.obtain(ev).apply { action = MotionEvent.ACTION_CANCEL }
+                    super.dispatchTouchEvent(cancel)
+                    cancel.recycle()
+                    return true
+                }
+            }
+        }
+        // While peeking, the page underneath stays still
+        if (EggikuPanelPeek.showing.value != null) return true
+        return super.dispatchTouchEvent(ev)
+    }
+
+    // Copies what is on screen and pops up the panel under the finger
+    private fun eggikuPeek(): Boolean {
+        val view = binding.readerContainer
+        if (view.width == 0 || view.height == 0) return false
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val location = IntArray(2)
+        view.getLocationInWindow(location)
+        val x = EggikuPanelPeek.lastDownX - location[0]
+        val y = EggikuPanelPeek.lastDownY - location[1]
+        return try {
+            PixelCopy.request(
+                window,
+                Rect(location[0], location[1], location[0] + view.width, location[1] + view.height),
+                bitmap,
+                { result ->
+                    if (result == PixelCopy.SUCCESS && EggikuPanelPeek.fingerDown) {
+                        EggikuPanelPeek.open(bitmap, x, y)
+                        view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                    }
+                },
+                Handler(Looper.getMainLooper()),
+            )
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+    // KMK <--
+
     override fun dispatchGenericMotionEvent(event: MotionEvent): Boolean {
         val handled = viewModel.state.value.viewer?.handleGenericMotionEvent(event) ?: false
         return handled || super.dispatchGenericMotionEvent(event)
@@ -704,6 +783,19 @@ class ReaderActivity : BaseActivity() {
         if (flashOnPageChange) {
             DisplayRefreshHost(hostState = displayRefreshHost)
         }
+
+        // KMK -->
+        val edgeGlow by readerPreferences.eggikuEdgeGlow().collectAsState()
+        EggikuEdgeGlow(
+            visible = edgeGlow && !state.menuVisible && state.totalPages > 1 && state.currentPage == state.totalPages,
+            edge = when (state.viewer) {
+                is WebtoonViewer, is VerticalPagerViewer -> EggikuGlowEdge.Bottom
+                is R2LPagerViewer -> EggikuGlowEdge.Left
+                else -> EggikuGlowEdge.Right
+            },
+        )
+        EggikuPeekOverlay()
+        // KMK <--
     }
 
     @Composable
@@ -769,6 +861,9 @@ class ReaderActivity : BaseActivity() {
             enabledPrevious = state.viewerChapters?.prevChapter != null,
             currentPage = state.currentPage,
             totalPages = state.totalPages,
+            // KMK -->
+            eggikuMinutesLeft = EggikuReadingSpeed.minutesLeft(state.totalPages - state.currentPage),
+            // KMK <--
             onPageIndexChange = {
                 isScrollingThroughPages = true
                 moveToPageIndex(it)
@@ -1242,6 +1337,9 @@ class ReaderActivity : BaseActivity() {
      * actions to perform is shown.
      */
     fun onPageLongTap(page: ReaderPage, /* SY --> */ extraPage: ReaderPage? = null /* SY <-- */) {
+        // KMK -->
+        if (readerPreferences.eggikuHoldToPeek().get() && eggikuPeek()) return
+        // KMK <--
         viewModel.openPageDialog(page, /* SY --> */ extraPage /* SY <-- */)
     }
 

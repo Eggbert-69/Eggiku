@@ -28,6 +28,8 @@ import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.download.DownloadCache
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
+import eu.kanade.tachiyomi.data.smart.EggikuSmart
+import eu.kanade.tachiyomi.data.tags.EggikuTags
 import eu.kanade.tachiyomi.data.track.TrackStatus
 import eu.kanade.tachiyomi.data.track.TrackerManager
 import eu.kanade.tachiyomi.source.Source
@@ -124,6 +126,7 @@ import tachiyomi.domain.track.interactor.GetTracks
 import tachiyomi.domain.track.interactor.GetTracksPerManga
 import tachiyomi.domain.track.model.Track
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.source.local.LocalSource
 import tachiyomi.source.local.isLocal
@@ -310,6 +313,23 @@ class LibraryScreenModel(
                                     false,
                                 ) to emptyList(),
                             )
+                        }
+                    }
+                    // Eggiku: the Smart tab goes last. It holds every series once; the tab itself
+                    // sorts them into smart categories without touching real ones.
+                    .let { grouped ->
+                        if (groupType == LibraryGroup.BY_DEFAULT && noActiveFilterOrSearch && EggikuSmart.enabled().get()) {
+                            grouped + (
+                                Category(
+                                    EggikuSmart.TAB_ID,
+                                    preferences.context.stringResource(KMR.strings.smart_tab),
+                                    Long.MAX_VALUE,
+                                    0,
+                                    false,
+                                ) to data.favorites.map { it.id }.distinct()
+                                )
+                        } else {
+                            grouped
                         }
                     }
                 // KMK <--
@@ -1264,6 +1284,16 @@ class LibraryScreenModel(
                 }
             }
             // AZ <--
+            // KMK -->
+            // Eggiku: "#tag" shows series carrying one of your own tags
+            if (query.trim().startsWith("#") && query.trim().length > 1) {
+                val wanted = query.trim().removePrefix("#").trim()
+                val assignments = EggikuTags.assignments()
+                return unfiltered.fastFilter { item ->
+                    assignments[item.libraryManga.id].orEmpty().any { it.equals(wanted, ignoreCase = true) }
+                }
+            }
+            // KMK <--
             // Prepare filter object
             val parsedQuery = searchEngine.parseQuery(query)
             val mangaWithMetaIds = getIdsOfFavoriteMangaWithMetadata.await()
@@ -1887,6 +1917,10 @@ class LibraryScreenModel(
         }
 
         fun getItemCountForCategory(category: Category): Int? {
+            // KMK -->
+            // The Smart tab only regroups what's already counted
+            if (category.id == EggikuSmart.TAB_ID) return null
+            // KMK <--
             return if (showMangaCount || !searchQuery.isNullOrEmpty()) groupedFavorites[category]?.size else null
         }
 
@@ -1904,7 +1938,10 @@ class LibraryScreenModel(
                 !showMangaCount -> null
                 !showCategoryTabs -> getItemCountForCategory(category)
                 // Whole library count
-                else -> libraryData.favorites.size
+                // KMK -->
+                // Each series once, however many categories it's in
+                else -> libraryData.favorites.distinctBy { it.id }.size
+                // KMK <--
             }
             return LibraryToolbarTitle(title, count)
         }

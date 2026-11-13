@@ -24,14 +24,19 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,8 +64,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
+import eu.kanade.tachiyomi.data.achievements.EggikuCompare
 import eu.kanade.tachiyomi.util.storage.getUriCompat
 import kotlinx.coroutines.launch
+import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.material.Scaffold
@@ -82,6 +89,7 @@ class EggikuAchievementsScreen : Screen() {
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
         val profileLayer = rememberGraphicsLayer()
+        var comparing by remember { mutableStateOf(false) }
         val data by produceState<Pair<EggikuAchievements.Facts, Map<String, LocalDate>>?>(null) {
             value = withIOContext {
                 val facts = EggikuAchievements.facts()
@@ -97,6 +105,11 @@ class EggikuAchievementsScreen : Screen() {
                     navigateUp = navigator::pop,
                     scrollBehavior = scrollBehavior,
                     actions = {
+                        if (data != null) {
+                            IconButton(onClick = { comparing = true }) {
+                                Icon(Icons.Outlined.People, contentDescription = stringResource(KMR.strings.compare_action))
+                            }
+                        }
                         if (data != null) {
                             IconButton(
                                 onClick = {
@@ -157,7 +170,76 @@ class EggikuAchievementsScreen : Screen() {
                     BadgeCard(badge, earned[badge.earnedKey])
                 }
             }
+            if (comparing) CompareDialog(facts) { comparing = false }
         }
+    }
+
+    @Composable
+    private fun CompareDialog(facts: EggikuAchievements.Facts, onDismiss: () -> Unit) {
+        val context = LocalContext.current
+        val navigator = LocalNavigator.currentOrThrow
+        val nicknamePref = remember { EggikuCompare.nickname() }
+        var nickname by remember { mutableStateOf(nicknamePref.get()) }
+        var pasted by remember { mutableStateOf("") }
+        var bad by remember { mutableStateOf(false) }
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(stringResource(KMR.strings.compare_action)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    OutlinedTextField(
+                        value = nickname,
+                        onValueChange = { nickname = it.take(20) },
+                        label = { Text(stringResource(KMR.strings.compare_nickname)) },
+                        singleLine = true,
+                    )
+                    FilledTonalButton(
+                        onClick = {
+                            nicknamePref.set(nickname.trim())
+                            val code = EggikuCompare.encode(EggikuCompare.mine(facts))
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, context.stringResource(KMR.strings.compare_share_text, code))
+                            }
+                            context.startActivity(Intent.createChooser(intent, null))
+                        },
+                    ) { Text(stringResource(KMR.strings.compare_share)) }
+                    OutlinedTextField(
+                        value = pasted,
+                        onValueChange = {
+                            pasted = it
+                            bad = false
+                        },
+                        label = { Text(stringResource(KMR.strings.compare_paste)) },
+                        isError = bad,
+                        supportingText = if (bad) {
+                            { Text(stringResource(KMR.strings.compare_bad_code)) }
+                        } else {
+                            null
+                        },
+                        maxLines = 3,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = pasted.isNotBlank(),
+                    onClick = {
+                        val friend = EggikuCompare.decode(pasted)
+                        if (friend == null) {
+                            bad = true
+                        } else {
+                            nicknamePref.set(nickname.trim())
+                            onDismiss()
+                            navigator.push(EggikuCompareScreen(friend))
+                        }
+                    },
+                ) { Text(stringResource(KMR.strings.compare_open)) }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) { Text(stringResource(KMR.strings.eggiku_close)) }
+            },
+        )
     }
 
     @Composable

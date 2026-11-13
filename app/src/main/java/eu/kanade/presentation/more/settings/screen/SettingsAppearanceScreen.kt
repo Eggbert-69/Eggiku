@@ -25,6 +25,7 @@ import eu.kanade.presentation.more.settings.screen.appearance.AppLanguageScreen
 import eu.kanade.presentation.more.settings.screen.appearance.EggikuThemeEditorScreen
 import eu.kanade.presentation.more.settings.widget.AppThemeModePreferenceWidget
 import eu.kanade.presentation.more.settings.widget.AppThemePreferenceWidget
+import eu.kanade.presentation.theme.EggikuFont
 import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableMap
@@ -305,6 +306,9 @@ object SettingsAppearanceScreen : SearchableSettings {
     @Composable
     fun getForkGroup(uiPreferences: UiPreferences): Preference.PreferenceGroup {
         val previewsRowCount by uiPreferences.previewsRowCount().collectAsState()
+        // KMK -->
+        val context = LocalContext.current
+        // KMK <--
 
         return Preference.PreferenceGroup(
             stringResource(SYMR.strings.pref_category_fork),
@@ -315,6 +319,22 @@ object SettingsAppearanceScreen : SearchableSettings {
                     title = stringResource(KMR.strings.pref_panorama_cover_flow),
                     subtitle = stringResource(KMR.strings.pref_panorama_cover_flow_summary),
                 ),
+                Preference.PreferenceItem.ListPreference(
+                    preference = uiPreferences.eggikuFont(),
+                    entries = EggikuFont.entries
+                        .associateWith { stringResource(it.title) }
+                        .toImmutableMap(),
+                    title = stringResource(KMR.strings.font_title),
+                    onValueChanged = {
+                        (context as? Activity)?.let { ActivityCompat.recreate(it) }
+                        true
+                    },
+                ),
+                Preference.PreferenceItem.CustomPreference(
+                    title = stringResource(KMR.strings.icon_title),
+                ) {
+                    EggikuIconPicker()
+                },
                 Preference.PreferenceItem.SwitchPreference(
                     preference = uiPreferences.eggikuIntroAnimation(),
                     title = stringResource(KMR.strings.eggiku_pref_intro_animation),

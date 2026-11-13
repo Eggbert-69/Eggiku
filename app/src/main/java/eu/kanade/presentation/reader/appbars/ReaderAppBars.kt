@@ -22,7 +22,9 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -42,7 +45,9 @@ import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import eu.kanade.tachiyomi.ui.reader.viewer.Viewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.R2LPagerViewer
 import kotlinx.collections.immutable.ImmutableSet
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.material.padding
+import tachiyomi.presentation.core.i18n.pluralStringResource
 import tachiyomi.presentation.core.util.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -79,6 +84,9 @@ fun ReaderAppBars(
     enabledPrevious: Boolean,
     currentPage: Int,
     totalPages: Int,
+    // KMK -->
+    eggikuMinutesLeft: Int? = null,
+    // KMK <--
     onPageIndexChange: (Int) -> Unit,
 
     readingMode: ReadingMode,
@@ -282,6 +290,18 @@ fun ReaderAppBars(
             Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small)) {
                 // KMK -->
                 if (oneHandMode) topBars(Modifier.consumeWindowInsets(WindowInsets.statusBars))
+                if (eggikuMinutesLeft != null) {
+                    Text(
+                        text = pluralStringResource(KMR.plurals.eggiku_minutes_left, eggikuMinutesLeft, eggikuMinutesLeft),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .clip(RoundedCornerShape(50))
+                            .background(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.9f))
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                    )
+                }
                 // KMK <--
                 // SY -->
                 if (effectiveNavBarType == NavBarType.Bottom) {

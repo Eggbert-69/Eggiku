@@ -36,6 +36,7 @@ import eu.kanade.tachiyomi.source.online.MetadataSource
 import eu.kanade.tachiyomi.source.online.all.MergedSource
 import eu.kanade.tachiyomi.ui.library.EggikuCategoryLock
 import eu.kanade.tachiyomi.ui.reader.chapter.ReaderChapterItem
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.reader.loader.ChapterLoader
 import eu.kanade.tachiyomi.ui.reader.loader.DownloadPageLoader
 import eu.kanade.tachiyomi.ui.reader.model.InsertPage
@@ -611,6 +612,20 @@ class ReaderViewModel @JvmOverloads constructor(
         }
     }
 
+    /** Seconds spent on the current chapter so far */
+    fun eggikuChapterSeconds(): Long =
+        chapterReadStartTime?.let { (Instant.now().toEpochMilli() - it) / 1000 }?.coerceAtLeast(0) ?: 0L
+
+    fun eggikuSetBookmark(chapterId: Long, bookmarked: Boolean) {
+        chapterList.firstOrNull { it.chapter.id == chapterId }?.chapter?.bookmark = bookmarked
+        viewModelScope.launchNonCancellable {
+            updateChapter.await(ChapterUpdate(id = chapterId, bookmark = bookmarked))
+        }
+        if (getCurrentChapter()?.chapter?.id == chapterId) {
+            mutableState.update { it.copy(bookmarked = bookmarked) }
+        }
+    }
+
     fun eggikuReadSkipped(chapter: Chapter) {
         closeDialog()
         viewModelScope.launchIO {
@@ -750,6 +765,9 @@ class ReaderViewModel @JvmOverloads constructor(
 
         val selectedChapter = page.chapter
         val pages = selectedChapter.pages ?: return
+        // KMK -->
+        EggikuReadingSpeed.onPage()
+        // KMK <--
 
         // Save last page read and mark as read if needed
         viewModelScope.launchNonCancellable {

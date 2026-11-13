@@ -45,6 +45,7 @@ import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
 import eu.kanade.tachiyomi.data.connections.discord.DiscordScreen
 import eu.kanade.tachiyomi.data.download.DownloadCache
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
+import eu.kanade.tachiyomi.data.smart.EggikuSmart
 import eu.kanade.tachiyomi.data.stats.EggikuWidgetBridge
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
 import eu.kanade.tachiyomi.ui.browse.source.SourcesScreen
@@ -132,7 +133,17 @@ data object LibraryTab : Tab {
             // SY -->
             val started = LibraryUpdateJob.startNow(
                 context = context,
-                category = if (state.groupType == LibraryGroup.BY_DEFAULT) category else null,
+                category = if (
+                    state.groupType == LibraryGroup.BY_DEFAULT &&
+                    // KMK -->
+                    // Refreshing the Smart tab updates the whole library
+                    category?.id != EggikuSmart.TAB_ID
+                    // KMK <--
+                ) {
+                    category
+                } else {
+                    null
+                },
                 group = state.groupType,
                 groupExtra = when (state.groupType) {
                     LibraryGroup.BY_DEFAULT -> null
