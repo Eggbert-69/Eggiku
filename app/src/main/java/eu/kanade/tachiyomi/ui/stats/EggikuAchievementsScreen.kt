@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -24,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
@@ -51,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
@@ -61,10 +64,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import eu.kanade.presentation.avatar.EggikuAvatarImage
+import eu.kanade.presentation.avatar.rankName
+import eu.kanade.presentation.avatar.rememberEggikuAvatarCatalog
+import eu.kanade.presentation.avatar.rememberMyEggikuAvatar
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.achievements.EggikuCompare
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatarProgress
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatars
+import eu.kanade.tachiyomi.ui.avatar.EggikuAvatarEditorScreen
 import eu.kanade.tachiyomi.util.storage.getUriCompat
 import kotlinx.coroutines.launch
 import tachiyomi.core.common.i18n.stringResource
@@ -78,6 +88,7 @@ import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import tachiyomi.presentation.core.util.collectAsState as collectPrefAsState
 
 // KMK -->
 /** Eggiku achievements: a ladder per stat with lots of small tiers, plus one-off and secret badges */
@@ -152,6 +163,9 @@ class EggikuAchievementsScreen : Screen() {
                     ) {
                         ProfileCard(facts, earnedCount)
                     }
+                }
+                item(span = { GridItemSpan(maxLineSpan) }, key = "avatar-button") {
+                    CustomizeAvatarButton { navigator.push(EggikuAvatarEditorScreen()) }
                 }
                 item(span = { GridItemSpan(maxLineSpan) }, key = "ladders-header") {
                     Header(stringResource(KMR.strings.ach_ladders))
@@ -243,6 +257,37 @@ class EggikuAchievementsScreen : Screen() {
     }
 
     @Composable
+    private fun CustomizeAvatarButton(onClick: () -> Unit) {
+        val catalog = rememberEggikuAvatarCatalog()
+        val seen by remember { EggikuAvatars.seenPref() }.collectPrefAsState()
+        val hasNew = remember(seen) {
+            val progress = EggikuAvatarProgress.mine()
+            catalog.parts.any {
+                it.unlock.type != "free" && progress.isUnlocked(catalog, it) && "${it.slot}/${it.id}" !in seen
+            }
+        }
+        Box {
+            FilledTonalButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+                Icon(Icons.Outlined.Face, contentDescription = null)
+                Text(
+                    text = stringResource(if (hasNew) KMR.strings.avatar_customize_new else KMR.strings.avatar_customize),
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+            if (hasNew) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .size(10.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.error),
+                )
+            }
+        }
+    }
+
+    @Composable
     private fun Header(text: String) {
         Text(
             text = text,
@@ -263,17 +308,67 @@ class EggikuAchievementsScreen : Screen() {
                 .padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Text(
-                text = stringResource(KMR.strings.ach_profile_title),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = scheme.onPrimaryContainer,
-            )
-            Text(
-                text = stringResource(KMR.strings.ach_count, earnedCount, EggikuAchievements.totalCount),
-                style = MaterialTheme.typography.bodyMedium,
-                color = scheme.onPrimaryContainer,
-            )
+            val navigator = LocalNavigator.currentOrThrow
+            val catalog = rememberEggikuAvatarCatalog()
+            val avatar = rememberMyEggikuAvatar()
+            val progress = remember(earnedCount) { EggikuAvatarProgress.mine() }
+            val rank = progress.rank(catalog)
+            val next = progress.nextRank(catalog)
+            val nickname = remember { EggikuCompare.nickname().get() }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                EggikuAvatarImage(
+                    avatar = avatar,
+                    size = 96.dp,
+                    border = progress.border(catalog, avatar),
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { navigator.push(EggikuAvatarEditorScreen()) },
+                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 14.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text(
+                        text = nickname.ifBlank { stringResource(KMR.strings.ach_profile_title) },
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = scheme.onPrimaryContainer,
+                        maxLines = 1,
+                    )
+                    Text(
+                        text = rankName(rank) + " · " + stringResource(KMR.strings.avatar_xp, progress.xp),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = scheme.onPrimaryContainer,
+                    )
+                    if (next != null) {
+                        val from = rank?.takeIf { !it.secret }?.xp ?: 0
+                        val to = next.xp ?: 1
+                        val fraction = ((progress.xp - from).toFloat() / (to - from).coerceAtLeast(1)).coerceIn(0f, 1f)
+                        LinearProgressIndicator(
+                            progress = { fraction },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(6.dp),
+                            strokeCap = StrokeCap.Round,
+                            gapSize = 0.dp,
+                            drawStopIndicator = {},
+                        )
+                        Text(
+                            text = stringResource(KMR.strings.avatar_next_rank, (to - progress.xp).coerceAtLeast(0), next.name),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = scheme.onPrimaryContainer,
+                        )
+                    }
+                    Text(
+                        text = stringResource(KMR.strings.ach_count, earnedCount, EggikuAchievements.totalCount),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = scheme.onPrimaryContainer,
+                    )
+                }
+            }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),

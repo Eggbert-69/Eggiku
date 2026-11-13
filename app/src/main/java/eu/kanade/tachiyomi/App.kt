@@ -26,6 +26,7 @@ import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.allowRgb565
 import coil3.request.crossfade
+import coil3.svg.SvgDecoder
 import coil3.util.DebugLogger
 import com.elvishew.xlog.LogConfiguration
 import com.elvishew.xlog.LogLevel
@@ -273,6 +274,10 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
                 // NetworkFetcher.Factory
                 add(OkHttpNetworkFetcherFactory(callFactoryLazy::value))
                 // Decoder.Factory
+                // KMK -->
+                // Eggiku avatar parts are SVGs in assets
+                add(SvgDecoder.Factory())
+                // KMK <--
                 add(TachiyomiImageDecoder.Factory())
                 // Fetcher.Factory
                 add(BufferedSourceFetcher.Factory())

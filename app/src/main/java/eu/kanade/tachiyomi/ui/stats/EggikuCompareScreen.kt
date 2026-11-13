@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -23,10 +24,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import eu.kanade.presentation.avatar.EggikuAvatarImage
+import eu.kanade.presentation.avatar.eggikuColor
+import eu.kanade.presentation.avatar.rankName
+import eu.kanade.presentation.avatar.rememberEggikuAvatarCatalog
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.achievements.EggikuCompare
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatar
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatarProgress
 import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.material.Scaffold
@@ -74,8 +81,8 @@ class EggikuCompareScreen(private val friend: EggikuCompare.Profile) : Screen() 
             ) {
                 item {
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        Header(myName, mine.earned, mine.total, Modifier.weight(1f))
-                        Header(friendName, friend.earned, friend.total, Modifier.weight(1f))
+                        Header(myName, mine, Modifier.weight(1f))
+                        Header(friendName, friend, Modifier.weight(1f))
                     }
                 }
                 items(EggikuAchievements.ladders, key = { it.key }) { ladder ->
@@ -105,10 +112,24 @@ class EggikuCompareScreen(private val friend: EggikuCompare.Profile) : Screen() 
     }
 
     @Composable
-    private fun Header(name: String, earned: Int, total: Int, modifier: Modifier) {
-        Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    private fun Header(name: String, profile: EggikuCompare.Profile, modifier: Modifier) {
+        val catalog = rememberEggikuAvatarCatalog()
+        val avatar = profile.avatar ?: EggikuAvatar()
+        val progress = remember(profile) { EggikuAvatarProgress.from(profile) }
+        val rank = progress.rank(catalog)
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            EggikuAvatarImage(avatar = avatar, size = 104.dp, border = progress.border(catalog, avatar))
             Text(name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            Text(stringResource(KMR.strings.ach_count, earned, total), style = MaterialTheme.typography.bodySmall)
+            Text(
+                text = rankName(rank) + " · " + stringResource(KMR.strings.avatar_xp, progress.xp),
+                style = MaterialTheme.typography.labelMedium,
+                color = eggikuColor(rank?.accent, MaterialTheme.colorScheme.onSurfaceVariant),
+            )
+            Text(stringResource(KMR.strings.ach_count, profile.earned, profile.total), style = MaterialTheme.typography.bodySmall)
         }
     }
 

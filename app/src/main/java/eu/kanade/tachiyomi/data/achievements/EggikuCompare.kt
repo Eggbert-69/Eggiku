@@ -2,6 +2,8 @@ package eu.kanade.tachiyomi.data.achievements
 
 import android.net.Uri
 import android.util.Base64
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatar
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatars
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -27,6 +29,8 @@ object EggikuCompare {
         val badges: List<String> = emptyList(),
         val earned: Int = 0,
         val total: Int = 0,
+        /** Left out by older versions; friends then see the default egg */
+        val avatar: EggikuAvatar? = null,
     )
 
     private const val PREFIX = "EGG1-"
@@ -43,6 +47,7 @@ object EggikuCompare {
             badges = EggikuAchievements.oneOffs.filter { it.earnedKey in earned }.map { it.key },
             earned = earned.size.coerceAtMost(EggikuAchievements.totalCount),
             total = EggikuAchievements.totalCount,
+            avatar = EggikuAvatars.mine(),
         )
     }
 

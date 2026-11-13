@@ -1,0 +1,4070 @@
+{
+  "version": 1,
+  "canvas": {
+    "width": 80,
+    "height": 80,
+    "shape": "circle clip, radius 40"
+  },
+  "layers": [
+    "background",
+    "background_pattern",
+    "back_effect",
+    "back_item",
+    "antennae",
+    "body",
+    "body_pattern",
+    "body_shade",
+    "cheeks",
+    "eyes",
+    "mouth",
+    "face_item",
+    "neck_item",
+    "ear_item",
+    "held_item",
+    "hat",
+    "front_effect"
+  ],
+  "anchors": {
+    "background": "full canvas",
+    "background_pattern": "full canvas",
+    "back_effect": "around body",
+    "back_item": "behind body, shoulders y=46",
+    "antennae": "head top (40,18)",
+    "body": "egg 22..58 x 18..64",
+    "body_pattern": "clipped to egg",
+    "body_shade": "egg right side",
+    "cheeks": "cheeks y=50, x=29.5/50.5",
+    "eyes": "eyes y=44, x=33.5/46.5",
+    "mouth": "mouth y=52",
+    "face_item": "eyes/mouth band y=38..56",
+    "neck_item": "neck y=56..72",
+    "ear_item": "ears x=19..61, y=22..56",
+    "held_item": "lower right (48..68, 48..72)",
+    "hat": "head top (40,18), brim y=26..34",
+    "front_effect": "corners around the head"
+  },
+  "parts": [
+    {
+      "id": "shell",
+      "name": "Shell",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/shell.svg",
+          "png": "body/shell.png"
+        },
+        "shade": {
+          "svg": "body/shell_shade.svg",
+          "png": "body/shell_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#FBF7EF",
+      "shade": "#D8CFC0",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "cream",
+      "name": "Cream",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/cream.svg",
+          "png": "body/cream.png"
+        },
+        "shade": {
+          "svg": "body/cream_shade.svg",
+          "png": "body/cream_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#FFE9C2",
+      "shade": "#E8C58C",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "toffee",
+      "name": "Toffee",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/toffee.svg",
+          "png": "body/toffee.png"
+        },
+        "shade": {
+          "svg": "body/toffee_shade.svg",
+          "png": "body/toffee_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#E3B07F",
+      "shade": "#B9814F",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "robin",
+      "name": "Robin",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/robin.svg",
+          "png": "body/robin.png"
+        },
+        "shade": {
+          "svg": "body/robin_shade.svg",
+          "png": "body/robin_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#A9DDE6",
+      "shade": "#77B7C3",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "mint",
+      "name": "Mint",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/mint.svg",
+          "png": "body/mint.png"
+        },
+        "shade": {
+          "svg": "body/mint_shade.svg",
+          "png": "body/mint_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#B8EBD0",
+      "shade": "#7CC9A2",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "glorb-green",
+      "name": "Glorb green",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/glorb-green.svg",
+          "png": "body/glorb-green.png"
+        },
+        "shade": {
+          "svg": "body/glorb-green_shade.svg",
+          "png": "body/glorb-green_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#8EE07A",
+      "shade": "#5DB14C",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "zorp-purple",
+      "name": "Zorp purple",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/zorp-purple.svg",
+          "png": "body/zorp-purple.png"
+        },
+        "shade": {
+          "svg": "body/zorp-purple_shade.svg",
+          "png": "body/zorp-purple_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#C3A3FF",
+      "shade": "#9273E0",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "blip-blue",
+      "name": "Blip blue",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/blip-blue.svg",
+          "png": "body/blip-blue.png"
+        },
+        "shade": {
+          "svg": "body/blip-blue_shade.svg",
+          "png": "body/blip-blue_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#7FC8FF",
+      "shade": "#4E98D6",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "trip-peach",
+      "name": "Trip peach",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/trip-peach.svg",
+          "png": "body/trip-peach.png"
+        },
+        "shade": {
+          "svg": "body/trip-peach_shade.svg",
+          "png": "body/trip-peach_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#FFAD7A",
+      "shade": "#E07D4A",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "plink-pink",
+      "name": "Plink pink",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/plink-pink.svg",
+          "png": "body/plink-pink.png"
+        },
+        "shade": {
+          "svg": "body/plink-pink_shade.svg",
+          "png": "body/plink-pink_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "free"
+      },
+      "fill": "#FF9FC6",
+      "shade": "#E06E9C",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "golden",
+      "name": "Golden",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/golden.svg",
+          "png": "body/golden.png"
+        },
+        "shade": {
+          "svg": "body/golden_shade.svg",
+          "png": "body/golden_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "rank",
+        "rank": "golden",
+        "condition": "Reach Golden Egg"
+      },
+      "fill": "#FFD54A",
+      "shade": "#E0A812",
+      "darkFace": false,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "midnight",
+      "name": "Midnight",
+      "slot": "body",
+      "layer": "body",
+      "layerIndex": 5,
+      "files": {
+        "base": {
+          "svg": "body/midnight.svg",
+          "png": "body/midnight.png"
+        },
+        "shade": {
+          "svg": "body/midnight_shade.svg",
+          "png": "body/midnight_shade.png"
+        }
+      },
+      "anchor": "egg 22..58 x 18..64",
+      "unlock": {
+        "type": "rank",
+        "rank": "cosmic",
+        "condition": "Reach Cosmic Egg"
+      },
+      "fill": "#3A3360",
+      "shade": "#262046",
+      "darkFace": true,
+      "note": "Draw base, then the chosen pattern, then the shade file on top."
+    },
+    {
+      "id": "speckles",
+      "name": "Speckles",
+      "slot": "pattern",
+      "layer": "body_pattern",
+      "layerIndex": 6,
+      "files": {
+        "svg": "pattern/speckles.svg",
+        "png": "pattern/speckles.png"
+      },
+      "anchor": "clipped to egg",
+      "unlock": {
+        "type": "free"
+      },
+      "darkFace": false
+    },
+    {
+      "id": "polka-dots",
+      "name": "Polka dots",
+      "slot": "pattern",
+      "layer": "body_pattern",
+      "layerIndex": 6,
+      "files": {
+        "svg": "pattern/polka-dots.svg",
+        "png": "pattern/polka-dots.png"
+      },
+      "anchor": "clipped to egg",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 2,
+        "tierKey": "L:distance:2",
+        "condition": "Swipe 0.25 mi in the reader"
+      },
+      "darkFace": false
+    },
+    {
+      "id": "stripes",
+      "name": "Stripes",
+      "slot": "pattern",
+      "layer": "body_pattern",
+      "layerIndex": 6,
+      "files": {
+        "svg": "pattern/stripes.svg",
+        "png": "pattern/stripes.png"
+      },
+      "anchor": "clipped to egg",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 3,
+        "tierKey": "L:distance:3",
+        "condition": "Swipe 0.5 mi in the reader"
+      },
+      "darkFace": false
+    },
+    {
+      "id": "zigzag",
+      "name": "Zigzag",
+      "slot": "pattern",
+      "layer": "body_pattern",
+      "layerIndex": 6,
+      "files": {
+        "svg": "pattern/zigzag.svg",
+        "png": "pattern/zigzag.png"
+      },
+      "anchor": "clipped to egg",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "zooms",
+        "tier": 3,
+        "tierKey": "L:zooms:3",
+        "condition": "Zoom in 250 times"
+      },
+      "darkFace": false
+    },
+    {
+      "id": "two-tone",
+      "name": "Two-tone",
+      "slot": "pattern",
+      "layer": "body_pattern",
+      "layerIndex": 6,
+      "files": {
+        "svg": "pattern/two-tone.svg",
+        "png": "pattern/two-tone.png"
+      },
+      "anchor": "clipped to egg",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "finished",
+        "tier": 0,
+        "tierKey": "L:finished:0",
+        "condition": "Finish 1 series"
+      },
+      "darkFace": false
+    },
+    {
+      "id": "galaxy",
+      "name": "Galaxy",
+      "slot": "pattern",
+      "layer": "body_pattern",
+      "layerIndex": 6,
+      "files": {
+        "svg": "pattern/galaxy.svg",
+        "png": "pattern/galaxy.png"
+      },
+      "anchor": "clipped to egg",
+      "unlock": {
+        "type": "rank",
+        "rank": "cosmic",
+        "condition": "Reach Cosmic Egg"
+      },
+      "darkFace": true
+    },
+    {
+      "id": "hearts",
+      "name": "Hearts",
+      "slot": "pattern",
+      "layer": "body_pattern",
+      "layerIndex": 6,
+      "files": {
+        "svg": "pattern/hearts.svg",
+        "png": "pattern/hearts.png"
+      },
+      "anchor": "clipped to egg",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 0,
+        "tierKey": "L:distance:0",
+        "condition": "Swipe 500 ft in the reader"
+      },
+      "darkFace": false
+    },
+    {
+      "id": "cracked",
+      "name": "Cracked",
+      "slot": "pattern",
+      "layer": "body_pattern",
+      "layerIndex": 6,
+      "files": {
+        "svg": "pattern/cracked.svg",
+        "png": "pattern/cracked.png"
+      },
+      "anchor": "clipped to egg",
+      "unlock": {
+        "type": "rank",
+        "rank": "cracked",
+        "condition": "Reach Cracked"
+      },
+      "darkFace": false
+    },
+    {
+      "id": "ball-tips",
+      "name": "Ball tips",
+      "slot": "antenna",
+      "layer": "antennae",
+      "layerIndex": 4,
+      "files": {
+        "byBody": {
+          "shell": {
+            "svg": "antennae/ball-tips/shell.svg",
+            "png": "antennae/ball-tips/shell.png"
+          },
+          "cream": {
+            "svg": "antennae/ball-tips/cream.svg",
+            "png": "antennae/ball-tips/cream.png"
+          },
+          "toffee": {
+            "svg": "antennae/ball-tips/toffee.svg",
+            "png": "antennae/ball-tips/toffee.png"
+          },
+          "robin": {
+            "svg": "antennae/ball-tips/robin.svg",
+            "png": "antennae/ball-tips/robin.png"
+          },
+          "mint": {
+            "svg": "antennae/ball-tips/mint.svg",
+            "png": "antennae/ball-tips/mint.png"
+          },
+          "glorb-green": {
+            "svg": "antennae/ball-tips/glorb-green.svg",
+            "png": "antennae/ball-tips/glorb-green.png"
+          },
+          "zorp-purple": {
+            "svg": "antennae/ball-tips/zorp-purple.svg",
+            "png": "antennae/ball-tips/zorp-purple.png"
+          },
+          "blip-blue": {
+            "svg": "antennae/ball-tips/blip-blue.svg",
+            "png": "antennae/ball-tips/blip-blue.png"
+          },
+          "trip-peach": {
+            "svg": "antennae/ball-tips/trip-peach.svg",
+            "png": "antennae/ball-tips/trip-peach.png"
+          },
+          "plink-pink": {
+            "svg": "antennae/ball-tips/plink-pink.svg",
+            "png": "antennae/ball-tips/plink-pink.png"
+          },
+          "golden": {
+            "svg": "antennae/ball-tips/golden.svg",
+            "png": "antennae/ball-tips/golden.png"
+          },
+          "midnight": {
+            "svg": "antennae/ball-tips/midnight.svg",
+            "png": "antennae/ball-tips/midnight.png"
+          }
+        }
+      },
+      "anchor": "head top (40,18)",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Pick the file matching the body colour id."
+    },
+    {
+      "id": "heart-tips",
+      "name": "Heart tips",
+      "slot": "antenna",
+      "layer": "antennae",
+      "layerIndex": 4,
+      "files": {
+        "byBody": {
+          "shell": {
+            "svg": "antennae/heart-tips/shell.svg",
+            "png": "antennae/heart-tips/shell.png"
+          },
+          "cream": {
+            "svg": "antennae/heart-tips/cream.svg",
+            "png": "antennae/heart-tips/cream.png"
+          },
+          "toffee": {
+            "svg": "antennae/heart-tips/toffee.svg",
+            "png": "antennae/heart-tips/toffee.png"
+          },
+          "robin": {
+            "svg": "antennae/heart-tips/robin.svg",
+            "png": "antennae/heart-tips/robin.png"
+          },
+          "mint": {
+            "svg": "antennae/heart-tips/mint.svg",
+            "png": "antennae/heart-tips/mint.png"
+          },
+          "glorb-green": {
+            "svg": "antennae/heart-tips/glorb-green.svg",
+            "png": "antennae/heart-tips/glorb-green.png"
+          },
+          "zorp-purple": {
+            "svg": "antennae/heart-tips/zorp-purple.svg",
+            "png": "antennae/heart-tips/zorp-purple.png"
+          },
+          "blip-blue": {
+            "svg": "antennae/heart-tips/blip-blue.svg",
+            "png": "antennae/heart-tips/blip-blue.png"
+          },
+          "trip-peach": {
+            "svg": "antennae/heart-tips/trip-peach.svg",
+            "png": "antennae/heart-tips/trip-peach.png"
+          },
+          "plink-pink": {
+            "svg": "antennae/heart-tips/plink-pink.svg",
+            "png": "antennae/heart-tips/plink-pink.png"
+          },
+          "golden": {
+            "svg": "antennae/heart-tips/golden.svg",
+            "png": "antennae/heart-tips/golden.png"
+          },
+          "midnight": {
+            "svg": "antennae/heart-tips/midnight.svg",
+            "png": "antennae/heart-tips/midnight.png"
+          }
+        }
+      },
+      "anchor": "head top (40,18)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 2,
+        "tierKey": "L:distance:2",
+        "condition": "Swipe 0.25 mi in the reader"
+      },
+      "note": "Pick the file matching the body colour id."
+    },
+    {
+      "id": "star-tips",
+      "name": "Star tips",
+      "slot": "antenna",
+      "layer": "antennae",
+      "layerIndex": 4,
+      "files": {
+        "byBody": {
+          "shell": {
+            "svg": "antennae/star-tips/shell.svg",
+            "png": "antennae/star-tips/shell.png"
+          },
+          "cream": {
+            "svg": "antennae/star-tips/cream.svg",
+            "png": "antennae/star-tips/cream.png"
+          },
+          "toffee": {
+            "svg": "antennae/star-tips/toffee.svg",
+            "png": "antennae/star-tips/toffee.png"
+          },
+          "robin": {
+            "svg": "antennae/star-tips/robin.svg",
+            "png": "antennae/star-tips/robin.png"
+          },
+          "mint": {
+            "svg": "antennae/star-tips/mint.svg",
+            "png": "antennae/star-tips/mint.png"
+          },
+          "glorb-green": {
+            "svg": "antennae/star-tips/glorb-green.svg",
+            "png": "antennae/star-tips/glorb-green.png"
+          },
+          "zorp-purple": {
+            "svg": "antennae/star-tips/zorp-purple.svg",
+            "png": "antennae/star-tips/zorp-purple.png"
+          },
+          "blip-blue": {
+            "svg": "antennae/star-tips/blip-blue.svg",
+            "png": "antennae/star-tips/blip-blue.png"
+          },
+          "trip-peach": {
+            "svg": "antennae/star-tips/trip-peach.svg",
+            "png": "antennae/star-tips/trip-peach.png"
+          },
+          "plink-pink": {
+            "svg": "antennae/star-tips/plink-pink.svg",
+            "png": "antennae/star-tips/plink-pink.png"
+          },
+          "golden": {
+            "svg": "antennae/star-tips/golden.svg",
+            "png": "antennae/star-tips/golden.png"
+          },
+          "midnight": {
+            "svg": "antennae/star-tips/midnight.svg",
+            "png": "antennae/star-tips/midnight.png"
+          }
+        }
+      },
+      "anchor": "head top (40,18)",
+      "unlock": {
+        "type": "rank",
+        "rank": "glorb",
+        "condition": "Reach Glib Glorb"
+      },
+      "note": "Pick the file matching the body colour id."
+    },
+    {
+      "id": "single",
+      "name": "Single",
+      "slot": "antenna",
+      "layer": "antennae",
+      "layerIndex": 4,
+      "files": {
+        "byBody": {
+          "shell": {
+            "svg": "antennae/single/shell.svg",
+            "png": "antennae/single/shell.png"
+          },
+          "cream": {
+            "svg": "antennae/single/cream.svg",
+            "png": "antennae/single/cream.png"
+          },
+          "toffee": {
+            "svg": "antennae/single/toffee.svg",
+            "png": "antennae/single/toffee.png"
+          },
+          "robin": {
+            "svg": "antennae/single/robin.svg",
+            "png": "antennae/single/robin.png"
+          },
+          "mint": {
+            "svg": "antennae/single/mint.svg",
+            "png": "antennae/single/mint.png"
+          },
+          "glorb-green": {
+            "svg": "antennae/single/glorb-green.svg",
+            "png": "antennae/single/glorb-green.png"
+          },
+          "zorp-purple": {
+            "svg": "antennae/single/zorp-purple.svg",
+            "png": "antennae/single/zorp-purple.png"
+          },
+          "blip-blue": {
+            "svg": "antennae/single/blip-blue.svg",
+            "png": "antennae/single/blip-blue.png"
+          },
+          "trip-peach": {
+            "svg": "antennae/single/trip-peach.svg",
+            "png": "antennae/single/trip-peach.png"
+          },
+          "plink-pink": {
+            "svg": "antennae/single/plink-pink.svg",
+            "png": "antennae/single/plink-pink.png"
+          },
+          "golden": {
+            "svg": "antennae/single/golden.svg",
+            "png": "antennae/single/golden.png"
+          },
+          "midnight": {
+            "svg": "antennae/single/midnight.svg",
+            "png": "antennae/single/midnight.png"
+          }
+        }
+      },
+      "anchor": "head top (40,18)",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Pick the file matching the body colour id."
+    },
+    {
+      "id": "curly",
+      "name": "Curly",
+      "slot": "antenna",
+      "layer": "antennae",
+      "layerIndex": 4,
+      "files": {
+        "byBody": {
+          "shell": {
+            "svg": "antennae/curly/shell.svg",
+            "png": "antennae/curly/shell.png"
+          },
+          "cream": {
+            "svg": "antennae/curly/cream.svg",
+            "png": "antennae/curly/cream.png"
+          },
+          "toffee": {
+            "svg": "antennae/curly/toffee.svg",
+            "png": "antennae/curly/toffee.png"
+          },
+          "robin": {
+            "svg": "antennae/curly/robin.svg",
+            "png": "antennae/curly/robin.png"
+          },
+          "mint": {
+            "svg": "antennae/curly/mint.svg",
+            "png": "antennae/curly/mint.png"
+          },
+          "glorb-green": {
+            "svg": "antennae/curly/glorb-green.svg",
+            "png": "antennae/curly/glorb-green.png"
+          },
+          "zorp-purple": {
+            "svg": "antennae/curly/zorp-purple.svg",
+            "png": "antennae/curly/zorp-purple.png"
+          },
+          "blip-blue": {
+            "svg": "antennae/curly/blip-blue.svg",
+            "png": "antennae/curly/blip-blue.png"
+          },
+          "trip-peach": {
+            "svg": "antennae/curly/trip-peach.svg",
+            "png": "antennae/curly/trip-peach.png"
+          },
+          "plink-pink": {
+            "svg": "antennae/curly/plink-pink.svg",
+            "png": "antennae/curly/plink-pink.png"
+          },
+          "golden": {
+            "svg": "antennae/curly/golden.svg",
+            "png": "antennae/curly/golden.png"
+          },
+          "midnight": {
+            "svg": "antennae/curly/midnight.svg",
+            "png": "antennae/curly/midnight.png"
+          }
+        }
+      },
+      "anchor": "head top (40,18)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 3,
+        "tierKey": "L:distance:3",
+        "condition": "Swipe 0.5 mi in the reader"
+      },
+      "note": "Pick the file matching the body colour id."
+    },
+    {
+      "id": "bug",
+      "name": "Bug",
+      "slot": "antenna",
+      "layer": "antennae",
+      "layerIndex": 4,
+      "files": {
+        "byBody": {
+          "shell": {
+            "svg": "antennae/bug/shell.svg",
+            "png": "antennae/bug/shell.png"
+          },
+          "cream": {
+            "svg": "antennae/bug/cream.svg",
+            "png": "antennae/bug/cream.png"
+          },
+          "toffee": {
+            "svg": "antennae/bug/toffee.svg",
+            "png": "antennae/bug/toffee.png"
+          },
+          "robin": {
+            "svg": "antennae/bug/robin.svg",
+            "png": "antennae/bug/robin.png"
+          },
+          "mint": {
+            "svg": "antennae/bug/mint.svg",
+            "png": "antennae/bug/mint.png"
+          },
+          "glorb-green": {
+            "svg": "antennae/bug/glorb-green.svg",
+            "png": "antennae/bug/glorb-green.png"
+          },
+          "zorp-purple": {
+            "svg": "antennae/bug/zorp-purple.svg",
+            "png": "antennae/bug/zorp-purple.png"
+          },
+          "blip-blue": {
+            "svg": "antennae/bug/blip-blue.svg",
+            "png": "antennae/bug/blip-blue.png"
+          },
+          "trip-peach": {
+            "svg": "antennae/bug/trip-peach.svg",
+            "png": "antennae/bug/trip-peach.png"
+          },
+          "plink-pink": {
+            "svg": "antennae/bug/plink-pink.svg",
+            "png": "antennae/bug/plink-pink.png"
+          },
+          "golden": {
+            "svg": "antennae/bug/golden.svg",
+            "png": "antennae/bug/golden.png"
+          },
+          "midnight": {
+            "svg": "antennae/bug/midnight.svg",
+            "png": "antennae/bug/midnight.png"
+          }
+        }
+      },
+      "anchor": "head top (40,18)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "zooms",
+        "tier": 3,
+        "tierKey": "L:zooms:3",
+        "condition": "Zoom in 250 times"
+      },
+      "note": "Pick the file matching the body colour id."
+    },
+    {
+      "id": "dots",
+      "name": "Dots",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/dots.svg",
+          "png": "eyes/dots.png"
+        },
+        "light": {
+          "svg": "eyes/dots_light.svg",
+          "png": "eyes/dots_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "shiny",
+      "name": "Shiny",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/shiny.svg",
+          "png": "eyes/shiny.png"
+        },
+        "light": {
+          "svg": "eyes/shiny_light.svg",
+          "png": "eyes/shiny_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "alien",
+      "name": "Alien",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/alien.svg",
+          "png": "eyes/alien.png"
+        },
+        "light": {
+          "svg": "eyes/alien_light.svg",
+          "png": "eyes/alien_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "cyclops",
+      "name": "Cyclops",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/cyclops.svg",
+          "png": "eyes/cyclops.png"
+        },
+        "light": {
+          "svg": "eyes/cyclops_light.svg",
+          "png": "eyes/cyclops_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 1,
+        "tierKey": "L:distance:1",
+        "condition": "Swipe 1,000 ft in the reader"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "three",
+      "name": "Three",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/three.svg",
+          "png": "eyes/three.png"
+        },
+        "light": {
+          "svg": "eyes/three_light.svg",
+          "png": "eyes/three_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 1,
+        "tierKey": "L:library:1",
+        "condition": "Have 250 series in your library"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "sleepy",
+      "name": "Sleepy",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/sleepy.svg",
+          "png": "eyes/sleepy.png"
+        },
+        "light": {
+          "svg": "eyes/sleepy_light.svg",
+          "png": "eyes/sleepy_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "happy",
+      "name": "Happy",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/happy.svg",
+          "png": "eyes/happy.png"
+        },
+        "light": {
+          "svg": "eyes/happy_light.svg",
+          "png": "eyes/happy_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "wink",
+      "name": "Wink",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/wink.svg",
+          "png": "eyes/wink.png"
+        },
+        "light": {
+          "svg": "eyes/wink_light.svg",
+          "png": "eyes/wink_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 4,
+        "tierKey": "L:streak:4",
+        "condition": "Read 30 days in a row"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "stars",
+      "name": "Stars",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/stars.svg",
+          "png": "eyes/stars.png"
+        },
+        "light": {
+          "svg": "eyes/stars_light.svg",
+          "png": "eyes/stars_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 2,
+        "tierKey": "L:library:2",
+        "condition": "Have 500 series in your library"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "hearts",
+      "name": "Hearts",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/hearts.svg",
+          "png": "eyes/hearts.png"
+        },
+        "light": {
+          "svg": "eyes/hearts_light.svg",
+          "png": "eyes/hearts_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 0,
+        "tierKey": "L:chapters:0",
+        "condition": "Read 1 chapters"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "dizzy",
+      "name": "Dizzy",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/dizzy.svg",
+          "png": "eyes/dizzy.png"
+        },
+        "light": {
+          "svg": "eyes/dizzy_light.svg",
+          "png": "eyes/dizzy_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 0,
+        "tierKey": "L:day:0",
+        "condition": "Read 25 chapters in one day"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "determined",
+      "name": "Determined",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/determined.svg",
+          "png": "eyes/determined.png"
+        },
+        "light": {
+          "svg": "eyes/determined_light.svg",
+          "png": "eyes/determined_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 1,
+        "tierKey": "L:day:1",
+        "condition": "Read 50 chapters in one day"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "teary",
+      "name": "Teary",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/teary.svg",
+          "png": "eyes/teary.png"
+        },
+        "light": {
+          "svg": "eyes/teary_light.svg",
+          "png": "eyes/teary_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 2,
+        "tierKey": "L:distance:2",
+        "condition": "Swipe 0.25 mi in the reader"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "cool",
+      "name": "Cool",
+      "slot": "eyes",
+      "layer": "eyes",
+      "layerIndex": 9,
+      "files": {
+        "default": {
+          "svg": "eyes/cool.svg",
+          "png": "eyes/cool.png"
+        },
+        "light": {
+          "svg": "eyes/cool_light.svg",
+          "png": "eyes/cool_light.png"
+        }
+      },
+      "anchor": "eyes y=44, x=33.5/46.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 3,
+        "tierKey": "L:distance:3",
+        "condition": "Swipe 0.5 mi in the reader"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "smile",
+      "name": "Smile",
+      "slot": "mouth",
+      "layer": "mouth",
+      "layerIndex": 10,
+      "files": {
+        "default": {
+          "svg": "mouth/smile.svg",
+          "png": "mouth/smile.png"
+        },
+        "light": {
+          "svg": "mouth/smile_light.svg",
+          "png": "mouth/smile_light.png"
+        }
+      },
+      "anchor": "mouth y=52",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "grin",
+      "name": "Grin",
+      "slot": "mouth",
+      "layer": "mouth",
+      "layerIndex": 10,
+      "files": {
+        "default": {
+          "svg": "mouth/grin.svg",
+          "png": "mouth/grin.png"
+        },
+        "light": {
+          "svg": "mouth/grin_light.svg",
+          "png": "mouth/grin_light.png"
+        }
+      },
+      "anchor": "mouth y=52",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "o",
+      "name": "O",
+      "slot": "mouth",
+      "layer": "mouth",
+      "layerIndex": 10,
+      "files": {
+        "default": {
+          "svg": "mouth/o.svg",
+          "png": "mouth/o.png"
+        },
+        "light": {
+          "svg": "mouth/o_light.svg",
+          "png": "mouth/o_light.png"
+        }
+      },
+      "anchor": "mouth y=52",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "cat",
+      "name": "Cat",
+      "slot": "mouth",
+      "layer": "mouth",
+      "layerIndex": 10,
+      "files": {
+        "default": {
+          "svg": "mouth/cat.svg",
+          "png": "mouth/cat.png"
+        },
+        "light": {
+          "svg": "mouth/cat_light.svg",
+          "png": "mouth/cat_light.png"
+        }
+      },
+      "anchor": "mouth y=52",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 1,
+        "tierKey": "L:chapters:1",
+        "condition": "Read 1,000 chapters"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "tongue",
+      "name": "Tongue",
+      "slot": "mouth",
+      "layer": "mouth",
+      "layerIndex": 10,
+      "files": {
+        "default": {
+          "svg": "mouth/tongue.svg",
+          "png": "mouth/tongue.png"
+        },
+        "light": {
+          "svg": "mouth/tongue_light.svg",
+          "png": "mouth/tongue_light.png"
+        }
+      },
+      "anchor": "mouth y=52",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "zooms",
+        "tier": 2,
+        "tierKey": "L:zooms:2",
+        "condition": "Zoom in 100 times"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "flat",
+      "name": "Flat",
+      "slot": "mouth",
+      "layer": "mouth",
+      "layerIndex": 10,
+      "files": {
+        "default": {
+          "svg": "mouth/flat.svg",
+          "png": "mouth/flat.png"
+        },
+        "light": {
+          "svg": "mouth/flat_light.svg",
+          "png": "mouth/flat_light.png"
+        }
+      },
+      "anchor": "mouth y=52",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "smirk",
+      "name": "Smirk",
+      "slot": "mouth",
+      "layer": "mouth",
+      "layerIndex": 10,
+      "files": {
+        "default": {
+          "svg": "mouth/smirk.svg",
+          "png": "mouth/smirk.png"
+        },
+        "light": {
+          "svg": "mouth/smirk_light.svg",
+          "png": "mouth/smirk_light.png"
+        }
+      },
+      "anchor": "mouth y=52",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 2,
+        "tierKey": "L:chapters:2",
+        "condition": "Read 10,000 chapters"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "fang",
+      "name": "Fang",
+      "slot": "mouth",
+      "layer": "mouth",
+      "layerIndex": 10,
+      "files": {
+        "default": {
+          "svg": "mouth/fang.svg",
+          "png": "mouth/fang.png"
+        },
+        "light": {
+          "svg": "mouth/fang_light.svg",
+          "png": "mouth/fang_light.png"
+        }
+      },
+      "anchor": "mouth y=52",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "ratings",
+        "tier": 3,
+        "tierKey": "L:ratings:3",
+        "condition": "Rate 25 series"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "wobbly",
+      "name": "Wobbly",
+      "slot": "mouth",
+      "layer": "mouth",
+      "layerIndex": 10,
+      "files": {
+        "default": {
+          "svg": "mouth/wobbly.svg",
+          "png": "mouth/wobbly.png"
+        },
+        "light": {
+          "svg": "mouth/wobbly_light.svg",
+          "png": "mouth/wobbly_light.png"
+        }
+      },
+      "anchor": "mouth y=52",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "ratings",
+        "tier": 0,
+        "tierKey": "L:ratings:0",
+        "condition": "Rate 1 series"
+      },
+      "note": "Use the light file on dark bodies."
+    },
+    {
+      "id": "blush",
+      "name": "Blush",
+      "slot": "cheeks",
+      "layer": "cheeks",
+      "layerIndex": 8,
+      "files": {
+        "svg": "cheeks/blush.svg",
+        "png": "cheeks/blush.png"
+      },
+      "anchor": "cheeks y=50, x=29.5/50.5",
+      "unlock": {
+        "type": "free"
+      }
+    },
+    {
+      "id": "freckles",
+      "name": "Freckles",
+      "slot": "cheeks",
+      "layer": "cheeks",
+      "layerIndex": 8,
+      "files": {
+        "svg": "cheeks/freckles.svg",
+        "png": "cheeks/freckles.png"
+      },
+      "anchor": "cheeks y=50, x=29.5/50.5",
+      "unlock": {
+        "type": "free"
+      }
+    },
+    {
+      "id": "rosy",
+      "name": "Rosy",
+      "slot": "cheeks",
+      "layer": "cheeks",
+      "layerIndex": 8,
+      "files": {
+        "svg": "cheeks/rosy.svg",
+        "png": "cheeks/rosy.png"
+      },
+      "anchor": "cheeks y=50, x=29.5/50.5",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "finished",
+        "tier": 1,
+        "tierKey": "L:finished:1",
+        "condition": "Finish 50 series"
+      }
+    },
+    {
+      "id": "none",
+      "name": "None",
+      "slot": "cheeks",
+      "layer": "cheeks",
+      "layerIndex": 8,
+      "files": null,
+      "anchor": "cheeks y=50, x=29.5/50.5",
+      "unlock": {
+        "type": "free"
+      }
+    },
+    {
+      "id": "beanie",
+      "name": "Beanie",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/beanie.svg",
+        "png": "hat/beanie.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "free"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "crown",
+      "name": "Crown",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/crown.svg",
+        "png": "hat/crown.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "rank",
+        "rank": "golden",
+        "condition": "Reach Golden Egg"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "party-hat",
+      "name": "Party hat",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/party-hat.svg",
+        "png": "hat/party-hat.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "weekend",
+        "earnedKey": "O:weekend",
+        "condition": "Earn the Weekend badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "wizard-hat",
+      "name": "Wizard hat",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/wizard-hat.svg",
+        "png": "hat/wizard-hat.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "sorting_hat",
+        "earnedKey": "O:sorting_hat",
+        "condition": "Earn the Sorting hat badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "chef-hat",
+      "name": "Chef hat",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/chef-hat.svg",
+        "png": "hat/chef-hat.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 0,
+        "tierKey": "L:distance:0",
+        "condition": "Swipe 500 ft in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "top-hat",
+      "name": "Top hat",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/top-hat.svg",
+        "png": "hat/top-hat.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "hours",
+        "tier": 1,
+        "tierKey": "L:hours:1",
+        "condition": "Read for 100 hours"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "ball-cap",
+      "name": "Ball cap",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/ball-cap.svg",
+        "png": "hat/ball-cap.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "free"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "cowboy-hat",
+      "name": "Cowboy hat",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/cowboy-hat.svg",
+        "png": "hat/cowboy-hat.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "long_haul",
+        "earnedKey": "O:long_haul",
+        "condition": "Earn the Long haul badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "beret",
+      "name": "Beret",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/beret.svg",
+        "png": "hat/beret.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 3,
+        "tierKey": "L:streak:3",
+        "condition": "Read 21 days in a row"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "grad-cap",
+      "name": "Grad cap",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/grad-cap.svg",
+        "png": "hat/grad-cap.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "polyglot",
+        "earnedKey": "O:polyglot",
+        "condition": "Earn the Polyglot badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "halo",
+      "name": "Halo",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/halo.svg",
+        "png": "hat/halo.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 7,
+        "tierKey": "L:streak:7",
+        "condition": "Read 90 days in a row"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "devil-horns",
+      "name": "Devil horns",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/devil-horns.svg",
+        "png": "hat/devil-horns.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "necromancer",
+        "earnedKey": "O:necromancer",
+        "condition": "Earn the Necromancer badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "cat-ears",
+      "name": "Cat ears",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/cat-ears.svg",
+        "png": "hat/cat-ears.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 5,
+        "tierKey": "L:streak:5",
+        "condition": "Read 45 days in a row"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "bunny-ears",
+      "name": "Bunny ears",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/bunny-ears.svg",
+        "png": "hat/bunny-ears.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "egg_hunter",
+        "earnedKey": "O:egg_hunter",
+        "condition": "Earn the Egg hunter badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "flower-crown",
+      "name": "Flower crown",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/flower-crown.svg",
+        "png": "hat/flower-crown.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "new_nest",
+        "earnedKey": "O:new_nest",
+        "condition": "Earn the New nest badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "bow",
+      "name": "Bow",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/bow.svg",
+        "png": "hat/bow.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 4,
+        "tierKey": "L:distance:4",
+        "condition": "Swipe 1 mi in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "viking-helmet",
+      "name": "Viking helmet",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/viking-helmet.svg",
+        "png": "hat/viking-helmet.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "iron_seat",
+        "earnedKey": "O:iron_seat",
+        "condition": "Earn the Iron seat badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "propeller-cap",
+      "name": "Propeller cap",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/propeller-cap.svg",
+        "png": "hat/propeller-cap.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 2,
+        "tierKey": "L:distance:2",
+        "condition": "Swipe 0.25 mi in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "santa-hat",
+      "name": "Santa hat",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/santa-hat.svg",
+        "png": "hat/santa-hat.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 0,
+        "tierKey": "L:streak:0",
+        "condition": "Read 3 days in a row"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "sprout",
+      "name": "Sprout",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/sprout.svg",
+        "png": "hat/sprout.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "free"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "shell-top",
+      "name": "Shell top",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/shell-top.svg",
+        "png": "hat/shell-top.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "rank",
+        "rank": "hatchling",
+        "condition": "Reach Hatchling"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "tiara",
+      "name": "Tiara",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/tiara.svg",
+        "png": "hat/tiara.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "ratings",
+        "tier": 1,
+        "tierKey": "L:ratings:1",
+        "condition": "Rate 5 series"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "pirate-hat",
+      "name": "Pirate hat",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/pirate-hat.svg",
+        "png": "hat/pirate-hat.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "globetrotter",
+        "earnedKey": "O:globetrotter",
+        "condition": "Earn the Globetrotter badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "frog-hat",
+      "name": "Frog hat",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/frog-hat.svg",
+        "png": "hat/frog-hat.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "finished",
+        "tier": 1,
+        "tierKey": "L:finished:1",
+        "condition": "Finish 50 series"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "mushroom-cap",
+      "name": "Mushroom cap",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/mushroom-cap.svg",
+        "png": "hat/mushroom-cap.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "started",
+        "tier": 1,
+        "tierKey": "L:started:1",
+        "condition": "Start 500 series"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "space-helmet",
+      "name": "Space helmet",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/space-helmet.svg",
+        "png": "hat/space-helmet.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "rank",
+        "rank": "cosmic",
+        "condition": "Reach Cosmic Egg"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "headlamp",
+      "name": "Headlamp",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/headlamp.svg",
+        "png": "hat/headlamp.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "night_shift",
+        "earnedKey": "O:night_shift",
+        "condition": "Earn the Night shift badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "hero-hair",
+      "name": "Hero hair",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/hero-hair.svg",
+        "png": "hat/hero-hair.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 3,
+        "tierKey": "L:day:3",
+        "condition": "Read 100 chapters in one day"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "ahoge",
+      "name": "Ahoge",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/ahoge.svg",
+        "png": "hat/ahoge.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 3,
+        "tierKey": "L:chapters:3",
+        "condition": "Read 50,000 chapters"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "twin-tails",
+      "name": "Twin tails",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/twin-tails.svg",
+        "png": "hat/twin-tails.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "started",
+        "tier": 0,
+        "tierKey": "L:started:0",
+        "condition": "Start 10 series"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "school-cap",
+      "name": "School cap",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/school-cap.svg",
+        "png": "hat/school-cap.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "zooms",
+        "tier": 1,
+        "tierKey": "L:zooms:1",
+        "condition": "Zoom in 50 times"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "hachimaki",
+      "name": "Hachimaki",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/hachimaki.svg",
+        "png": "hat/hachimaki.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "ratings",
+        "tier": 2,
+        "tierKey": "L:ratings:2",
+        "condition": "Rate 10 series"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "round-glasses",
+      "name": "Round glasses",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/round-glasses.svg",
+        "png": "face/round-glasses.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "free"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "sunglasses",
+      "name": "Sunglasses",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/sunglasses.svg",
+        "png": "face/sunglasses.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 1,
+        "tierKey": "L:distance:1",
+        "condition": "Swipe 1,000 ft in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "star-shades",
+      "name": "Star shades",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/star-shades.svg",
+        "png": "face/star-shades.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "ratings",
+        "tier": 2,
+        "tierKey": "L:ratings:2",
+        "condition": "Rate 10 series"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "heart-glasses",
+      "name": "Heart glasses",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/heart-glasses.svg",
+        "png": "face/heart-glasses.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 1,
+        "tierKey": "L:library:1",
+        "condition": "Have 250 series in your library"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "monocle",
+      "name": "Monocle",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/monocle.svg",
+        "png": "face/monocle.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "badge",
+        "key": "harsh_critic",
+        "earnedKey": "O:harsh_critic",
+        "condition": "Earn the Harsh critic badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "eye-patch",
+      "name": "Eye patch",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/eye-patch.svg",
+        "png": "face/eye-patch.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 4,
+        "tierKey": "L:streak:4",
+        "condition": "Read 30 days in a row"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "mustache",
+      "name": "Mustache",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/mustache.svg",
+        "png": "face/mustache.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 2,
+        "tierKey": "L:library:2",
+        "condition": "Have 500 series in your library"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "ninja-mask",
+      "name": "Ninja mask",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/ninja-mask.svg",
+        "png": "face/ninja-mask.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 0,
+        "tierKey": "L:chapters:0",
+        "condition": "Read 1 chapters"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "face-mask",
+      "name": "Face mask",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/face-mask.svg",
+        "png": "face/face-mask.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 0,
+        "tierKey": "L:day:0",
+        "condition": "Read 25 chapters in one day"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "3d-glasses",
+      "name": "3D glasses",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/3d-glasses.svg",
+        "png": "face/3d-glasses.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 1,
+        "tierKey": "L:day:1",
+        "condition": "Read 50 chapters in one day"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "goggles",
+      "name": "Goggles",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/goggles.svg",
+        "png": "face/goggles.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "zooms",
+        "tier": 1,
+        "tierKey": "L:zooms:1",
+        "condition": "Zoom in 50 times"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "band-aid",
+      "name": "Band-aid",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/band-aid.svg",
+        "png": "face/band-aid.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 2,
+        "tierKey": "L:distance:2",
+        "condition": "Swipe 0.25 mi in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "visor",
+      "name": "Visor",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/visor.svg",
+        "png": "face/visor.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 3,
+        "tierKey": "L:distance:3",
+        "condition": "Swipe 0.5 mi in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "anger-mark",
+      "name": "Anger mark",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/anger-mark.svg",
+        "png": "face/anger-mark.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "zooms",
+        "tier": 3,
+        "tierKey": "L:zooms:3",
+        "condition": "Zoom in 250 times"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "sweat-drop",
+      "name": "Sweat drop",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/sweat-drop.svg",
+        "png": "face/sweat-drop.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "finished",
+        "tier": 0,
+        "tierKey": "L:finished:0",
+        "condition": "Finish 1 series"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "blush-lines",
+      "name": "Blush lines",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/blush-lines.svg",
+        "png": "face/blush-lines.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 0,
+        "tierKey": "L:distance:0",
+        "condition": "Swipe 500 ft in the reader"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "cheek-scar",
+      "name": "Cheek scar",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/cheek-scar.svg",
+        "png": "face/cheek-scar.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "hours",
+        "tier": 1,
+        "tierKey": "L:hours:1",
+        "condition": "Read for 100 hours"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "glasses-glint",
+      "name": "Glasses glint",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/glasses-glint.svg",
+        "png": "face/glasses-glint.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 3,
+        "tierKey": "L:streak:3",
+        "condition": "Read 21 days in a row"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "hero-mask",
+      "name": "Hero mask",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/hero-mask.svg",
+        "png": "face/hero-mask.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 5,
+        "tierKey": "L:streak:5",
+        "condition": "Read 45 days in a row"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "nose-bandage",
+      "name": "Nose bandage",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/nose-bandage.svg",
+        "png": "face/nose-bandage.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 4,
+        "tierKey": "L:distance:4",
+        "condition": "Swipe 1 mi in the reader"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "glowing-eyes",
+      "name": "Glowing eyes",
+      "slot": "face",
+      "layer": "face_item",
+      "layerIndex": 11,
+      "files": {
+        "svg": "face/glowing-eyes.svg",
+        "png": "face/glowing-eyes.png"
+      },
+      "anchor": "eyes/mouth band y=38..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 0,
+        "tierKey": "L:streak:0",
+        "condition": "Read 3 days in a row"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "scarf",
+      "name": "Scarf",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/scarf.svg",
+        "png": "neck/scarf.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "free"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "bow-tie",
+      "name": "Bow tie",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/bow-tie.svg",
+        "png": "neck/bow-tie.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "badge",
+        "key": "clean_coop",
+        "earnedKey": "O:clean_coop",
+        "condition": "Earn the Clean coop badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "necktie",
+      "name": "Necktie",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/necktie.svg",
+        "png": "neck/necktie.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "badge",
+        "key": "up_to_date",
+        "earnedKey": "O:up_to_date",
+        "condition": "Earn the Up to date badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "gold-medal",
+      "name": "Gold medal",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/gold-medal.svg",
+        "png": "neck/gold-medal.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "rank",
+        "rank": "hard",
+        "condition": "Reach Hard-Boiled"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "pearls",
+      "name": "Pearls",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/pearls.svg",
+        "png": "neck/pearls.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 1,
+        "tierKey": "L:distance:1",
+        "condition": "Swipe 1,000 ft in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "bell-collar",
+      "name": "Bell collar",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/bell-collar.svg",
+        "png": "neck/bell-collar.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 1,
+        "tierKey": "L:library:1",
+        "condition": "Have 250 series in your library"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "bandana",
+      "name": "Bandana",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/bandana.svg",
+        "png": "neck/bandana.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 4,
+        "tierKey": "L:streak:4",
+        "condition": "Read 30 days in a row"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "heart-locket",
+      "name": "Heart locket",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/heart-locket.svg",
+        "png": "neck/heart-locket.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 2,
+        "tierKey": "L:library:2",
+        "condition": "Have 500 series in your library"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "sailor-collar",
+      "name": "Sailor collar",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/sailor-collar.svg",
+        "png": "neck/sailor-collar.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 0,
+        "tierKey": "L:chapters:0",
+        "condition": "Read 1 chapters"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "gakuran-collar",
+      "name": "Gakuran collar",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/gakuran-collar.svg",
+        "png": "neck/gakuran-collar.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 0,
+        "tierKey": "L:day:0",
+        "condition": "Read 25 chapters in one day"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "long-scarf",
+      "name": "Long scarf",
+      "slot": "neck",
+      "layer": "neck_item",
+      "layerIndex": 12,
+      "files": {
+        "svg": "neck/long-scarf.svg",
+        "png": "neck/long-scarf.png"
+      },
+      "anchor": "neck y=56..72",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 1,
+        "tierKey": "L:day:1",
+        "condition": "Read 50 chapters in one day"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "headphones",
+      "name": "Headphones",
+      "slot": "ear",
+      "layer": "ear_item",
+      "layerIndex": 13,
+      "files": {
+        "svg": "ear/headphones.svg",
+        "png": "ear/headphones.png"
+      },
+      "anchor": "ears x=19..61, y=22..56",
+      "unlock": {
+        "type": "free"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "earmuffs",
+      "name": "Earmuffs",
+      "slot": "ear",
+      "layer": "ear_item",
+      "layerIndex": 13,
+      "files": {
+        "svg": "ear/earmuffs.svg",
+        "png": "ear/earmuffs.png"
+      },
+      "anchor": "ears x=19..61, y=22..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 0,
+        "tierKey": "L:distance:0",
+        "condition": "Swipe 500 ft in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "earrings",
+      "name": "Earrings",
+      "slot": "ear",
+      "layer": "ear_item",
+      "layerIndex": 13,
+      "files": {
+        "svg": "ear/earrings.svg",
+        "png": "ear/earrings.png"
+      },
+      "anchor": "ears x=19..61, y=22..56",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "hours",
+        "tier": 1,
+        "tierKey": "L:hours:1",
+        "condition": "Read for 100 hours"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "headset",
+      "name": "Headset",
+      "slot": "ear",
+      "layer": "ear_item",
+      "layerIndex": 13,
+      "files": {
+        "svg": "ear/headset.svg",
+        "png": "ear/headset.png"
+      },
+      "anchor": "ears x=19..61, y=22..56",
+      "unlock": {
+        "type": "badge",
+        "key": "dj",
+        "earnedKey": "O:dj",
+        "condition": "Earn the DJ badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "cape",
+      "name": "Cape",
+      "slot": "back",
+      "layer": "back_item",
+      "layerIndex": 3,
+      "files": {
+        "svg": "back/cape.svg",
+        "png": "back/cape.png"
+      },
+      "anchor": "behind body, shoulders y=46",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 1,
+        "tierKey": "L:distance:1",
+        "condition": "Swipe 1,000 ft in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "wings",
+      "name": "Wings",
+      "slot": "back",
+      "layer": "back_item",
+      "layerIndex": 3,
+      "files": {
+        "svg": "back/wings.svg",
+        "png": "back/wings.png"
+      },
+      "anchor": "behind body, shoulders y=46",
+      "unlock": {
+        "type": "badge",
+        "key": "unfolded",
+        "earnedKey": "O:unfolded",
+        "condition": "Earn the Unfolded badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "jetpack",
+      "name": "Jetpack",
+      "slot": "back",
+      "layer": "back_item",
+      "layerIndex": 3,
+      "files": {
+        "svg": "back/jetpack.svg",
+        "png": "back/jetpack.png"
+      },
+      "anchor": "behind body, shoulders y=46",
+      "unlock": {
+        "type": "badge",
+        "key": "liftoff",
+        "earnedKey": "O:liftoff",
+        "condition": "Earn the Liftoff badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "hero-cape",
+      "name": "Hero cape",
+      "slot": "back",
+      "layer": "back_item",
+      "layerIndex": 3,
+      "files": {
+        "svg": "back/hero-cape.svg",
+        "png": "back/hero-cape.png"
+      },
+      "anchor": "behind body, shoulders y=46",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 1,
+        "tierKey": "L:library:1",
+        "condition": "Have 250 series in your library"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "katana-on-back",
+      "name": "Katana on back",
+      "slot": "back",
+      "layer": "back_item",
+      "layerIndex": 3,
+      "files": {
+        "svg": "back/katana-on-back.svg",
+        "png": "back/katana-on-back.png"
+      },
+      "anchor": "behind body, shoulders y=46",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 4,
+        "tierKey": "L:streak:4",
+        "condition": "Read 30 days in a row"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "book",
+      "name": "Book",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/book.svg",
+        "png": "held/book.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "free"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "manga",
+      "name": "Manga",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/manga.svg",
+        "png": "held/manga.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 1,
+        "tierKey": "L:chapters:1",
+        "condition": "Read 1,000 chapters"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "boba-tea",
+      "name": "Boba tea",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/boba-tea.svg",
+        "png": "held/boba-tea.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 1,
+        "tierKey": "L:distance:1",
+        "condition": "Swipe 1,000 ft in the reader"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "coffee",
+      "name": "Coffee",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/coffee.svg",
+        "png": "held/coffee.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 1,
+        "tierKey": "L:library:1",
+        "condition": "Have 250 series in your library"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "ice-cream",
+      "name": "Ice cream",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/ice-cream.svg",
+        "png": "held/ice-cream.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "badge",
+        "key": "back_for_seconds",
+        "earnedKey": "O:back_for_seconds",
+        "condition": "Earn the Back for seconds badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "magic-wand",
+      "name": "Magic wand",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/magic-wand.svg",
+        "png": "held/magic-wand.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 4,
+        "tierKey": "L:streak:4",
+        "condition": "Read 30 days in a row"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "balloon",
+      "name": "Balloon",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/balloon.svg",
+        "png": "held/balloon.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "badge",
+        "key": "goal",
+        "earnedKey": "O:goal",
+        "condition": "Earn the Goal badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "controller",
+      "name": "Controller",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/controller.svg",
+        "png": "held/controller.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "badge",
+        "key": "arcade",
+        "earnedKey": "O:arcade",
+        "condition": "Earn the Arcade badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "flower",
+      "name": "Flower",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/flower.svg",
+        "png": "held/flower.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 2,
+        "tierKey": "L:library:2",
+        "condition": "Have 500 series in your library"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "flashlight",
+      "name": "Flashlight",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/flashlight.svg",
+        "png": "held/flashlight.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "badge",
+        "key": "night_shift",
+        "earnedKey": "O:night_shift",
+        "condition": "Earn the Night shift badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "katana",
+      "name": "Katana",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/katana.svg",
+        "png": "held/katana.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 0,
+        "tierKey": "L:chapters:0",
+        "condition": "Read 1 chapters"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "melon-bread",
+      "name": "Melon bread",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/melon-bread.svg",
+        "png": "held/melon-bread.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 0,
+        "tierKey": "L:day:0",
+        "condition": "Read 25 chapters in one day"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "ramen",
+      "name": "Ramen",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/ramen.svg",
+        "png": "held/ramen.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 1,
+        "tierKey": "L:day:1",
+        "condition": "Read 50 chapters in one day"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "bento",
+      "name": "Bento",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/bento.svg",
+        "png": "held/bento.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 1,
+        "tierKey": "L:day:1",
+        "condition": "Read 50 chapters in one day"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "spellbook",
+      "name": "Spellbook",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/spellbook.svg",
+        "png": "held/spellbook.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 2,
+        "tierKey": "L:distance:2",
+        "condition": "Swipe 0.25 mi in the reader"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "round-shield",
+      "name": "Round shield",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/round-shield.svg",
+        "png": "held/round-shield.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 3,
+        "tierKey": "L:distance:3",
+        "condition": "Swipe 0.5 mi in the reader"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "sparkles",
+      "name": "Sparkles",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/sparkles.svg",
+        "png": "front_effect/sparkles.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "free"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "hearts",
+      "name": "Hearts",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/hearts.svg",
+        "png": "front_effect/hearts.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "ratings",
+        "tier": 3,
+        "tierKey": "L:ratings:3",
+        "condition": "Rate 25 series"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "zzz",
+      "name": "Zzz",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/zzz.svg",
+        "png": "front_effect/zzz.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "badge",
+        "key": "night_shift",
+        "earnedKey": "O:night_shift",
+        "condition": "Earn the Night shift badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "music-notes",
+      "name": "Music notes",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/music-notes.svg",
+        "png": "front_effect/music-notes.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "badge",
+        "key": "dj",
+        "earnedKey": "O:dj",
+        "condition": "Earn the DJ badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "rain-cloud",
+      "name": "Rain cloud",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/rain-cloud.svg",
+        "png": "front_effect/rain-cloud.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "badge",
+        "key": "patience",
+        "earnedKey": "O:patience",
+        "condition": "Earn the Patience badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "stars",
+      "name": "Stars",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/stars.svg",
+        "png": "front_effect/stars.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "ratings",
+        "tier": 0,
+        "tierKey": "L:ratings:0",
+        "condition": "Rate 1 series"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "confetti",
+      "name": "Confetti",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/confetti.svg",
+        "png": "front_effect/confetti.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 1,
+        "tierKey": "L:streak:1",
+        "condition": "Read 7 days in a row"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "bubbles",
+      "name": "Bubbles",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/bubbles.svg",
+        "png": "front_effect/bubbles.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 2,
+        "tierKey": "L:streak:2",
+        "condition": "Read 14 days in a row"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "lightning",
+      "name": "Lightning",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/lightning.svg",
+        "png": "front_effect/lightning.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "badge",
+        "key": "speedrun",
+        "earnedKey": "O:speedrun",
+        "condition": "Earn the Speedrun badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "impact",
+      "name": "Impact !",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/impact.svg",
+        "png": "front_effect/impact.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 2,
+        "tierKey": "L:day:2",
+        "condition": "Read 75 chapters in one day"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "question-exclaim",
+      "name": "?!",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/question-exclaim.svg",
+        "png": "front_effect/question-exclaim.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "finished",
+        "tier": 2,
+        "tierKey": "L:finished:2",
+        "condition": "Finish 250 series"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "pow",
+      "name": "POW!",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/pow.svg",
+        "png": "front_effect/pow.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 7,
+        "tierKey": "L:streak:7",
+        "condition": "Read 90 days in a row"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "level-up",
+      "name": "Level up",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/level-up.svg",
+        "png": "front_effect/level-up.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 2,
+        "tierKey": "L:chapters:2",
+        "condition": "Read 10,000 chapters"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "s-rank-badge",
+      "name": "S-rank badge",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/s-rank-badge.svg",
+        "png": "front_effect/s-rank-badge.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "rank",
+        "rank": "sunny",
+        "condition": "Reach Sunny-Side Up"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "shoujo-sparkle",
+      "name": "Shoujo sparkle",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "layerIndex": 16,
+      "files": {
+        "svg": "front_effect/shoujo-sparkle.svg",
+        "png": "front_effect/shoujo-sparkle.png"
+      },
+      "anchor": "corners around the head",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 0,
+        "tierKey": "L:library:0",
+        "condition": "Have 10 series in your library"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "glow",
+      "name": "Glow",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "layerIndex": 2,
+      "files": {
+        "svg": "back_effect/glow.svg",
+        "png": "back_effect/glow.png"
+      },
+      "anchor": "around body",
+      "unlock": {
+        "type": "rank",
+        "rank": "glorb",
+        "condition": "Reach Glib Glorb"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "fire-aura",
+      "name": "Fire aura",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "layerIndex": 2,
+      "files": {
+        "svg": "back_effect/fire-aura.svg",
+        "png": "back_effect/fire-aura.png"
+      },
+      "anchor": "around body",
+      "unlock": {
+        "type": "badge",
+        "key": "marathon",
+        "earnedKey": "O:marathon",
+        "condition": "Earn the Marathon badge"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "orbit-ring",
+      "name": "Orbit ring",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "layerIndex": 2,
+      "files": {
+        "svg": "back_effect/orbit-ring.svg",
+        "png": "back_effect/orbit-ring.png"
+      },
+      "anchor": "around body",
+      "unlock": {
+        "type": "rank",
+        "rank": "cosmic",
+        "condition": "Reach Cosmic Egg"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "power-aura",
+      "name": "Power aura",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "layerIndex": 2,
+      "files": {
+        "svg": "back_effect/power-aura.svg",
+        "png": "back_effect/power-aura.png"
+      },
+      "anchor": "around body",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "library",
+        "tier": 2,
+        "tierKey": "L:library:2",
+        "condition": "Have 500 series in your library"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "magic-circle",
+      "name": "Magic circle",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "layerIndex": 2,
+      "files": {
+        "svg": "back_effect/magic-circle.svg",
+        "png": "back_effect/magic-circle.png"
+      },
+      "anchor": "around body",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "chapters",
+        "tier": 0,
+        "tierKey": "L:chapters:0",
+        "condition": "Read 1 chapters"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "dungeon-gate",
+      "name": "Dungeon gate",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "layerIndex": 2,
+      "files": {
+        "svg": "back_effect/dungeon-gate.svg",
+        "png": "back_effect/dungeon-gate.png"
+      },
+      "anchor": "around body",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 0,
+        "tierKey": "L:day:0",
+        "condition": "Read 25 chapters in one day"
+      },
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "solid",
+      "name": "Solid",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": null,
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "free"
+      },
+      "note": "No file: just the background colour."
+    },
+    {
+      "id": "dots",
+      "name": "Dots",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/dots.svg",
+        "png": "background_pattern/dots.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "free"
+      },
+      "usesOwnColours": false,
+      "collection": "core"
+    },
+    {
+      "id": "stripes",
+      "name": "Stripes",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/stripes.svg",
+        "png": "background_pattern/stripes.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "day",
+        "tier": 1,
+        "tierKey": "L:day:1",
+        "condition": "Read 50 chapters in one day"
+      },
+      "usesOwnColours": false,
+      "collection": "core"
+    },
+    {
+      "id": "space",
+      "name": "Space",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/space.svg",
+        "png": "background_pattern/space.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "rank",
+        "rank": "cosmic",
+        "condition": "Reach Cosmic Egg"
+      },
+      "usesOwnColours": true,
+      "collection": "core"
+    },
+    {
+      "id": "checker",
+      "name": "Checker",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/checker.svg",
+        "png": "background_pattern/checker.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 2,
+        "tierKey": "L:distance:2",
+        "condition": "Swipe 0.25 mi in the reader"
+      },
+      "usesOwnColours": false,
+      "collection": "core"
+    },
+    {
+      "id": "hearts",
+      "name": "Hearts",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/hearts.svg",
+        "png": "background_pattern/hearts.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 3,
+        "tierKey": "L:distance:3",
+        "condition": "Swipe 0.5 mi in the reader"
+      },
+      "usesOwnColours": false,
+      "collection": "core"
+    },
+    {
+      "id": "clouds",
+      "name": "Clouds",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/clouds.svg",
+        "png": "background_pattern/clouds.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "badge",
+        "key": "sunny",
+        "earnedKey": "O:sunny",
+        "condition": "Earn the Sunny badge"
+      },
+      "usesOwnColours": true,
+      "collection": "core"
+    },
+    {
+      "id": "sunburst",
+      "name": "Sunburst",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/sunburst.svg",
+        "png": "background_pattern/sunburst.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "rank",
+        "rank": "sunny",
+        "condition": "Reach Sunny-Side Up"
+      },
+      "usesOwnColours": false,
+      "collection": "core"
+    },
+    {
+      "id": "grid",
+      "name": "Grid",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/grid.svg",
+        "png": "background_pattern/grid.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "zooms",
+        "tier": 3,
+        "tierKey": "L:zooms:3",
+        "condition": "Zoom in 250 times"
+      },
+      "usesOwnColours": false,
+      "collection": "core"
+    },
+    {
+      "id": "speed-lines",
+      "name": "Speed lines",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/speed-lines.svg",
+        "png": "background_pattern/speed-lines.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "finished",
+        "tier": 0,
+        "tierKey": "L:finished:0",
+        "condition": "Finish 1 series"
+      },
+      "usesOwnColours": false,
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "halftone",
+      "name": "Halftone",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/halftone.svg",
+        "png": "background_pattern/halftone.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "distance",
+        "tier": 0,
+        "tierKey": "L:distance:0",
+        "condition": "Swipe 500 ft in the reader"
+      },
+      "usesOwnColours": false,
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "shoujo-bubbles",
+      "name": "Shoujo bubbles",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/shoujo-bubbles.svg",
+        "png": "background_pattern/shoujo-bubbles.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "hours",
+        "tier": 1,
+        "tierKey": "L:hours:1",
+        "condition": "Read for 100 hours"
+      },
+      "usesOwnColours": true,
+      "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "comic-panels",
+      "name": "Comic panels",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/comic-panels.svg",
+        "png": "background_pattern/comic-panels.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "ladder",
+        "ladder": "streak",
+        "tier": 3,
+        "tierKey": "L:streak:3",
+        "condition": "Read 21 days in a row"
+      },
+      "usesOwnColours": true,
+      "collection": "manga-webtoon-comic"
+    }
+  ],
+  "ranks": [
+    {
+      "id": "raw",
+      "name": "Raw Egg",
+      "xp": 0,
+      "secret": false,
+      "accent": "#B9B4C4",
+      "files": {
+        "svg": "rank_border/raw.svg",
+        "png": "rank_border/raw.png"
+      },
+      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+    },
+    {
+      "id": "cracked",
+      "name": "Cracked",
+      "xp": 20,
+      "secret": false,
+      "accent": "#D9B98A",
+      "files": {
+        "svg": "rank_border/cracked.svg",
+        "png": "rank_border/cracked.png"
+      },
+      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+    },
+    {
+      "id": "hatchling",
+      "name": "Hatchling",
+      "xp": 60,
+      "secret": false,
+      "accent": "#C98A4B",
+      "files": {
+        "svg": "rank_border/hatchling.svg",
+        "png": "rank_border/hatchling.png"
+      },
+      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+    },
+    {
+      "id": "soft",
+      "name": "Soft-Boiled",
+      "xp": 150,
+      "secret": false,
+      "accent": "#A9B4C6",
+      "files": {
+        "svg": "rank_border/soft.svg",
+        "png": "rank_border/soft.png"
+      },
+      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+    },
+    {
+      "id": "hard",
+      "name": "Hard-Boiled",
+      "xp": 300,
+      "secret": false,
+      "accent": "#7FA6D9",
+      "files": {
+        "svg": "rank_border/hard.svg",
+        "png": "rank_border/hard.png"
+      },
+      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+    },
+    {
+      "id": "sunny",
+      "name": "Sunny-Side Up",
+      "xp": 500,
+      "secret": false,
+      "accent": "#FFB020",
+      "files": {
+        "svg": "rank_border/sunny.svg",
+        "png": "rank_border/sunny.png"
+      },
+      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+    },
+    {
+      "id": "golden",
+      "name": "Golden Egg",
+      "xp": 800,
+      "secret": false,
+      "accent": "#F2B705",
+      "files": {
+        "svg": "rank_border/golden.svg",
+        "png": "rank_border/golden.png"
+      },
+      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+    },
+    {
+      "id": "cosmic",
+      "name": "Cosmic Egg",
+      "xp": 1200,
+      "secret": false,
+      "accent": "#8B6CFF",
+      "files": {
+        "svg": "rank_border/cosmic.svg",
+        "png": "rank_border/cosmic.png"
+      },
+      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+    },
+    {
+      "id": "glorb",
+      "name": "Glib Glorb",
+      "xp": null,
+      "secret": true,
+      "accent": "#5CFF8A",
+      "files": {
+        "svg": "rank_border/glorb.svg",
+        "png": "rank_border/glorb.png"
+      },
+      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+    }
+  ],
+  "darkBodies": [
+    "midnight"
+  ],
+  "saveFormat": {
+    "description": "One pick per slot (part id or null) plus the background colour. Store as JSON in a preference; include it in backups.",
+    "example": {
+      "v": 1,
+      "body": "shell",
+      "pattern": null,
+      "antenna": null,
+      "eyes": "dots",
+      "mouth": "smile",
+      "cheeks": "blush",
+      "hat": null,
+      "face": null,
+      "neck": null,
+      "ear": null,
+      "back": null,
+      "held": null,
+      "backEffect": null,
+      "frontEffect": null,
+      "bgColor": "#FFE3C2",
+      "bgPattern": "solid"
+    },
+    "rules": [
+      "Draw layers in the 'layers' order; skip empty slots.",
+      "Use the *_light eyes and mouth files when the body is in darkBodies or the pattern has darkFace=true.",
+      "Antennae: use the file for the chosen body colour.",
+      "Clip the finished stack to a circle (radius 40 on the 80 canvas)."
+    ]
+  },
+  "backgroundColors": [
+    "#FFE3C2",
+    "#FFD6E3",
+    "#DCD6FF",
+    "#CFE6FF",
+    "#CDEFE8",
+    "#D9F2C4",
+    "#FFF0A8",
+    "#FFD9C9",
+    "#E8E4F0",
+    "#2B2340",
+    "#183B3A",
+    "#3A1F2E"
+  ],
+  "rankRules": {
+    "xp": "10 XP per achievement ladder tier earned + 25 XP per one-off badge earned (same data as EggikuCompare.Profile)",
+    "secret": "Glib Glorb unlocks when EggikuAchievements.Facts.glibGlorb is true, whatever the XP",
+    "maxXpToday": "about 2,000 with every current tier and badge"
+  }
+}

@@ -10,6 +10,8 @@ import eu.kanade.domain.ui.model.HiddenAppThemes
 import eu.kanade.presentation.more.settings.screen.EggikuHiddenThemes
 import eu.kanade.presentation.more.stats.EggikuStatsFormat
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatarCatalog
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatarProgress
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.rating.EggikuRatings
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
@@ -470,7 +472,12 @@ object EggikuAchievements {
     /** Checks and sends one notification for anything newly earned */
     suspend fun checkAndNotify(context: Context) {
         val facts = facts()
+        val avatarBefore = EggikuAvatarProgress.mine()
         val newOnes = checkNew(facts)
+        val newAvatarItems = EggikuAvatarCatalog.get(context).let { catalog ->
+            val after = EggikuAvatarProgress.mine()
+            catalog.parts.count { after.isUnlocked(catalog, it) && !avatarBefore.isUnlocked(catalog, it) }
+        }
         // Hidden themes earned by reading
         val themes = buildList {
             if (facts.longestStreak >= 7 && EggikuHiddenThemes.grant(AppTheme.HOT_SAUCE)) add(AppTheme.HOT_SAUCE)
@@ -509,6 +516,10 @@ object EggikuAchievements {
                     context.stringResource(KMR.strings.ach_unlocked_more, shown.size - 1)
                 } else {
                     context.stringResource(KMR.strings.ach_unlocked_tap)
+                } + if (newAvatarItems > 0) {
+                    " " + context.stringResource(KMR.strings.avatar_new_items, newAvatarItems)
+                } else {
+                    ""
                 },
             )
             setContentIntent(EggikuOpen.pendingIntent(context, ID, EggikuOpen.ACHIEVEMENTS))
