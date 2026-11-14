@@ -1,5 +1,34 @@
 [
   {
+    "build": 30,
+    "date": "2026-11-13",
+    "changes": [
+      "Fixed the reader closing a few seconds into some chapters",
+      "Fixed the reader closing on phones that can't run sharpening; it now just turns itself off there"
+    ]
+  },
+  {
+    "build": 29,
+    "date": "2026-11-13",
+    "changes": [
+      "Page tint: the reader's menus, bars and mini player take on the colours of the page you're reading (turn it off in reader settings)",
+      "Tilt to scroll for webtoons: tap the rotate button in the reader, then tip the top of your phone away to scroll down and toward you to go back up",
+      "Spoiler shield: titles of unread chapters past your next one stay blurred until you tap them (Settings → Library)",
+      "Egg timer: pick a 10 to 60 minute reading session and an egg cooks in the corner, then hatches into your weekly egg carton in Stats"
+    ]
+  },
+  {
+    "build": 28,
+    "date": "2026-11-13",
+    "changes": [
+      "Stats reworked: a compact streak card with your last 7 days, the calendar when you want it, a weekly goal bar, this week against last week, and an easier to read habits list",
+      "Avatars: build your own egg or alien egg from 176 items, unlocked by your achievements and ranks, with rank borders from Raw Egg to Cosmic (plus a secret one)",
+      "Your avatar, rank and XP sit at the top of the More tab, on your achievements card, and show up when you compare with a friend",
+      "Fixed the music player jumping to the top of the reader",
+      "Fixed updates failing the first time they download"
+    ]
+  },
+  {
     "build": 27,
     "date": "2026-11-13",
     "changes": [
