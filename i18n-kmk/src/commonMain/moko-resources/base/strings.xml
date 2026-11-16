@@ -929,4 +929,12 @@
     <string name="egg_carton_overflow">(+%1$d more than fit)</string>
     <string name="spoiler_shield">Spoiler shield</string>
     <string name="spoiler_shield_summary">Blur the titles of unread chapters past the next one. Tap a title to show it.</string>
+    <string name="audio_output">Audio output</string>
+    <string name="audio_output_summary">Switch to your Bluetooth headphones or speaker without leaving Eggiku</string>
+    <string name="audio_output_group">Audio output</string>
+    <string name="pref_audio_output_button">Audio output button in the reader</string>
+    <string name="pref_audio_output_button_summary">A headphones button in the reader menu that opens the audio output picker</string>
+    <string name="audio_output_bluetooth_settings">Bluetooth settings</string>
+    <string name="audio_output_bluetooth_settings_summary">Pair new headphones, or use this if the picker doesn\'t list yours</string>
+    <string name="audio_output_unavailable">Couldn\'t open audio output on this phone</string>
 </resources>

@@ -39,11 +39,14 @@ import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.reader.components.ChapterNavigator
 import eu.kanade.presentation.reader.music.EggikuReaderMusic
 import eu.kanade.presentation.reader.music.rememberEggikuReaderMusicState
+import eu.kanade.tachiyomi.data.music.EggikuAudioOutput
+import eu.kanade.tachiyomi.data.music.EggikuMusicPreferences
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import eu.kanade.tachiyomi.ui.reader.viewer.Viewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.R2LPagerViewer
+import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.ImmutableSet
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.material.padding
@@ -132,6 +135,7 @@ fun ReaderAppBars(
     val musicState = rememberEggikuReaderMusicState()
     val musicContext = LocalContext.current
     val musicScope = rememberCoroutineScope()
+    val audioOutputButton by remember { Injekt.get<EggikuMusicPreferences>().audioOutputButton() }.collectAsState()
     // KMK <--
     val isRtl = viewer is R2LPagerViewer
     val backgroundColor = MaterialTheme.colorScheme
@@ -360,6 +364,11 @@ fun ReaderAppBars(
                     // SY <--
                     // KMK -->
                     onClickMusic = { musicState.onMusicButton(musicContext, musicScope) },
+                    onClickAudioOutput = {
+                        if (!EggikuAudioOutput.show(musicContext)) {
+                            musicContext.toast(KMR.strings.audio_output_unavailable)
+                        }
+                    }.takeIf { audioOutputButton },
                     eggTimerActive = eggTimerActive,
                     onClickEggTimer = onClickEggTimer,
                     tiltActive = tiltActive,

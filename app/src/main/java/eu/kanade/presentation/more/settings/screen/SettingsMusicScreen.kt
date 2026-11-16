@@ -14,8 +14,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.music.EggikuPlaylistDialog
+import eu.kanade.tachiyomi.data.music.EggikuAudioOutput
 import eu.kanade.tachiyomi.data.music.EggikuMusic
 import eu.kanade.tachiyomi.data.music.EggikuMusicPreferences
+import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.toImmutableList
 import tachiyomi.domain.category.interactor.GetCategories
 import tachiyomi.i18n.kmk.KMR
@@ -57,6 +59,7 @@ object SettingsMusicScreen : SearchableSettings {
         return listOf(
             getAccessGroup(hasAccess),
             getPlayerGroup(preferences),
+            getAudioOutputGroup(preferences),
             getCategoryPlaylistsGroup(preferences),
         )
     }
@@ -111,6 +114,37 @@ object SettingsMusicScreen : SearchableSettings {
                     title = stringResource(KMR.strings.pref_music_bounce),
                     subtitle = stringResource(KMR.strings.pref_music_bounce_summary),
                     enabled = miniPlayer,
+                ),
+            ).toImmutableList(),
+        )
+    }
+
+    @Composable
+    private fun getAudioOutputGroup(preferences: EggikuMusicPreferences): Preference.PreferenceGroup {
+        val context = LocalContext.current
+        return Preference.PreferenceGroup(
+            title = stringResource(KMR.strings.audio_output_group),
+            preferenceItems = listOf(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.audio_output),
+                    subtitle = stringResource(KMR.strings.audio_output_summary),
+                    onClick = {
+                        if (!EggikuAudioOutput.show(context)) context.toast(KMR.strings.audio_output_unavailable)
+                    },
+                ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = preferences.audioOutputButton(),
+                    title = stringResource(KMR.strings.pref_audio_output_button),
+                    subtitle = stringResource(KMR.strings.pref_audio_output_button_summary),
+                ),
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.audio_output_bluetooth_settings),
+                    subtitle = stringResource(KMR.strings.audio_output_bluetooth_settings_summary),
+                    onClick = {
+                        if (!EggikuAudioOutput.openBluetoothSettings(context)) {
+                            context.toast(KMR.strings.audio_output_unavailable)
+                        }
+                    },
                 ),
             ).toImmutableList(),
         )

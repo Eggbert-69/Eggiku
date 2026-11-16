@@ -1,5 +1,13 @@
 [
   {
+    "build": 28,
+    "date": "2026-11-15",
+    "changes": [
+      "Reader: a headphones button in the bottom bar opens the audio output picker, so you can switch to your AirPods or other Bluetooth headphones without leaving Eggiku",
+      "Settings → Music → Audio output: open the picker, hide the reader button, or jump to Bluetooth settings to pair something new"
+    ]
+  },
+  {
     "build": 27,
     "date": "2026-11-13",
     "changes": [

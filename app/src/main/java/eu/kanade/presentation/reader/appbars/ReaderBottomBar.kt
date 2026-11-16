@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.ScreenRotation
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FormatListNumbered
+import androidx.compose.material.icons.outlined.Headphones
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.ScreenRotation
@@ -57,6 +58,7 @@ fun ReaderBottomBar(
     modifier: Modifier = Modifier,
     // KMK -->
     onClickMusic: (() -> Unit)? = null,
+    onClickAudioOutput: (() -> Unit)? = null,
     eggTimerActive: Boolean = false,
     onClickEggTimer: (() -> Unit)? = null,
     tiltActive: Boolean = false,
@@ -198,6 +200,15 @@ fun ReaderBottomBar(
                 Icon(
                     imageVector = Icons.Outlined.MusicNote,
                     contentDescription = stringResource(KMR.strings.music_reader_button),
+                    tint = iconColor,
+                )
+            }
+        }
+        if (onClickAudioOutput != null) {
+            IconButton(onClick = onClickAudioOutput) {
+                Icon(
+                    imageVector = Icons.Outlined.Headphones,
+                    contentDescription = stringResource(KMR.strings.audio_output),
                     tint = iconColor,
                 )
             }

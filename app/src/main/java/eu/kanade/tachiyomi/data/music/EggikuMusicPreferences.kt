@@ -18,6 +18,9 @@ class EggikuMusicPreferences(
 
     fun bounceWhenSettling() = preferenceStore.getBoolean("eggiku_music_bounce", true)
 
+    /** The headphones button in the reader menu that opens the audio output picker */
+    fun audioOutputButton() = preferenceStore.getBoolean("eggiku_audio_output_button", true)
+
     /** Whether the reader's player is shrunk to the music note */
     fun miniPlayerCollapsed() = preferenceStore.getBoolean(
         Preference.appStateKey("eggiku_music_collapsed"),
