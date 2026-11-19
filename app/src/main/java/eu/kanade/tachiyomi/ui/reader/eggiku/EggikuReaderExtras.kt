@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.view.HapticFeedbackConstants
 import android.view.View
 import androidx.core.graphics.scale
+import exh.log.xLogE
 import kotlinx.coroutines.flow.MutableStateFlow
 import tachiyomi.core.common.preference.PreferenceStore
 import uy.kohesive.injekt.Injekt
@@ -92,7 +93,14 @@ object EggikuPanelPeek {
     }
 
     fun open(screenshot: Bitmap, x: Float, y: Float) {
-        showing.value = crop(screenshot, x.toInt(), y.toInt())
+        // Runs in a PixelCopy callback, outside any try in the reader, so a bad crop must not crash it
+        if (screenshot.width < STEP * 2 || screenshot.height < STEP * 2) return
+        showing.value = try {
+            crop(screenshot, x.toInt(), y.toInt())
+        } catch (e: Exception) {
+            xLogE("Panel peek couldn't crop the page", e)
+            null
+        }
     }
 
     private const val STEP = 4 // look at every 4th pixel, plenty for finding gutters
