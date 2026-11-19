@@ -79,6 +79,7 @@ import eu.kanade.presentation.reader.EggikuEggTimerOverlay
 import eu.kanade.presentation.reader.EggikuGlowEdge
 import eu.kanade.presentation.reader.EggikuPeekOverlay
 import eu.kanade.presentation.reader.EggikuTiltIndicator
+import eu.kanade.presentation.reader.EggikuTranslateOverlay
 import eu.kanade.presentation.reader.OrientationSelectDialog
 import eu.kanade.presentation.reader.ReaderContentOverlay
 import eu.kanade.presentation.reader.ReaderPageActionsDialog
@@ -106,6 +107,7 @@ import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.AddToLibra
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Error
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Success
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuEggTimer
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGuided
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuHaptics
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPageTint
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPanelPeek
@@ -113,6 +115,7 @@ import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuSharpen
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuTilt
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuTiltScroller
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuTranslate
 import eu.kanade.tachiyomi.ui.reader.loader.HttpPageLoader
 import eu.kanade.tachiyomi.ui.reader.model.ReaderChapter
 import eu.kanade.tachiyomi.ui.reader.model.ReaderPage
@@ -644,6 +647,7 @@ class ReaderActivity : BaseActivity() {
         EggikuPageTint.reset()
         EggikuEggTimer.onReaderClosed()
         EggikuTilt.off()
+        EggikuTranslate.close()
         // KMK <--
         viewModel.state.value.viewer?.destroy()
         config = null
@@ -841,6 +845,7 @@ class ReaderActivity : BaseActivity() {
             },
         )
         EggikuPeekOverlay()
+        EggikuTranslateOverlay()
         // KMK <--
     }
 
@@ -854,6 +859,7 @@ class ReaderActivity : BaseActivity() {
         // KMK -->
         val eggSession by EggikuEggTimer.session.collectAsState()
         val tiltActive by EggikuTilt.active.collectAsState()
+        val guidedActive by EggikuGuided.active.collectAsState()
         // KMK <--
 
         val cropBorderPaged by readerPreferences.cropBorders().collectAsState()
@@ -917,6 +923,21 @@ class ReaderActivity : BaseActivity() {
             onClickEggTimer = { EggikuEggTimer.pickerOpen.value = true },
             tiltActive = tiltActive,
             onClickTilt = ::toggleEggikuTilt.takeIf { state.viewer is WebtoonViewer },
+            guidedActive = guidedActive,
+            onClickGuided = {
+                if (EggikuGuided.toggle()) toast(KMR.strings.guided_view_on_hint, Toast.LENGTH_LONG)
+            }.takeIf { state.viewer is PagerViewer },
+            onClickTranslate = {
+                viewModel.showMenus(false)
+                // Give the menu a moment to slide away so it isn't read as page text
+                binding.readerContainer.postDelayed(
+                    {
+                        val sourceLang = viewModel.manga?.source?.let { Injekt.get<SourceManager>().get(it)?.lang }
+                        EggikuTranslate.run(this, binding.readerContainer, sourceLang, lifecycleScope)
+                    },
+                    350,
+                )
+            },
             // KMK <--
             onPageIndexChange = {
                 isScrollingThroughPages = true
@@ -1386,6 +1407,10 @@ class ReaderActivity : BaseActivity() {
      * bottom menu and delegates the change to the presenter.
      */
     fun onPageSelected(page: ReaderPage, hasExtraPage: Boolean = false) {
+        // KMK -->
+        // A translation only fits the page it was made for
+        EggikuTranslate.close()
+        // KMK <--
         // SY -->
         val currentPageText = if (hasExtraPage) {
             val invertDoublePage = (viewModel.state.value.viewer as? PagerViewer)?.config?.invertDoublePages ?: false

@@ -93,6 +93,9 @@ fun ReaderAppBars(
     onClickEggTimer: (() -> Unit)? = null,
     tiltActive: Boolean = false,
     onClickTilt: (() -> Unit)? = null,
+    guidedActive: Boolean = false,
+    onClickGuided: (() -> Unit)? = null,
+    onClickTranslate: (() -> Unit)? = null,
     // KMK <--
     onPageIndexChange: (Int) -> Unit,
 
@@ -373,6 +376,9 @@ fun ReaderAppBars(
                     onClickEggTimer = onClickEggTimer,
                     tiltActive = tiltActive,
                     onClickTilt = onClickTilt,
+                    guidedActive = guidedActive,
+                    onClickGuided = onClickGuided,
+                    onClickTranslate = onClickTranslate,
                     // KMK <--
                 )
             }

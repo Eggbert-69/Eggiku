@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Help
+import androidx.compose.material.icons.outlined.MonitorHeart
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,6 +28,7 @@ import mihon.domain.extension.model.KOMIKKU_SIGNATURE
 import mihon.domain.extension.model.REPO_HELP
 import mihon.domain.extension.model.REPO_SIGNATURE
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.material.Icon
 import tachiyomi.presentation.core.components.material.IconButton
 import tachiyomi.presentation.core.components.material.Scaffold
@@ -50,6 +52,9 @@ fun ExtensionStoresScreen(
     // KMK <--
     onClickRefresh: () -> Unit,
     navigateUp: () -> Unit,
+    // KMK -->
+    onClickHealth: (() -> Unit)? = null,
+    // KMK <--
 ) {
     val lazyListState = rememberLazyListState()
     Scaffold(
@@ -59,6 +64,16 @@ fun ExtensionStoresScreen(
                 title = stringResource(MR.strings.extensionStores),
                 scrollBehavior = scrollBehavior,
                 actions = {
+                    // KMK -->
+                    if (onClickHealth != null) {
+                        IconButton(onClick = onClickHealth) {
+                            Icon(
+                                imageVector = Icons.Outlined.MonitorHeart,
+                                contentDescription = stringResource(KMR.strings.repo_health),
+                            )
+                        }
+                    }
+                    // KMK <--
                     IconButton(onClick = onClickRefresh) {
                         Icon(
                             imageVector = Icons.Outlined.Refresh,

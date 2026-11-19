@@ -13,9 +13,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.core.preference.asState
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.presentation.components.relativeDateText
 import eu.kanade.presentation.more.settings.Preference
+import eu.kanade.presentation.more.settings.screen.browse.EggikuRepoHealthScreen
 import eu.kanade.presentation.more.settings.screen.browse.ExtensionStoresScreen
 import eu.kanade.tachiyomi.data.search.EggikuSearchPrefs
+import eu.kanade.tachiyomi.extension.EggikuExtensionAutoUpdate
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.EggikuSearchGroupsScreen
 import eu.kanade.tachiyomi.ui.category.sources.SourceCategoryScreen
 import eu.kanade.tachiyomi.util.system.AuthenticatorUtil.authenticate
@@ -187,6 +190,43 @@ object SettingsBrowseScreen : SearchableSettings {
                             navigator.push(ExtensionStoresScreen())
                         },
                     ),
+                    // KMK -->
+                    Preference.PreferenceItem.TextPreference(
+                        title = stringResource(KMR.strings.repo_health),
+                        subtitle = stringResource(KMR.strings.repo_health_summary),
+                        onClick = { navigator.push(EggikuRepoHealthScreen()) },
+                    ),
+                    run {
+                        val autoOn by EggikuExtensionAutoUpdate.enabled().collectAsState()
+                        val lastRun by EggikuExtensionAutoUpdate.lastRun().collectAsState()
+                        val lastCount by EggikuExtensionAutoUpdate.lastUpdated().collectAsState()
+                        Preference.PreferenceItem.SwitchPreference(
+                            preference = EggikuExtensionAutoUpdate.enabled(),
+                            title = stringResource(KMR.strings.ext_auto_update),
+                            subtitle = when {
+                                !EggikuExtensionAutoUpdate.canUpdateSilently() -> stringResource(KMR.strings.ext_auto_update_needs_installer)
+                                autoOn && lastRun > 0 -> stringResource(
+                                    KMR.strings.ext_auto_update_last,
+                                    relativeDateText(lastRun),
+                                    lastCount,
+                                )
+                                else -> stringResource(KMR.strings.ext_auto_update_summary)
+                            },
+                            onValueChanged = { on ->
+                                EggikuExtensionAutoUpdate.setup(context, on = on)
+                                true
+                            },
+                        )
+                    },
+                    Preference.PreferenceItem.SwitchPreference(
+                        preference = EggikuExtensionAutoUpdate.wifiOnly(),
+                        title = stringResource(KMR.strings.ext_auto_update_wifi),
+                        onValueChanged = { wifi ->
+                            EggikuExtensionAutoUpdate.setup(context, wifi = wifi)
+                            true
+                        },
+                    ),
+                    // KMK <--
                 ),
             ),
             Preference.PreferenceGroup(

@@ -91,6 +91,7 @@ import eu.kanade.tachiyomi.data.smartdownload.EggikuSmartDownloads
 import eu.kanade.tachiyomi.data.stats.EggikuStatsWorker
 import eu.kanade.tachiyomi.data.updater.AppUpdateChecker
 import eu.kanade.tachiyomi.data.updater.AppUpdateJob
+import eu.kanade.tachiyomi.extension.EggikuExtensionAutoUpdate
 import eu.kanade.tachiyomi.extension.api.ExtensionApi
 import eu.kanade.tachiyomi.ui.base.activity.BaseActivity
 import eu.kanade.tachiyomi.ui.browse.source.browse.BrowseSourceScreen
@@ -565,6 +566,7 @@ class MainActivity : BaseActivity() {
                     EggikuStatsWorker.setup(context)
                     EggikuCookTimer.checkDue(context)
                     EggikuSmartDownloads.setup(context)
+                    EggikuExtensionAutoUpdate.setup(context)
                 } catch (e: Exception) {
                     logcat(LogPriority.ERROR, e)
                 }

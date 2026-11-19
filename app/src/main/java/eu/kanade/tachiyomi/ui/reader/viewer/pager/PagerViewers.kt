@@ -49,6 +49,10 @@ class R2LPagerViewer(
     override fun moveToPrevious() {
         moveRight()
     }
+
+    // KMK -->
+    override val eggikuRtl: Boolean = true
+    // KMK <--
 }
 
 /**

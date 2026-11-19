@@ -63,6 +63,9 @@ class ExtensionStoresScreen(
             onClickDelete = { screenModel.showDialog(ExtensionStoreDialog.Delete(it)) },
             onClickRefresh = { screenModel.refreshRepos() },
             navigateUp = navigator::pop,
+            // KMK -->
+            onClickHealth = { navigator.push(EggikuRepoHealthScreen()) },
+            // KMK <--
         )
 
         when (val dialog = successState.dialog) {

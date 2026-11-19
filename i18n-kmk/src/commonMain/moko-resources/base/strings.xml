@@ -1021,4 +1021,42 @@
     <string name="pref_eggiku_search_timeout_off">No limit</string>
     <string name="pref_eggiku_search_skip">Skip sources that keep failing</string>
     <string name="pref_eggiku_search_skip_summary">After 3 failed or too-slow searches in a row, a source sits out for a day. You can still search it from the results.</string>
+    <!-- Eggiku repo health and extension auto-update -->
+    <string name="repo_health">Repo health</string>
+    <string name="repo_health_summary">Find repos that are down, slow or abandoned</string>
+    <string name="repo_health_check_again">Check again</string>
+    <string name="repo_health_none">No repos added yet</string>
+    <string name="repo_health_all_good">All %1$d repos look healthy</string>
+    <string name="repo_health_problems">%1$d of %2$d repos need a look</string>
+    <string name="repo_health_ok">Healthy</string>
+    <string name="repo_health_slow">Slow</string>
+    <string name="repo_health_stale">Not updated lately</string>
+    <string name="repo_health_down">Down</string>
+    <string name="repo_health_disabled">Turned off</string>
+    <string name="repo_health_listed">%1$d extensions</string>
+    <string name="repo_health_installed">%1$d installed</string>
+    <string name="repo_health_updated">updated %1$d days ago</string>
+    <string name="repo_health_error">Error: %1$s</string>
+    <string name="repo_health_advice_down">Couldn\'t reach it. If it stays down for a few days it may have moved: check its website or Discord for a new link, or turn it off so it stops slowing extension checks.</string>
+    <string name="repo_health_advice_slow">It answers slowly, which makes extension checks take longer. Usually fine unless it gets worse.</string>
+    <string name="repo_health_advice_stale">Nothing has changed in over 3 months. It may be abandoned; look for a newer repo with the same extensions.</string>
+    <string name="repo_health_obsolete">%1$d of your extensions from it are no longer listed there</string>
+    <string name="repo_health_failing">Sources from it that keep failing searches: %1$s</string>
+    <string name="repo_health_disable">Turn off</string>
+    <string name="repo_health_enable">Turn on</string>
+    <string name="repo_health_remove">Remove</string>
+    <string name="repo_health_remove_confirm">Tap again to remove</string>
+    <string name="ext_auto_update">Update extensions automatically</string>
+    <string name="ext_auto_update_summary">Checks about twice a day and installs updates in the background</string>
+    <string name="ext_auto_update_last">Last checked %1$s · updated %2$d</string>
+    <string name="ext_auto_update_needs_installer">Needs the Private installer, or the package installer on Android 12+ (Settings → Advanced → Extension installer)</string>
+    <string name="ext_auto_update_wifi">Only on Wi-Fi</string>
+    <!-- Eggiku panel-by-panel and raw translation -->
+    <string name="guided_view">Panel by panel</string>
+    <string name="guided_view_on_hint">Panel by panel is on: each tap forward zooms to the next panel, and the page turns after the last one</string>
+    <string name="translate_page">Translate page</string>
+    <string name="translate_working">Reading and translating…</string>
+    <string name="translate_downloading">Downloading the language pack (first time only, about 30 MB)…</string>
+    <string name="translate_nothing_found">No text found on this page</string>
+    <string name="translate_failed">Couldn\'t translate: %1$s</string>
 </resources>

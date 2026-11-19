@@ -38,6 +38,7 @@ import eu.kanade.domain.base.BasePreferences
 import eu.kanade.tachiyomi.data.coil.cropBorders
 import eu.kanade.tachiyomi.data.coil.customDecoder
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGuided
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences.LandscapeZoomScaleType
 import eu.kanade.tachiyomi.ui.reader.viewer.webtoon.WebtoonSubsamplingImageView
@@ -74,6 +75,69 @@ open class ReaderPageImageView @JvmOverloads constructor(
     private var pageView: View? = null
 
     private var config: Config? = null
+
+    // KMK -->
+    /** Panel-by-panel: this page's panels once found (empty list = page has no panels to step through) */
+    private var eggikuPanels: EggikuGuided.PagePanels? = null
+    private var eggikuDetecting = false
+
+    /**
+     * Panel-by-panel step. Returns true if it handled the tap (zoomed to a panel, or is finding them);
+     * false means the page should turn. [turnPage] is called if panel finding comes back empty.
+     */
+    fun eggikuGuidedStep(forward: Boolean, rtl: Boolean, turnPage: () -> Unit): Boolean {
+        val view = pageView as? SubsamplingScaleImageView ?: return false
+        if (!view.isReady || eggikuDetecting) return view.isReady
+        val found = eggikuPanels
+        if (found == null) {
+            if (!forward) return false
+            eggikuDetecting = true
+            // Panels are read off the screen, so show the whole page first
+            if (view.scale > view.minScale * 1.01f) view.resetScaleAndCenter()
+            view.post {
+                EggikuGuided.detect(view, rtl) { panels ->
+                    eggikuDetecting = false
+                    val pagePanels = EggikuGuided.PagePanels(panels)
+                    eggikuPanels = pagePanels
+                    if (panels.isEmpty()) {
+                        turnPage()
+                    } else {
+                        pagePanels.index = 0
+                        EggikuGuided.zoomTo(view, panels[0])
+                    }
+                }
+            }
+            return true
+        }
+        if (found.panels.isEmpty()) return false
+        val next = found.index + if (forward) 1 else -1
+        return when {
+            next >= found.panels.size -> {
+                found.index = -1
+                false
+            }
+            next < 0 -> {
+                if (found.index == 0) {
+                    found.index = -1
+                    EggikuGuided.zoomOut(view)
+                    true
+                } else {
+                    false
+                }
+            }
+            else -> {
+                found.index = next
+                EggikuGuided.zoomTo(view, found.panels[next])
+                true
+            }
+        }
+    }
+
+    /** Back to the whole page, e.g. when the page is shown again */
+    fun eggikuGuidedReset() {
+        eggikuPanels?.index = -1
+    }
+    // KMK <--
 
     var onImageLoaded: (() -> Unit)? = null
     var onImageLoadError: ((Throwable?) -> Unit)? = null
@@ -181,6 +245,10 @@ open class ReaderPageImageView @JvmOverloads constructor(
     }
 
     fun recycle() = pageView?.let {
+        // KMK -->
+        eggikuPanels = null
+        eggikuDetecting = false
+        // KMK <--
         when (it) {
             is SubsamplingScaleImageView -> it.recycle()
             is AppCompatImageView -> it.dispose()

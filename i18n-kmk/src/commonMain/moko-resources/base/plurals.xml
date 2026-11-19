@@ -88,4 +88,8 @@
         <item quantity="one">%d egg hatched all time</item>
         <item quantity="other">%d eggs hatched all time</item>
     </plurals>
+    <plurals name="ext_auto_updated">
+        <item quantity="one">Updated %d extension</item>
+        <item quantity="other">Updated %d extensions</item>
+    </plurals>
 </resources>

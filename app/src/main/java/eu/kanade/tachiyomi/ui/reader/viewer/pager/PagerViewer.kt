@@ -15,6 +15,7 @@ import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.reader.ReaderActivity
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGuided
 import eu.kanade.tachiyomi.ui.reader.model.ChapterTransition
 import eu.kanade.tachiyomi.ui.reader.model.InsertPage
 import eu.kanade.tachiyomi.ui.reader.model.ReaderItem
@@ -390,6 +391,9 @@ abstract class PagerViewer(
     protected open fun moveRight() {
         if (pager.currentItem != adapter.count - 1) {
             val holder = (currentPage as? ReaderPage)?.let(::getPageHolder)
+            // KMK -->
+            if (holder != null && eggikuGuided(holder, forward = !eggikuRtl) { pager.setCurrentItem(pager.currentItem + 1, config.usePageTransitions) }) return
+            // KMK <--
             if (holder != null && config.navigateToPan && holder.canPanRight()) {
                 holder.panRight()
             } else {
@@ -404,6 +408,9 @@ abstract class PagerViewer(
     protected open fun moveLeft() {
         if (pager.currentItem != 0) {
             val holder = (currentPage as? ReaderPage)?.let(::getPageHolder)
+            // KMK -->
+            if (holder != null && eggikuGuided(holder, forward = eggikuRtl) { pager.setCurrentItem(pager.currentItem - 1, config.usePageTransitions) }) return
+            // KMK <--
             if (holder != null && config.navigateToPan && holder.canPanLeft()) {
                 holder.panLeft()
             } else {
@@ -412,12 +419,26 @@ abstract class PagerViewer(
         }
     }
 
+    // KMK -->
+    /** Right-to-left pagers read the other way, so panels and "next" go the other way too */
+    protected open val eggikuRtl: Boolean = false
+
+    private fun eggikuGuided(holder: PagerPageHolder, forward: Boolean, turnPage: () -> Unit): Boolean {
+        if (!EggikuGuided.active.value) return false
+        return holder.eggikuGuidedStep(forward, eggikuRtl, turnPage)
+    }
+    // KMK <--
+
     /**
      * Pans to the top of the page or if already on the top moves to the previous page.
      */
     protected open fun moveUp() {
         // KMK -->
         val holder = (currentPage as? ReaderPage)?.let(::getPageHolder)
+        if (EggikuGuided.active.value) {
+            moveToPrevious()
+            return
+        }
         if (holder != null && holder.canPanUp()) {
             holder.panUp()
         } else {
@@ -432,6 +453,10 @@ abstract class PagerViewer(
     protected open fun moveDown() {
         // KMK -->
         val holder = (currentPage as? ReaderPage)?.let(::getPageHolder)
+        if (EggikuGuided.active.value) {
+            moveToNext()
+            return
+        }
         if (holder != null && holder.canPanDown()) {
             holder.panDown()
         } else {
