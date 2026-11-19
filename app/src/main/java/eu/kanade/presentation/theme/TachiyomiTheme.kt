@@ -27,6 +27,7 @@ import eu.kanade.presentation.theme.colorscheme.CustomColorScheme
 import eu.kanade.presentation.theme.colorscheme.DinoEggColorScheme
 import eu.kanade.presentation.theme.colorscheme.DoomColorScheme
 import eu.kanade.presentation.theme.colorscheme.DraculaColorScheme
+import eu.kanade.presentation.theme.colorscheme.EasterBasketColorScheme
 import eu.kanade.presentation.theme.colorscheme.EverforestColorScheme
 import eu.kanade.presentation.theme.colorscheme.GlibGlorbColorScheme
 import eu.kanade.presentation.theme.colorscheme.GoldenHourColorScheme

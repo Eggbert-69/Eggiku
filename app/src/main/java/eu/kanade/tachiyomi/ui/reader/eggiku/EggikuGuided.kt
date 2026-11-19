@@ -34,7 +34,7 @@ object EggikuGuided {
     private val preferenceStore: PreferenceStore by lazy { Injekt.get() }
     private val pref by lazy { preferenceStore.getBoolean("eggiku_guided_view", false) }
     private val mutableActive by lazy { MutableStateFlow(pref.get()) }
-    val active: StateFlow<Boolean> get() = mutableActive.asStateFlow()
+    val active: StateFlow<Boolean> by lazy { mutableActive.asStateFlow() }
 
     fun toggle(): Boolean {
         val on = !mutableActive.value

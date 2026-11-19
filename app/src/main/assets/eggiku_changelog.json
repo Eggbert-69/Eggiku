@@ -8,7 +8,18 @@
       "New achievements: an Egg Drops ladder for sending drops, and Got mail for opening your first one",
       "Fixes from Komikku: global search no longer gets stuck loading, and extensions no longer show updates that came from a different repo",
       "Stats are safer: restoring a backup can't be undone by the old stats in memory, and a damaged stats log is kept instead of being wiped",
-      "Panel peek can no longer crash the reader"
+      "Panel peek can no longer crash the reader",
+      "Search: one card per series with Merged on, showing every source it's on. Compare sources counts chapters and crowns the best one",
+      "Search: Other names also searches the English, romaji and Japanese titles from AniList",
+      "Search: groups like \"English\" or \"Raws\" (plus a built-in Fast ones group), and Tag mode to search a genre across every source that has it",
+      "Search: filters for language, status, not in my library and minimum chapters, plus matches from your library, history and Egg Drops at the top",
+      "Search: each source gets a time limit, the fastest answers show first, and sources that keep failing sit out for a day (Settings → Browse)",
+      "Find by picture: the picture button in search, or share a screenshot to Eggiku, finds which series it's from",
+      "Repo health (Settings → Browse, or the heart button on the repos screen) shows repos that are down, slow or abandoned",
+      "Extensions update themselves in the background on Wi-Fi (Settings → Browse)",
+      "Reader: Panel by panel button for paged reading zooms panel to panel, and Translate page puts a translation over raw pages, all on your phone",
+      "Fold sync: keep library and progress the same on every phone through one file in Google Drive (Settings → Data and storage → Sync)",
+      "Egg hunt: six golden eggs are hidden around Eggiku. Hints are in Achievements"
     ]
   },
   {
