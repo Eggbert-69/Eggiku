@@ -221,6 +221,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="eggiku" android:host="open" />
                 <data android:scheme="eggiku" android:host="compare" />
+                <data android:scheme="eggiku" android:host="drop" />
             </intent-filter>
             <!-- KMK -->
 

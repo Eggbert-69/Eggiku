@@ -54,6 +54,7 @@ import eu.kanade.presentation.manga.EditCoverAction
 import eu.kanade.presentation.manga.MangaScreen
 import eu.kanade.presentation.manga.components.ClearMangaDialog
 import eu.kanade.presentation.manga.components.DeleteChaptersDialog
+import eu.kanade.presentation.manga.components.EggikuDropDialog
 import eu.kanade.presentation.manga.components.MangaCoverDialog
 import eu.kanade.presentation.manga.components.ScanlatorFilterDialog
 import eu.kanade.presentation.manga.components.SetIntervalDialog
@@ -62,6 +63,7 @@ import eu.kanade.presentation.theme.TachiyomiTheme
 import eu.kanade.presentation.util.AssistContentScreen
 import eu.kanade.presentation.util.Screen
 import eu.kanade.presentation.util.isTabletUi
+import eu.kanade.tachiyomi.data.drop.EggikuDrops
 import eu.kanade.tachiyomi.source.ConfigurableSource
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.isLocalOrStub
@@ -233,6 +235,10 @@ class MangaScreen(
         // KMK <--
         val haptic = LocalHapticFeedback.current
         val isHttpSource = remember { successState.source is HttpSource }
+        // KMK -->
+        // Eggiku Egg Drop: the series (and its source) being sent to a friend
+        var eggDrop by remember { mutableStateOf<Pair<Manga, Source>?>(null) }
+        // KMK <--
 
         LaunchedEffect(successState.manga, screenModel.source) {
             if (isHttpSource) {
@@ -346,15 +352,15 @@ class MangaScreen(
             onShareClicked = {
                 // KMK -->
                 if (successState.mergedData == null) {
-                    // KMK <--
-                    shareManga(context, screenModel.manga, screenModel.source)
-                    // KMK -->
+                    val manga = screenModel.manga
+                    val source = screenModel.source
+                    if (manga != null && source != null) eggDrop = manga to source
                 } else {
                     mergedMangaAction(
                         context,
                         navigator,
                         successState.mergedData,
-                        action = { ctx, _, manga, source -> shareManga(ctx, manga, source) },
+                        action = { _, _, manga, source -> if (source != null) eggDrop = manga to source },
                         titleRes = MR.strings.action_share,
                     )
                     // KMK <--
@@ -646,6 +652,23 @@ class MangaScreen(
             // KMK <--
         }
 
+        // KMK -->
+        eggDrop?.let { (dropManga, dropSource) ->
+            EggikuDropDialog(
+                manga = dropManga,
+                onDismissRequest = { eggDrop = null },
+                onSend = { stars, note ->
+                    eggDrop = null
+                    sendEggDrop(context, dropManga, dropSource, stars, note)
+                },
+                onPlainShare = {
+                    eggDrop = null
+                    shareManga(context, dropManga, dropSource)
+                },
+            )
+        }
+        // KMK <--
+
         if (showScanlatorsDialog) {
             ScanlatorFilterDialog(
                 availableScanlators = successState.availableScanlators,
@@ -714,6 +737,34 @@ class MangaScreen(
             context.toast(e.message)
         }
     }
+
+    // KMK -->
+    /** Eggiku Egg Drop: a message carrying the drop link, plus the web link for anyone without Eggiku */
+    private fun sendEggDrop(context: Context, manga: Manga, source: Source, stars: Int, note: String) {
+        try {
+            val webUrl = getMangaUrl(manga, source)
+            val drop = EggikuDrops.create(manga, source.name, webUrl, stars, note)
+            val starsText = if (drop.stars > 0) "★".repeat(drop.stars) + "☆".repeat(5 - drop.stars) + "\n" else ""
+            val noteText = if (drop.note.isNotBlank()) "\"${drop.note}\"\n" else ""
+            val webText = webUrl?.let { "\n" + context.stringResource(KMR.strings.egg_drop_message_web, it) }.orEmpty()
+            val text = context.stringResource(
+                KMR.strings.egg_drop_message,
+                manga.title,
+                starsText + noteText,
+                EggikuDrops.link(drop),
+            ) + webText
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, text)
+                putExtra(Intent.EXTRA_TITLE, manga.title)
+            }
+            context.startActivity(Intent.createChooser(intent, context.stringResource(KMR.strings.egg_drop_send_title)))
+            EggikuDrops.countSent()
+        } catch (e: Exception) {
+            context.toast(e.message)
+        }
+    }
+    // KMK <--
 
     /**
      * Perform a search using the provided query.
