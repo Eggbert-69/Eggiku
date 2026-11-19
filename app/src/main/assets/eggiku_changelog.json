@@ -1,5 +1,17 @@
 [
   {
+    "build": 29,
+    "date": "2026-11-19",
+    "changes": [
+      "Egg Drop: tap Share on a series to send it to a friend with your stars and a short note. If they use Eggiku, the link opens that exact series",
+      "More → Egg Drops: every series friends have sent you, with new ones marked. Opening a drop from a source you don't have searches your sources for it",
+      "New achievements: an Egg Drops ladder for sending drops, and Got mail for opening your first one",
+      "Fixes from Komikku: global search no longer gets stuck loading, and extensions no longer show updates that came from a different repo",
+      "Stats are safer: restoring a backup can't be undone by the old stats in memory, and a damaged stats log is kept instead of being wiped",
+      "Panel peek can no longer crash the reader"
+    ]
+  },
+  {
     "build": 28,
     "date": "2026-11-15",
     "changes": [
