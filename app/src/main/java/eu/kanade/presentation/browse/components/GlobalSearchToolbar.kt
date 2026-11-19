@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,10 +27,11 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.SourceFilter
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
@@ -52,6 +54,11 @@ fun GlobalSearchToolbar(
     toggleSelectionMode: () -> Unit,
     isRunning: Boolean,
     hasPinnedSources: Boolean,
+    /** A search group is chosen, so Pinned / All aren't */
+    eggikuGroupActive: Boolean = false,
+    eggikuActions: List<AppBar.AppBarAction> = emptyList(),
+    /** Eggiku chips (groups, merged, filters...) after the usual ones */
+    eggikuChips: @Composable RowScope.() -> Unit = {},
     // KMK <--
 ) {
     Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
@@ -66,9 +73,7 @@ fun GlobalSearchToolbar(
                 // KMK -->
                 actions = {
                     AppBarActions(
-                        actions = persistentListOf(
-                            bulkSelectionButton(isRunning, toggleSelectionMode),
-                        ),
+                        actions = (eggikuActions + bulkSelectionButton(isRunning, toggleSelectionMode)).toImmutableList(),
                     )
                 },
                 // KMK <--
@@ -95,7 +100,7 @@ fun GlobalSearchToolbar(
                 if (hasPinnedSources) {
                     // KMK <--
                     FilterChip(
-                        selected = sourceFilter == SourceFilter.PinnedOnly,
+                        selected = /* KMK --> */ !eggikuGroupActive && /* KMK <-- */ sourceFilter == SourceFilter.PinnedOnly,
                         onClick = { onChangeSearchFilter(SourceFilter.PinnedOnly) },
                         leadingIcon = {
                             Icon(
@@ -111,7 +116,7 @@ fun GlobalSearchToolbar(
                     )
                 }
                 FilterChip(
-                    selected = sourceFilter == SourceFilter.All,
+                    selected = /* KMK --> */ !eggikuGroupActive && /* KMK <-- */ sourceFilter == SourceFilter.All,
                     onClick = { onChangeSearchFilter(SourceFilter.All) },
                     leadingIcon = {
                         Icon(
@@ -144,6 +149,9 @@ fun GlobalSearchToolbar(
                     Text(text = stringResource(MR.strings.has_results))
                 },
             )
+            // KMK -->
+            eggikuChips()
+            // KMK <--
         }
 
         HorizontalDivider()

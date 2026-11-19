@@ -41,6 +41,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.animation.doOnEnd
+import androidx.core.content.IntentCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -94,6 +95,7 @@ import eu.kanade.tachiyomi.extension.api.ExtensionApi
 import eu.kanade.tachiyomi.ui.base.activity.BaseActivity
 import eu.kanade.tachiyomi.ui.browse.source.browse.BrowseSourceScreen
 import eu.kanade.tachiyomi.ui.browse.source.feed.SourceFeedScreen
+import eu.kanade.tachiyomi.ui.browse.source.globalsearch.EggikuFindByPictureScreen
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.GlobalSearchScreen
 import eu.kanade.tachiyomi.ui.deeplink.DeepLinkScreen
 import eu.kanade.tachiyomi.ui.drop.EggikuDropScreen
@@ -723,6 +725,18 @@ class MainActivity : BaseActivity() {
                 // Get the search query provided in extras, and if not null, perform a global search with it.
                 val query = intent.getStringExtra(SearchManager.QUERY) ?: intent.getStringExtra(Intent.EXTRA_TEXT)
                 // KMK -->
+                // A picture shared to Eggiku: find which series it's from
+                val sharedImage = if (intent.action == Intent.ACTION_SEND && intent.type?.startsWith("image/") == true) {
+                    IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, android.net.Uri::class.java)
+                } else {
+                    null
+                }
+                if (sharedImage != null) {
+                    navigator.popUntilRoot()
+                    navigator.push(EggikuFindByPictureScreen(sharedImage.toString()))
+                    ready = true
+                    return true
+                }
                 val shared = EggikuShare.fromText(query)
                 val friend = EggikuCompare.decode(query)
                 val drop = EggikuDrops.decode(query)

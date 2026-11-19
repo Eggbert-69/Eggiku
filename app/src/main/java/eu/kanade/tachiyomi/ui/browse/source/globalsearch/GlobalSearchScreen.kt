@@ -13,11 +13,13 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.core.util.ifSourcesLoaded
+import eu.kanade.presentation.browse.EggikuSearchActions
 import eu.kanade.presentation.browse.GlobalSearchScreen
 import eu.kanade.presentation.browse.components.BulkFavoriteDialogs
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.ui.browse.BulkFavoriteScreenModel
 import eu.kanade.tachiyomi.ui.browse.source.browse.BrowseSourceScreen
+import eu.kanade.tachiyomi.ui.drop.EggikuDropScreen
 import eu.kanade.tachiyomi.ui.manga.MangaScreen
 import tachiyomi.presentation.core.screens.LoadingScreen
 
@@ -82,7 +84,7 @@ class GlobalSearchScreen(
                 onChangeSearchQuery = screenModel::updateSearchQuery,
                 onSearch = { screenModel.search() },
                 getManga = { screenModel.getManga(it) },
-                onChangeSearchFilter = screenModel::setSourceFilter,
+                onChangeSearchFilter = /* KMK --> */ screenModel::eggikuChooseSourceFilter /* KMK <-- */,
                 onToggleResults = screenModel::toggleFilterResults,
                 onClickSource = {
                     navigator.push(BrowseSourceScreen(it.id, state.searchQuery))
@@ -108,6 +110,21 @@ class GlobalSearchScreen(
                 // KMK -->
                 bulkFavoriteScreenModel = bulkFavoriteScreenModel,
                 hasPinnedSources = screenModel.hasPinnedSources(),
+                eggikuActions = remember(screenModel) {
+                    EggikuSearchActions(
+                        onSelectGroup = screenModel::eggikuSelectGroup,
+                        onManageGroups = { navigator.push(EggikuSearchGroupsScreen()) },
+                        onToggleTag = screenModel::eggikuToggleTagMode,
+                        onToggleMerged = screenModel::eggikuToggleMerged,
+                        onToggleAltTitles = screenModel::eggikuToggleAltTitles,
+                        onToggleMine = screenModel::eggikuToggleMine,
+                        onSetFilters = screenModel::eggikuSetFilters,
+                        onSearchSkipped = screenModel::eggikuSearchSkipped,
+                        onCompare = screenModel::eggikuCompare,
+                        onFindByPicture = { navigator.push(EggikuFindByPictureScreen()) },
+                        onOpenDrop = { navigator.push(EggikuDropScreen(it)) },
+                    )
+                },
                 // KMK <--
             )
         }

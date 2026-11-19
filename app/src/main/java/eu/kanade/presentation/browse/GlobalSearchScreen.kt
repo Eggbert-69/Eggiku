@@ -2,10 +2,14 @@ package eu.kanade.presentation.browse
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ImageSearch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import eu.kanade.domain.source.model.installedExtension
 import eu.kanade.presentation.browse.components.GlobalSearchCardRow
@@ -13,16 +17,20 @@ import eu.kanade.presentation.browse.components.GlobalSearchErrorResultItem
 import eu.kanade.presentation.browse.components.GlobalSearchLoadingResultItem
 import eu.kanade.presentation.browse.components.GlobalSearchResultItem
 import eu.kanade.presentation.browse.components.GlobalSearchToolbar
+import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.BulkSelectionToolbar
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.ui.browse.BulkFavoriteScreenModel
+import eu.kanade.tachiyomi.ui.browse.source.globalsearch.EggikuSearchFiltering
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.SearchItemResult
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.SearchScreenModel
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.SourceFilter
 import eu.kanade.tachiyomi.util.system.LocaleHelper
 import kotlinx.collections.immutable.ImmutableMap
 import tachiyomi.domain.manga.model.Manga
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.material.Scaffold
+import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.domain.source.model.Source as DomainSource
 
 @Composable
@@ -40,6 +48,7 @@ fun GlobalSearchScreen(
     // KMK -->
     bulkFavoriteScreenModel: BulkFavoriteScreenModel,
     hasPinnedSources: Boolean,
+    eggikuActions: EggikuSearchActions? = null,
     // KMK <--
 ) {
     // KMK -->
@@ -87,6 +96,22 @@ fun GlobalSearchScreen(
                     toggleSelectionMode = bulkFavoriteScreenModel::toggleSelectionMode,
                     isRunning = bulkFavoriteState.isRunning,
                     hasPinnedSources = hasPinnedSources,
+                    eggikuGroupActive = state.eggiku.groupId != null,
+                    eggikuActions = eggikuActions?.let { actions ->
+                        listOf(
+                            AppBar.Action(
+                                title = stringResource(KMR.strings.search_by_picture),
+                                icon = Icons.Outlined.ImageSearch,
+                                onClick = actions.onFindByPicture,
+                            ),
+                        )
+                    }.orEmpty(),
+                    eggikuChips = {
+                        if (eggikuActions != null) {
+                            val languages = remember(state.items.keys) { state.items.keys.map { it.lang }.distinct().sorted() }
+                            EggikuSearchChips(state.eggiku, languages, eggikuActions)
+                        }
+                    },
                     // KMK <--
                 )
             }
@@ -101,8 +126,11 @@ fun GlobalSearchScreen(
             return@Scaffold
         }
         // KMK <--
+        // KMK -->
+        val items = if (eggikuActions != null) state.eggikuItems else state.filteredItems
+        // KMK <--
         GlobalSearchContent(
-            items = state.filteredItems,
+            items = /* KMK --> */ items /* KMK <-- */,
             contentPadding = paddingValues,
             getManga = getManga,
             onClickSource = onClickSource,
@@ -110,6 +138,35 @@ fun GlobalSearchScreen(
             onLongClickItem = onLongClickItem,
             // KMK -->
             selection = bulkFavoriteState.selection,
+            eggikuHeader = eggikuActions?.let { actions ->
+                {
+                    eggikuSearchHeader(
+                        eggiku = state.eggiku,
+                        actions = actions,
+                        getManga = getManga,
+                        onClickItem = onClickItem,
+                        onLongClickItem = onLongClickItem,
+                        selection = bulkFavoriteState.selection,
+                    )
+                }
+            },
+            eggikuMerged = if (eggikuActions != null && state.eggiku.merged) {
+                {
+                    eggikuMergedResults(
+                        series = EggikuSearchFiltering.merge(items),
+                        eggiku = state.eggiku,
+                        actions = eggikuActions,
+                        onClickItem = onClickItem,
+                    )
+                }
+            } else {
+                null
+            },
+            eggikuSubtitle = if (eggikuActions != null) {
+                { source -> eggikuSourceSubtitle(source, state.eggiku) }
+            } else {
+                null
+            },
             // KMK <--
         )
     }
@@ -126,12 +183,26 @@ internal fun GlobalSearchContent(
     fromSourceId: Long? = null,
     // KMK -->
     selection: List<Manga>,
+    eggikuHeader: (LazyListScope.() -> Unit)? = null,
+    /** Draws merged series cards instead of the per-source rows */
+    eggikuMerged: (LazyListScope.() -> Unit)? = null,
+    eggikuSubtitle: ((Source) -> String)? = null,
     // KMK <--
 ) {
     LazyColumn(
         contentPadding = contentPadding,
     ) {
+        // KMK -->
+        eggikuHeader?.invoke(this)
+        if (eggikuMerged != null) {
+            // Sources still searching or that failed stay listed below the merged cards
+            eggikuMerged()
+        }
+        // KMK <--
         items.forEach { (source, result) ->
+            // KMK -->
+            if (eggikuMerged != null && result is SearchItemResult.Success) return@forEach
+            // KMK <--
             item(key = "global-search-${source.id}") {
                 // KMK -->
                 val domainSource = DomainSource(
@@ -156,7 +227,7 @@ internal fun GlobalSearchContent(
                             } ?: ""
                             ),
                     // KMK <--
-                    subtitle = LocaleHelper.getLocalizedDisplayName(source.lang),
+                    subtitle = /* KMK --> */ eggikuSubtitle?.invoke(source) ?: /* KMK <-- */ LocaleHelper.getLocalizedDisplayName(source.lang),
                     onClick = { onClickSource(source) },
                     modifier = Modifier.animateItem(),
                 ) {

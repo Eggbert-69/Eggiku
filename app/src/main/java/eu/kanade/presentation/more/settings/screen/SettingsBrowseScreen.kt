@@ -15,6 +15,8 @@ import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.screen.browse.ExtensionStoresScreen
+import eu.kanade.tachiyomi.data.search.EggikuSearchPrefs
+import eu.kanade.tachiyomi.ui.browse.source.globalsearch.EggikuSearchGroupsScreen
 import eu.kanade.tachiyomi.ui.category.sources.SourceCategoryScreen
 import eu.kanade.tachiyomi.util.system.AuthenticatorUtil.authenticate
 import kotlinx.collections.immutable.persistentListOf
@@ -112,6 +114,43 @@ object SettingsBrowseScreen : SearchableSettings {
                     ),
                 ),
             ),
+            // KMK -->
+            run {
+                val timeoutPref = remember { EggikuSearchPrefs.timeoutSeconds() }
+                val timeout by timeoutPref.collectAsState()
+                Preference.PreferenceGroup(
+                    title = stringResource(KMR.strings.pref_eggiku_search),
+                    preferenceItems = persistentListOf(
+                        Preference.PreferenceItem.SliderPreference(
+                            value = timeout,
+                            title = stringResource(KMR.strings.pref_eggiku_search_timeout),
+                            valueString = if (timeout == 0) {
+                                stringResource(KMR.strings.pref_eggiku_search_timeout_off)
+                            } else {
+                                stringResource(KMR.strings.pref_eggiku_search_timeout_value, timeout)
+                            },
+                            valueRange = 0..60 step 5,
+                            steps = 11,
+                            onValueChanged = { timeoutPref.set(it) },
+                        ),
+                        Preference.PreferenceItem.SwitchPreference(
+                            preference = EggikuSearchPrefs.skipFailing(),
+                            title = stringResource(KMR.strings.pref_eggiku_search_skip),
+                            subtitle = stringResource(KMR.strings.pref_eggiku_search_skip_summary),
+                        ),
+                        Preference.PreferenceItem.TextPreference(
+                            title = stringResource(KMR.strings.search_groups),
+                            onClick = { navigator.push(EggikuSearchGroupsScreen()) },
+                        ),
+                        Preference.PreferenceItem.EditTextPreference(
+                            preference = EggikuSearchPrefs.sauceNaoKey(),
+                            title = stringResource(KMR.strings.search_by_picture_key),
+                            subtitle = stringResource(KMR.strings.search_by_picture_key_hint),
+                        ),
+                    ),
+                )
+            },
+            // KMK <--
             Preference.PreferenceGroup(
                 title = stringResource(SYMR.strings.feed),
                 preferenceItems = persistentListOf(
