@@ -30,7 +30,7 @@ import java.text.Normalizer
 import java.util.UUID
 
 // KMK -->
-/** Eggiku search settings shared by global search and its helpers */
+/** Eggiku search settings shared by global search and its helpers (Settings → Browse → Searching all sources) */
 object EggikuSearchPrefs {
 
     private val preferenceStore: PreferenceStore by lazy { Injekt.get() }
