@@ -62,6 +62,9 @@ enum class AppTheme(val titleRes: StringResource?) {
 
     /** Hidden until unlocked: search "rawr" in settings and hatch the egg */
     DINO_EGG(KMR.strings.theme_dinoegg),
+
+    /** Hidden until unlocked: find all six golden eggs */
+    EASTER_BASKET(KMR.strings.theme_easterbasket),
     // KMK <--
 
     // Deprecated
@@ -83,5 +86,6 @@ val HiddenAppThemes = setOf(
     AppTheme.HOT_SAUCE,
     AppTheme.GOLDEN_HOUR,
     AppTheme.DINO_EGG,
+    AppTheme.EASTER_BASKET,
 )
 // KMK <--

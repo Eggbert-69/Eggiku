@@ -3905,6 +3905,64 @@
       },
       "usesOwnColours": true,
       "collection": "manga-webtoon-comic"
+    },
+    {
+      "id": "golden-egg",
+      "name": "Golden egg",
+      "slot": "held",
+      "layer": "held_item",
+      "layerIndex": 14,
+      "files": {
+        "svg": "held/golden-egg.svg",
+        "png": "held/golden-egg.png"
+      },
+      "anchor": "lower right (48..68, 48..72)",
+      "unlock": {
+        "type": "badge",
+        "key": "golden_three",
+        "earnedKey": "O:golden_three",
+        "condition": "Find 3 golden eggs"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "egg-basket",
+      "name": "Egg basket",
+      "slot": "hat",
+      "layer": "hat",
+      "layerIndex": 15,
+      "files": {
+        "svg": "hat/egg-basket.svg",
+        "png": "hat/egg-basket.png"
+      },
+      "anchor": "head top (40,18), brim y=26..34",
+      "unlock": {
+        "type": "badge",
+        "key": "egg_basket",
+        "earnedKey": "O:egg_basket",
+        "condition": "Find 5 golden eggs"
+      },
+      "collection": "core"
+    },
+    {
+      "id": "golden-eggs",
+      "name": "Golden eggs",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "layerIndex": 1,
+      "files": {
+        "svg": "background_pattern/golden-eggs.svg",
+        "png": "background_pattern/golden-eggs.png"
+      },
+      "anchor": "full canvas",
+      "unlock": {
+        "type": "badge",
+        "key": "golden_basket",
+        "earnedKey": "O:golden_basket",
+        "condition": "Find all 6 golden eggs"
+      },
+      "usesOwnColours": true,
+      "collection": "core"
     }
   ],
   "ranks": [

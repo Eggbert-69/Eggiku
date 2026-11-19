@@ -72,6 +72,7 @@ import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.achievements.EggikuCompare
+import eu.kanade.tachiyomi.data.achievements.EggikuEggHuntCard
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatarProgress
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatars
 import eu.kanade.tachiyomi.ui.avatar.EggikuAvatarEditorScreen
@@ -166,6 +167,9 @@ class EggikuAchievementsScreen : Screen() {
                 }
                 item(span = { GridItemSpan(maxLineSpan) }, key = "avatar-button") {
                     CustomizeAvatarButton { navigator.push(EggikuAvatarEditorScreen()) }
+                }
+                item(span = { GridItemSpan(maxLineSpan) }, key = "egg-hunt") {
+                    EggikuEggHuntCard()
                 }
                 item(span = { GridItemSpan(maxLineSpan) }, key = "ladders-header") {
                     Header(stringResource(KMR.strings.ach_ladders))

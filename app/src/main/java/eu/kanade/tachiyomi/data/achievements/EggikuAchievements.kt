@@ -95,6 +95,7 @@ object EggikuAchievements {
         val counters: Map<String, Long>,
         val glibGlorb: Boolean,
         val hiddenThemes: Set<String>,
+        val eggsFound: Int = 0,
     )
 
     // ---- Ladders ----
@@ -305,6 +306,15 @@ object EggikuAchievements {
             (it.counters[COUNT_DROPS_RECEIVED] ?: 0) >= 1
         },
         // Secrets
+        OneOff(EggikuEggHunt.BADGE_THREE, "🥚", KMR.strings.ach_golden_three, KMR.strings.ach_golden_three_desc, secret = true) {
+            it.eggsFound >= 3
+        },
+        OneOff(EggikuEggHunt.BADGE_FIVE, "🐣", KMR.strings.ach_egg_basket, KMR.strings.ach_egg_basket_desc, secret = true) {
+            it.eggsFound >= 5
+        },
+        OneOff(EggikuEggHunt.BADGE_ALL, "🌟", KMR.strings.ach_golden_basket, KMR.strings.ach_golden_basket_desc, secret = true) {
+            it.eggsFound >= EggikuEggHunt.Egg.entries.size
+        },
         OneOff("liftoff", "🚀", KMR.strings.ach_liftoff, KMR.strings.ach_liftoff_desc, secret = true) { it.glibGlorb },
         OneOff("sunny", "🌞", KMR.strings.ach_sunny, KMR.strings.ach_sunny_desc, secret = true) {
             AppTheme.SUNNY_SIDE_UP.name in it.hiddenThemes
@@ -454,6 +464,7 @@ object EggikuAchievements {
             ).associateWith { counter(it).get() },
             glibGlorb = ui.glibGlorbUnlocked().get(),
             hiddenThemes = ui.unlockedHiddenThemes().get(),
+            eggsFound = EggikuEggHunt.found().size,
         )
     }
 

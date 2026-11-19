@@ -47,6 +47,7 @@ import com.hippo.unifile.UniFile
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import eu.kanade.domain.sync.SyncPreferences
+import eu.kanade.presentation.components.relativeDateText
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.screen.SettingsSecurityScreen.PasswordDialog
 import eu.kanade.presentation.more.settings.screen.data.BackupHistoryScreen
@@ -70,6 +71,7 @@ import eu.kanade.tachiyomi.data.export.LibraryExporter
 import eu.kanade.tachiyomi.data.export.LibraryExporter.ExportOptions
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
 import eu.kanade.tachiyomi.data.sync.SyncManager
+import eu.kanade.tachiyomi.data.sync.service.EggikuDriveFileSyncService
 import eu.kanade.tachiyomi.data.sync.service.GoogleDriveService
 import eu.kanade.tachiyomi.data.sync.service.GoogleDriveSyncService
 import eu.kanade.tachiyomi.extension.EggikuMissingExtensions
@@ -829,6 +831,7 @@ object SettingsDataScreen : SearchableSettings {
                             (SyncManager.SyncService.GOOGLE_DRIVE.value to stringResource(SYMR.strings.google_drive))
                                 .takeIf { driveSyncAvailable },
                             SyncManager.SyncService.WEB_DAV.value to stringResource(KMR.strings.web_dav),
+                            SyncManager.SyncService.DRIVE_FILE.value to stringResource(KMR.strings.fold_sync),
                         ).toMap().toImmutableMap(),
                         // KMK <--
                         title = stringResource(SYMR.strings.pref_sync_service),
@@ -873,6 +876,7 @@ object SettingsDataScreen : SearchableSettings {
             SyncManager.SyncService.GOOGLE_DRIVE -> getGoogleDrivePreferences()
             // KMK -->
             SyncManager.SyncService.WEB_DAV -> getWebDavPreferences(syncPreferences)
+            SyncManager.SyncService.DRIVE_FILE -> getEggikuFoldSyncPreferences()
             // KMK <--
         }
 
@@ -887,6 +891,55 @@ object SettingsDataScreen : SearchableSettings {
             preferences
         }
     }
+
+    // KMK -->
+    /** Fold sync: create the sync file on the first phone, pick that same file on the others */
+    @Composable
+    private fun getEggikuFoldSyncPreferences(): List<Preference> {
+        val context = LocalContext.current
+        val uriRaw by EggikuDriveFileSyncService.fileUriPref().collectAsState()
+        val lastSynced by EggikuDriveFileSyncService.lastSynced().collectAsState()
+        val lastError by EggikuDriveFileSyncService.lastError().collectAsState()
+        val fileName = remember(uriRaw) { EggikuDriveFileSyncService.fileName(context) }
+        val onPicked: (Uri?) -> Unit = { uri ->
+            if (uri != null) {
+                val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                try {
+                    context.contentResolver.takePersistableUriPermission(uri, flags)
+                } catch (_: Exception) {
+                    // Some providers grant access without persistable permissions
+                }
+                EggikuDriveFileSyncService.fileUriPref().set(uri.toString())
+                EggikuDriveFileSyncService.lastError().set("")
+                context.toast(KMR.strings.fold_sync_file_set)
+            }
+        }
+        val create = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream"), onPicked)
+        val open = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument(), onPicked)
+        return listOf(
+            Preference.PreferenceItem.InfoPreference(stringResource(KMR.strings.fold_sync_info)),
+            Preference.PreferenceItem.TextPreference(
+                title = stringResource(KMR.strings.fold_sync_create),
+                subtitle = stringResource(KMR.strings.fold_sync_create_summary),
+                onClick = { create.launch("eggiku-sync.eggsync") },
+            ),
+            Preference.PreferenceItem.TextPreference(
+                title = stringResource(KMR.strings.fold_sync_pick),
+                subtitle = stringResource(KMR.strings.fold_sync_pick_summary),
+                onClick = { open.launch(arrayOf("*/*")) },
+            ),
+            Preference.PreferenceItem.TextPreference(
+                title = stringResource(KMR.strings.fold_sync_status),
+                subtitle = when {
+                    uriRaw.isBlank() -> stringResource(KMR.strings.fold_sync_no_file)
+                    lastError.isNotBlank() -> stringResource(KMR.strings.fold_sync_error, fileName ?: "?", lastError)
+                    lastSynced > 0 -> stringResource(KMR.strings.fold_sync_last, fileName ?: "?", relativeDateText(lastSynced))
+                    else -> stringResource(KMR.strings.fold_sync_not_yet, fileName ?: "?")
+                },
+            ),
+        )
+    }
+    // KMK <--
 
     @Composable
     private fun getAdditionalPreferences(syncPreferences: SyncPreferences): List<Preference> {

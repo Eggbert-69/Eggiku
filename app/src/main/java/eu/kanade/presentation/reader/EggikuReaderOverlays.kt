@@ -49,6 +49,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.more.stats.EggikuStatsFormat
+import eu.kanade.tachiyomi.data.achievements.EggikuEggHunt
+import eu.kanade.tachiyomi.data.achievements.EggikuHiddenEgg
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.reader.ReaderActivity
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPanelPeek
@@ -166,6 +168,10 @@ fun EggikuChapterEndCard(finished: Chapter?) {
                     "📖 " + stringResource(KMR.strings.chapter_end_today, today),
                     style = MaterialTheme.typography.bodyMedium,
                 )
+            }
+            // Egg hunt: now and then a golden egg rolls out at the end of a chapter
+            if (remember(finished.id) { EggikuEggHunt.luckyChapterEnd(finished.id) }) {
+                EggikuHiddenEgg(EggikuEggHunt.Egg.CHAPTER_END, alignment = Alignment.CenterStart)
             }
             Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
                 FilledTonalButton(

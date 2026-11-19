@@ -242,5 +242,6 @@ private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(
     AppTheme.HOT_SAUCE to HotSauceColorScheme,
     AppTheme.GOLDEN_HOUR to GoldenHourColorScheme,
     AppTheme.DINO_EGG to DinoEggColorScheme,
+    AppTheme.EASTER_BASKET to EasterBasketColorScheme,
     // KMK <--
 )

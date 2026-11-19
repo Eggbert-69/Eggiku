@@ -173,4 +173,59 @@ internal object DinoEggColorScheme : BaseColorScheme() {
         surfaceContainerHighest = Color(0xFFDFE4DC),
     )
 }
+/** Eggiku hidden theme: pastel Easter basket (lilac, mint and butter yellow) */
+internal object EasterBasketColorScheme : BaseColorScheme() {
+
+    override val darkScheme = darkColorScheme(
+        primary = Color(0xFFD6B8FF),
+        onPrimary = Color(0xFF3B1F66),
+        primaryContainer = Color(0xFF53377F),
+        onPrimaryContainer = Color(0xFFEEDCFF),
+        secondary = Color(0xFF9EE8C8),
+        onSecondary = Color(0xFF003827),
+        secondaryContainer = Color(0xFF125139),
+        onSecondaryContainer = Color(0xFFBAF8DE),
+        tertiary = Color(0xFFFFE08A),
+        onTertiary = Color(0xFF3D2E00),
+        tertiaryContainer = Color(0xFF584400),
+        onTertiaryContainer = Color(0xFFFFEFB8),
+        background = Color(0xFF17141C),
+        onBackground = Color(0xFFE9E1EE),
+        surface = Color(0xFF17141C),
+        onSurface = Color(0xFFE9E1EE),
+        surfaceVariant = Color(0xFF4A4452),
+        onSurfaceVariant = Color(0xFFCCC3D4),
+        outline = Color(0xFF968E9E),
+        surfaceContainerLow = Color(0xFF1F1B25),
+        surfaceContainer = Color(0xFF231F29),
+        surfaceContainerHigh = Color(0xFF2E2934),
+        surfaceContainerHighest = Color(0xFF39343F),
+    )
+
+    override val lightScheme = lightColorScheme(
+        primary = Color(0xFF7B54B8),
+        onPrimary = Color(0xFFFFFFFF),
+        primaryContainer = Color(0xFFEEDCFF),
+        onPrimaryContainer = Color(0xFF2A0A55),
+        secondary = Color(0xFF2E7D5E),
+        onSecondary = Color(0xFFFFFFFF),
+        secondaryContainer = Color(0xFFBAF8DE),
+        onSecondaryContainer = Color(0xFF002116),
+        tertiary = Color(0xFF8C6D00),
+        onTertiary = Color(0xFFFFFFFF),
+        tertiaryContainer = Color(0xFFFFEFB8),
+        onTertiaryContainer = Color(0xFF2B2000),
+        background = Color(0xFFFFF7FE),
+        onBackground = Color(0xFF1E1A22),
+        surface = Color(0xFFFFF7FE),
+        onSurface = Color(0xFF1E1A22),
+        surfaceVariant = Color(0xFFEBDFF2),
+        onSurfaceVariant = Color(0xFF4A4452),
+        outline = Color(0xFF7C7484),
+        surfaceContainerLow = Color(0xFFFBF0FC),
+        surfaceContainer = Color(0xFFF6EBF8),
+        surfaceContainerHigh = Color(0xFFF0E5F2),
+        surfaceContainerHighest = Color(0xFFEADFEC),
+    )
+}
 // KMK <--

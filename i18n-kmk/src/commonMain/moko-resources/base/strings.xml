@@ -1059,4 +1059,38 @@
     <string name="translate_downloading">Downloading the language pack (first time only, about 30 MB)…</string>
     <string name="translate_nothing_found">No text found on this page</string>
     <string name="translate_failed">Couldn\'t translate: %1$s</string>
+    <!-- Eggiku Fold sync -->
+    <string name="fold_sync">Fold sync (Google Drive file)</string>
+    <string name="fold_sync_info">Keeps your library, reading progress and categories the same on every phone you use Eggiku on, through one file in Google Drive. No sign-in needed.\n\nOn the first phone, create the sync file. On every other phone, pick that same file. Drive can take a minute to pass changes between phones.</string>
+    <string name="fold_sync_create">Create sync file</string>
+    <string name="fold_sync_create_summary">First phone: pick Google Drive in the side menu, then save</string>
+    <string name="fold_sync_pick">Use sync file from my other phone</string>
+    <string name="fold_sync_pick_summary">Other phones: find eggiku-sync.eggsync in Google Drive</string>
+    <string name="fold_sync_status">Sync file</string>
+    <string name="fold_sync_no_file">None picked yet</string>
+    <string name="fold_sync_not_yet">%1$s · not synced yet</string>
+    <string name="fold_sync_last">%1$s · last synced %2$s</string>
+    <string name="fold_sync_error">%1$s · last sync failed: %2$s</string>
+    <string name="fold_sync_file_set">Sync file set. Tap Sync now to sync.</string>
+    <!-- Eggiku egg hunt -->
+    <string name="theme_easterbasket">Easter Basket</string>
+    <string name="egg_hunt_title">Egg hunt: %1$d of %2$d golden eggs found</string>
+    <string name="egg_hunt_rewards">Look for a faint little egg. 3 eggs: a golden egg to hold. 5: a basket hat. All 6: a secret theme and a golden egg background.</string>
+    <string name="egg_hunt_done">Every egg found! The Easter Basket theme is in Settings → Appearance.</string>
+    <string name="egg_hunt_hint_about">Where Eggiku says who it is</string>
+    <string name="egg_hunt_hint_stats">At the very bottom of your numbers</string>
+    <string name="egg_hunt_hint_drops">Where friends\' eggs land</string>
+    <string name="egg_hunt_hint_repos">Checking on the places extensions come from</string>
+    <string name="egg_hunt_hint_groups">Where sources get sorted into sets</string>
+    <string name="egg_hunt_hint_chapter_end">Sometimes rolls out when a chapter ends</string>
+    <string name="egg_hunt_found">You found a golden egg! (%1$d of %2$d)</string>
+    <string name="egg_hunt_three">3 golden eggs! You can hold one now: check your avatar</string>
+    <string name="egg_hunt_five">5 golden eggs! The egg basket hat is yours</string>
+    <string name="egg_hunt_all_found">All 6 golden eggs! Easter Basket theme and golden egg background unlocked</string>
+    <string name="ach_golden_three">Golden trio</string>
+    <string name="ach_golden_three_desc">Find 3 golden eggs</string>
+    <string name="ach_egg_basket">Full basket</string>
+    <string name="ach_egg_basket_desc">Find 5 golden eggs</string>
+    <string name="ach_golden_basket">Golden basket</string>
+    <string name="ach_golden_basket_desc">Find every golden egg</string>
 </resources>

@@ -35,6 +35,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.util.Screen
+import eu.kanade.tachiyomi.data.achievements.EggikuEggHunt
+import eu.kanade.tachiyomi.data.achievements.EggikuHiddenEgg
 import eu.kanade.tachiyomi.data.search.EggikuSourceHealth
 import eu.kanade.tachiyomi.extension.ExtensionManager
 import eu.kanade.tachiyomi.network.GET
@@ -267,6 +269,7 @@ class EggikuRepoHealthScreen : Screen() {
                         modifier = Modifier.animateItem(),
                     )
                 }
+                item(key = "egg") { EggikuHiddenEgg(EggikuEggHunt.Egg.REPOS) }
             }
         }
     }

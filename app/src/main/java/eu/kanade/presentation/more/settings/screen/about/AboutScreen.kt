@@ -34,6 +34,8 @@ import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.util.LocalBackPress
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.BuildConfig
+import eu.kanade.tachiyomi.data.achievements.EggikuEggHunt
+import eu.kanade.tachiyomi.data.achievements.EggikuHiddenEgg
 import eu.kanade.tachiyomi.data.updater.AppUpdateChecker
 import eu.kanade.tachiyomi.ui.more.ComingUpdatesScreen
 import eu.kanade.tachiyomi.ui.more.NewUpdateScreen
@@ -102,6 +104,9 @@ class AboutScreen : Screen() {
                 item {
                     LogoHeader()
                 }
+                // KMK -->
+                item { EggikuHiddenEgg(EggikuEggHunt.Egg.ABOUT) }
+                // KMK <--
 
                 item {
                     TextPreferenceWidget(

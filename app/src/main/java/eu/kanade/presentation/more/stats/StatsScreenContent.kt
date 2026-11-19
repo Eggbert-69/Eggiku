@@ -20,6 +20,8 @@ import eu.kanade.presentation.more.stats.components.StatsItem
 import eu.kanade.presentation.more.stats.components.StatsOverviewItem
 import eu.kanade.presentation.more.stats.data.StatsData
 import eu.kanade.presentation.util.toDurationString
+import eu.kanade.tachiyomi.data.achievements.EggikuEggHunt
+import eu.kanade.tachiyomi.data.achievements.EggikuHiddenEgg
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.SectionCard
 import tachiyomi.presentation.core.components.material.padding
@@ -61,6 +63,9 @@ fun StatsScreenContent(
         item {
             TrackerStats(state.trackers)
         }
+        // KMK -->
+        item { EggikuHiddenEgg(EggikuEggHunt.Egg.STATS) }
+        // KMK <--
     }
 }
 

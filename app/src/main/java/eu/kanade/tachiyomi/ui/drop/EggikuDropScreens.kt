@@ -52,6 +52,8 @@ import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.relativeDateText
 import eu.kanade.presentation.manga.components.MangaCover
 import eu.kanade.presentation.util.Screen
+import eu.kanade.tachiyomi.data.achievements.EggikuEggHunt
+import eu.kanade.tachiyomi.data.achievements.EggikuHiddenEgg
 import eu.kanade.tachiyomi.data.drop.EggikuDrops
 import eu.kanade.tachiyomi.ui.deeplink.DeepLinkScreen
 import eu.kanade.tachiyomi.ui.manga.MangaScreen
@@ -228,10 +230,10 @@ class EggikuDropInboxScreen : Screen() {
             },
         ) { padding ->
             if (inbox.isEmpty()) {
-                EmptyScreen(
-                    message = stringResource(KMR.strings.egg_drop_inbox_empty),
-                    modifier = Modifier.padding(padding),
-                )
+                Box(modifier = Modifier.padding(padding)) {
+                    EmptyScreen(message = stringResource(KMR.strings.egg_drop_inbox_empty))
+                    EggikuHiddenEgg(EggikuEggHunt.Egg.DROPS, modifier = Modifier.align(Alignment.BottomCenter))
+                }
                 return@Scaffold
             }
             LazyColumn(
@@ -263,6 +265,7 @@ class EggikuDropInboxScreen : Screen() {
                         modifier = Modifier.animateItem(),
                     )
                 }
+                item(key = "egg") { EggikuHiddenEgg(EggikuEggHunt.Egg.DROPS) }
             }
         }
     }

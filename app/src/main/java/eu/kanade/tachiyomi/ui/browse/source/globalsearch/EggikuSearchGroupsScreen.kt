@@ -2,6 +2,7 @@ package eu.kanade.tachiyomi.ui.browse.source.globalsearch
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -36,6 +37,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.util.Screen
+import eu.kanade.tachiyomi.data.achievements.EggikuEggHunt
+import eu.kanade.tachiyomi.data.achievements.EggikuHiddenEgg
 import eu.kanade.tachiyomi.data.search.EggikuSearchGroups
 import eu.kanade.tachiyomi.data.search.EggikuSourceHealth
 import eu.kanade.tachiyomi.util.system.LocaleHelper
@@ -76,7 +79,10 @@ class EggikuSearchGroupsScreen : Screen() {
             },
         ) { padding ->
             if (groups.isEmpty()) {
-                EmptyScreen(message = stringResource(KMR.strings.search_groups_empty), modifier = Modifier.padding(padding))
+                Box(modifier = Modifier.padding(padding)) {
+                    EmptyScreen(message = stringResource(KMR.strings.search_groups_empty))
+                    EggikuHiddenEgg(EggikuEggHunt.Egg.GROUPS, modifier = Modifier.align(Alignment.BottomCenter))
+                }
                 return@Scaffold
             }
             LazyColumn(
@@ -128,6 +134,7 @@ class EggikuSearchGroupsScreen : Screen() {
                         }
                     }
                 }
+                item(key = "egg") { EggikuHiddenEgg(EggikuEggHunt.Egg.GROUPS) }
             }
         }
     }

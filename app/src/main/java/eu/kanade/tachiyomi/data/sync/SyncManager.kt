@@ -11,6 +11,7 @@ import eu.kanade.tachiyomi.data.backup.models.BackupManga
 import eu.kanade.tachiyomi.data.backup.restore.BackupRestoreJob
 import eu.kanade.tachiyomi.data.backup.restore.RestoreOptions
 import eu.kanade.tachiyomi.data.backup.restore.restorers.MangaRestorer
+import eu.kanade.tachiyomi.data.sync.service.EggikuDriveFileSyncService
 import eu.kanade.tachiyomi.data.sync.service.GoogleDriveSyncService
 import eu.kanade.tachiyomi.data.sync.service.SyncData
 import eu.kanade.tachiyomi.data.sync.service.SyncYomiSyncService
@@ -58,6 +59,9 @@ class SyncManager(
         GOOGLE_DRIVE(2),
         // KMK -->
         WEB_DAV(3),
+
+        /** Eggiku Fold sync: one file in Google Drive picked on each phone */
+        DRIVE_FILE(4),
         // KMK <--
         ;
 
@@ -144,6 +148,10 @@ class SyncManager(
             // KMK -->
             SyncService.WEB_DAV -> {
                 WebDavSyncService(context, json, syncPreferences, notifier)
+            }
+
+            SyncService.DRIVE_FILE -> {
+                EggikuDriveFileSyncService(context, json, syncPreferences, notifier)
             }
             // KMK <--
 
