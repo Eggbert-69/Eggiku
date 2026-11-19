@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.data.stats
 import android.content.res.Resources
 import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.music.EggikuMusic
+import exh.log.xLogE
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -73,24 +74,33 @@ object EggikuReadingLog {
     private var days: MutableMap<String, DayStats>? = null
     private var dirty = false
 
+    /** What was stored when [days] was loaded or last saved, to spot a backup restore */
+    private var loadedRaw: String? = null
+
     private val _changes = MutableStateFlow(0)
 
     /** Bumps whenever the log is saved, so screens can refresh */
     val changes: StateFlow<Int> = _changes.asStateFlow()
 
     private fun load(): MutableMap<String, DayStats> {
-        days?.let { return it }
         val raw = logPref().get()
+        // If the stored log changed underneath us (a backup restore), the stored one wins;
+        // otherwise the next save would write the old in-memory log over the restored one
+        days?.let { if (raw == loadedRaw) return it }
         val loaded = if (raw.isBlank()) {
             mutableMapOf()
         } else {
             try {
                 json.decodeFromString(logSerializer, raw).toMutableMap()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                // Keep the unreadable copy instead of letting the next save erase years of stats
+                xLogE("Eggiku reading log couldn't be read; kept a copy", e)
+                preferenceStore.getString("eggiku_reading_log_unreadable", "").set(raw)
                 mutableMapOf()
             }
         }
         days = loaded
+        loadedRaw = raw
         return loaded
     }
 
@@ -188,12 +198,13 @@ object EggikuReadingLog {
                 day.copy(swipeMm = day.swipeMm + swipe / pxPerMm, panMm = day.panMm + pan / pxPerMm)
             }
         }
-        val snapshot = synchronized(lock) {
+        synchronized(lock) {
             if (!dirty) return
             dirty = false
-            load().toMap()
+            val encoded = json.encodeToString(logSerializer, load().toMap())
+            loadedRaw = encoded
+            logPref().set(encoded)
         }
-        logPref().set(json.encodeToString(logSerializer, snapshot))
         _changes.value++
         EggikuWidgetBridge.updateStats()
     }
