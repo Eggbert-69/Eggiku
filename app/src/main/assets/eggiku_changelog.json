@@ -1,5 +1,17 @@
 [
   {
+    "build": 30,
+    "date": "2026-11-19",
+    "changes": [
+      "Translate is now a toggle: turn it on and every page translates as it comes on screen, then stays translated while you scroll, zoom and turn pages",
+      "Translations are pinned to the page, so they move and zoom with it instead of floating on top",
+      "Text is grouped into whole speech bubbles first, and boxes never overlap each other anymore",
+      "Text size is fitted to each bubble once, so long lines shrink to fit instead of spilling out",
+      "Much faster: only new parts of a page are read, pages you go back to show instantly, and the language models stay loaded",
+      "Bubbles cut off at the screen edge wait until they're fully in view instead of being half-read"
+    ]
+  },
+  {
     "build": 29,
     "date": "2026-11-19",
     "changes": [
