@@ -16,7 +16,6 @@ import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.automirrored.outlined.PlaylistAdd
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.CloudOff
-import androidx.compose.material.icons.outlined.Egg
 import androidx.compose.material.icons.outlined.GetApp
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Info
@@ -31,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -46,10 +44,8 @@ import eu.kanade.presentation.more.settings.widget.SwitchPreferenceWidget
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import eu.kanade.tachiyomi.R
-import eu.kanade.tachiyomi.data.drop.EggikuDrops
 import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
 import eu.kanade.tachiyomi.ui.avatar.EggikuAvatarEditorScreen
-import eu.kanade.tachiyomi.ui.drop.EggikuDropInboxScreen
 import eu.kanade.tachiyomi.ui.more.DownloadQueueState
 import eu.kanade.tachiyomi.ui.more.EggikuUpdateScreen
 import eu.kanade.tachiyomi.util.system.openInBrowser
@@ -204,17 +200,6 @@ fun MoreScreen(
                 )
             }
             // KMK -->
-            item {
-                val navigator = LocalNavigator.current
-                val drops by remember { EggikuDrops.inboxChanges() }.collectAsState(EggikuDrops.inbox())
-                val unseen = drops.count { !it.seen }
-                TextPreferenceWidget(
-                    title = stringResource(KMR.strings.egg_drop_inbox),
-                    subtitle = if (unseen > 0) stringResource(KMR.strings.egg_drop_inbox_summary, unseen) else null,
-                    icon = Icons.Outlined.Egg,
-                    onPreferenceClick = { navigator?.push(EggikuDropInboxScreen()) },
-                )
-            }
             item {
                 TextPreferenceWidget(
                     title = stringResource(KMR.strings.option_label_library_update_errors),

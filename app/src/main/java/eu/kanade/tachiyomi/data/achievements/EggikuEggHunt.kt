@@ -47,6 +47,7 @@ object EggikuEggHunt {
     enum class Egg(val hint: StringResource) {
         ABOUT(KMR.strings.egg_hunt_hint_about),
         STATS(KMR.strings.egg_hunt_hint_stats),
+        // Named for where it first hid; it now lives on the find by picture screen
         DROPS(KMR.strings.egg_hunt_hint_drops),
         REPOS(KMR.strings.egg_hunt_hint_repos),
         GROUPS(KMR.strings.egg_hunt_hint_groups),

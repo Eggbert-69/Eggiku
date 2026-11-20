@@ -19,7 +19,6 @@ import eu.kanade.presentation.browse.components.BulkFavoriteDialogs
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.ui.browse.BulkFavoriteScreenModel
 import eu.kanade.tachiyomi.ui.browse.source.browse.BrowseSourceScreen
-import eu.kanade.tachiyomi.ui.drop.EggikuDropScreen
 import eu.kanade.tachiyomi.ui.manga.MangaScreen
 import tachiyomi.presentation.core.screens.LoadingScreen
 
@@ -122,7 +121,6 @@ class GlobalSearchScreen(
                         onSearchSkipped = screenModel::eggikuSearchSkipped,
                         onCompare = screenModel::eggikuCompare,
                         onFindByPicture = { navigator.push(EggikuFindByPictureScreen()) },
-                        onOpenDrop = { navigator.push(EggikuDropScreen(it)) },
                     )
                 },
                 // KMK <--

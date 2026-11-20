@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.browse.components.GlobalSearchCardRow
 import eu.kanade.presentation.browse.components.GlobalSearchResultItem
 import eu.kanade.presentation.manga.components.MangaCover
-import eu.kanade.tachiyomi.data.drop.EggikuDrops
 import eu.kanade.tachiyomi.data.search.EggikuSearchGroups
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.model.SManga
@@ -82,7 +81,6 @@ class EggikuSearchActions(
     val onSearchSkipped: () -> Unit,
     val onCompare: (List<Pair<Source, Manga>>) -> Unit,
     val onFindByPicture: () -> Unit,
-    val onOpenDrop: (EggikuDrops.Drop) -> Unit,
 )
 
 private fun seconds(ms: Long) = String.format(Locale.getDefault(), "%.1f s", ms / 1000f)
@@ -273,7 +271,7 @@ private fun EggikuSearchFiltersDialog(
     )
 }
 
-/** Above the source rows: other names being searched, skipped sources, and matches in your stuff */
+/** Above the source rows: other names being searched, skipped sources, and matches in your library and history */
 fun LazyListScope.eggikuSearchHeader(
     eggiku: EggikuSearchState,
     actions: EggikuSearchActions,
@@ -326,30 +324,6 @@ fun LazyListScope.eggikuSearchHeader(
                         onLongClick = onLongClickItem,
                         selection = selection,
                     )
-                }
-            }
-        }
-        if (mine.drops.isNotEmpty()) {
-            item(key = "eggiku-mine-drops") {
-                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
-                    Text(stringResource(KMR.strings.egg_drop_inbox), style = MaterialTheme.typography.titleSmall)
-                    mine.drops.take(5).forEach { received ->
-                        AssistChip(
-                            onClick = { actions.onOpenDrop(received.drop) },
-                            leadingIcon = { Icon(Icons.Outlined.Egg, contentDescription = null, modifier = Modifier.size(18.dp)) },
-                            label = {
-                                Text(
-                                    stringResource(
-                                        KMR.strings.search_mine_drop,
-                                        received.drop.title,
-                                        received.drop.from.ifBlank { stringResource(KMR.strings.compare_friend) },
-                                    ),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            },
-                        )
-                    }
                 }
             }
         }

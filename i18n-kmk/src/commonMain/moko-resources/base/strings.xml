@@ -939,32 +939,6 @@
     <string name="audio_output_bluetooth_settings">Bluetooth settings</string>
     <string name="audio_output_bluetooth_settings_summary">Pair new headphones, or use this if the picker doesn\'t list yours</string>
     <string name="audio_output_unavailable">Couldn\'t open audio output on this phone</string>
-    <!-- Eggiku Egg Drop -->
-    <string name="egg_drop_title">Egg Drop</string>
-    <string name="egg_drop_send_title">Egg Drop to a friend</string>
-    <string name="egg_drop_your_stars">Your stars</string>
-    <string name="egg_drop_note">Note (optional)</string>
-    <string name="egg_drop_note_hint">Why they should read it…</string>
-    <string name="egg_drop_your_name">Your name (friends see this)</string>
-    <string name="egg_drop_send">Send</string>
-    <string name="egg_drop_plain_share">Just the link</string>
-    <string name="egg_drop_message">🥚 Egg Drop: %1$s\n%2$sOpen in Eggiku: %3$s</string>
-    <string name="egg_drop_message_web">Not on Eggiku? %1$s</string>
-    <string name="egg_drop_from">From %1$s</string>
-    <string name="egg_drop_on_source">On %1$s</string>
-    <string name="egg_drop_source_missing">They read it on %1$s, which you don\'t have. Eggiku will look for it on your sources.</string>
-    <string name="egg_drop_open">Open series</string>
-    <string name="egg_drop_find">Find it on my sources</string>
-    <string name="egg_drop_inbox">Egg Drops</string>
-    <string name="egg_drop_inbox_empty">No drops yet. When a friend sends you a series from Eggiku, it lands here.\n\nTo send one, tap Share on any series.</string>
-    <string name="egg_drop_new">New</string>
-    <string name="egg_drop_delete">Delete (tap twice)</string>
-    <string name="egg_drop_mark_all_seen">Mark all as seen</string>
-    <string name="egg_drop_inbox_summary">%1$d new</string>
-    <string name="ach_l_drops">Egg Drops</string>
-    <string name="ach_l_drops_desc">send %1$s Egg Drops to friends</string>
-    <string name="ach_got_mail">Got mail</string>
-    <string name="ach_got_mail_desc">Open an Egg Drop from a friend</string>
     <!-- Eggiku search -->
     <string name="search_alt_titles">Other names</string>
     <string name="search_alt_titles_also">Also searching: %1$s</string>
@@ -1011,7 +985,6 @@
     <string name="search_mine">My stuff</string>
     <string name="search_mine_title">In your stuff</string>
     <string name="search_mine_subtitle">%1$d in library · %2$d from history</string>
-    <string name="search_mine_drop">%1$s · from %2$s</string>
     <string name="search_skipped">%1$d sources skipped for failing lately</string>
     <string name="search_skipped_anyway">Search them too</string>
     <string name="search_tag_mode">Tag</string>
@@ -1080,7 +1053,7 @@
     <string name="egg_hunt_done">Every egg found! The Easter Basket theme is in Settings → Appearance.</string>
     <string name="egg_hunt_hint_about">Where Eggiku says who it is</string>
     <string name="egg_hunt_hint_stats">At the very bottom of your numbers</string>
-    <string name="egg_hunt_hint_drops">Where friends\' eggs land</string>
+    <string name="egg_hunt_hint_drops">Where pictures get looked up</string>
     <string name="egg_hunt_hint_repos">Checking on the places extensions come from</string>
     <string name="egg_hunt_hint_groups">Where sources get sorted into sets</string>
     <string name="egg_hunt_hint_chapter_end">Sometimes rolls out when a chapter ends</string>
@@ -1094,4 +1067,13 @@
     <string name="ach_egg_basket_desc">Find 5 golden eggs</string>
     <string name="ach_golden_basket">Golden basket</string>
     <string name="ach_golden_basket_desc">Find every golden egg</string>
+    <!-- Eggiku translation settings -->
+    <string name="translate_settings">Translation</string>
+    <string name="translate_font">Translation font</string>
+    <string name="translate_font_app">Same as the app font</string>
+    <string name="translate_bold">Bold translation text</string>
+    <string name="translate_from">Raw language</string>
+    <string name="translate_from_auto">From the series\' source</string>
+    <string name="translate_mobile_data">Download language packs on mobile data</string>
+    <string name="translate_mobile_data_summary">Each pack is about 30 MB and only downloads once</string>
 </resources>

@@ -56,8 +56,6 @@ object EggikuAchievements {
     const val COUNT_MIGRATED = "migrated"
     const val COUNT_REVIVED = "revived"
     const val COUNT_MUSIC_SECONDS = "music_seconds"
-    const val COUNT_DROPS_SENT = "drops_sent"
-    const val COUNT_DROPS_RECEIVED = "drops_received"
 
     private val preferenceStore: PreferenceStore by lazy { Injekt.get() }
 
@@ -230,13 +228,6 @@ object EggikuAchievements {
             KMR.strings.ach_l_ratings_desc,
             listOf(1, 5, 10, 25, 50, 100, 250, 500).map(Int::toLong),
         ) { it.rated },
-        Ladder(
-            "drops",
-            "🥚",
-            KMR.strings.ach_l_drops,
-            KMR.strings.ach_l_drops_desc,
-            listOf(1, 2, 3, 5, 10, 15, 25, 50, 100).map(Int::toLong),
-        ) { it.counters[COUNT_DROPS_SENT] ?: 0L },
     )
 
     /** Shared egg-themed names for tiers, spread over each ladder so the top is always Cosmic Egg */
@@ -301,9 +292,6 @@ object EggikuAchievements {
         OneOff("harsh_critic", "🥀", KMR.strings.ach_harsh_critic, KMR.strings.ach_harsh_critic_desc) { it.anyOneStar },
         OneOff("patience", "⏲️", KMR.strings.ach_patience, KMR.strings.ach_patience_desc) {
             (it.counters[COUNT_COOKED] ?: 0) >= 1
-        },
-        OneOff("got_mail", "📬", KMR.strings.ach_got_mail, KMR.strings.ach_got_mail_desc) {
-            (it.counters[COUNT_DROPS_RECEIVED] ?: 0) >= 1
         },
         // Secrets
         OneOff(EggikuEggHunt.BADGE_THREE, "🥚", KMR.strings.ach_golden_three, KMR.strings.ach_golden_three_desc, secret = true) {
@@ -459,8 +447,6 @@ object EggikuAchievements {
                 COUNT_MERGES,
                 COUNT_MIGRATED,
                 COUNT_REVIVED,
-                COUNT_DROPS_SENT,
-                COUNT_DROPS_RECEIVED,
             ).associateWith { counter(it).get() },
             glibGlorb = ui.glibGlorbUnlocked().get(),
             hiddenThemes = ui.unlockedHiddenThemes().get(),

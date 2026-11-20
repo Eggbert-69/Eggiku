@@ -84,7 +84,6 @@ import eu.kanade.tachiyomi.data.coil.MangaCoverMetadata
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.download.DownloadCache
-import eu.kanade.tachiyomi.data.drop.EggikuDrops
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.smartdownload.EggikuSmartDownloads
@@ -99,7 +98,6 @@ import eu.kanade.tachiyomi.ui.browse.source.feed.SourceFeedScreen
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.EggikuFindByPictureScreen
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.GlobalSearchScreen
 import eu.kanade.tachiyomi.ui.deeplink.DeepLinkScreen
-import eu.kanade.tachiyomi.ui.drop.EggikuDropScreen
 import eu.kanade.tachiyomi.ui.home.HomeScreen
 import eu.kanade.tachiyomi.ui.manga.MangaScreen
 import eu.kanade.tachiyomi.ui.more.NewUpdateScreen
@@ -741,11 +739,7 @@ class MainActivity : BaseActivity() {
                 }
                 val shared = EggikuShare.fromText(query)
                 val friend = EggikuCompare.decode(query)
-                val drop = EggikuDrops.decode(query)
-                if (drop != null) {
-                    navigator.popUntilRoot()
-                    navigator.push(EggikuDropScreen(drop))
-                } else if (friend != null) {
+                if (friend != null) {
                     navigator.popUntilRoot()
                     navigator.push(EggikuCompareScreen(friend))
                 } else if (shared != null) {
@@ -774,11 +768,7 @@ class MainActivity : BaseActivity() {
                 // A series a friend shared from Eggiku
                 val shared = EggikuShare.fromUri(intent.data)
                 val friend = EggikuCompare.fromUri(intent.data)
-                val drop = EggikuDrops.fromUri(intent.data)
-                if (drop != null) {
-                    navigator.popUntilRoot()
-                    navigator.push(EggikuDropScreen(drop))
-                } else if (friend != null) {
+                if (friend != null) {
                     navigator.popUntilRoot()
                     navigator.push(EggikuCompareScreen(friend))
                 } else if (shared != null) {

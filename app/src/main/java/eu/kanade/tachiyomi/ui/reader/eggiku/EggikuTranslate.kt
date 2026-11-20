@@ -30,6 +30,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
@@ -76,6 +79,17 @@ object EggikuTranslate {
     /** Download language packs on mobile data too */
     fun allowMobileData() = preferenceStore.getBoolean("eggiku_translate_mobile_data", true)
 
+    /** Font for translations: an [eu.kanade.presentation.theme.EggikuFont] name, or "APP" to match the app font */
+    fun fontPref() = preferenceStore.getString("eggiku_translate_font", "COMIC_NEUE")
+
+    fun boldPref() = preferenceStore.getBoolean("eggiku_translate_bold", true)
+
+    /** Relays out every translated page with the new font, without reading the pages again */
+    fun fontChanged() {
+        pageCache.evictAll()
+        pages.toList().forEach { it.relayout() }
+    }
+
     private val mutableActive by lazy { MutableStateFlow(activePref.get()) }
     val active: StateFlow<Boolean> by lazy { mutableActive.asStateFlow() }
 
@@ -107,6 +121,21 @@ object EggikuTranslate {
 
     /** Finished pages by page key, so a page you come back to shows instantly */
     internal val pageCache = LruCache<String, EggikuPageTranslation.Saved>(150)
+
+    init {
+        // Settings changes apply right away to pages already translated
+        scope.launch { merge(fontPref().changes().drop(1), boldPref().changes().drop(1)).collect { fontChanged() } }
+        scope.launch {
+            rawLanguage().changes().drop(1).collect {
+                pageCache.evictAll()
+                autoLang = null
+                pages.toList().forEach {
+                    it.reset()
+                    it.schedule(150)
+                }
+            }
+        }
+    }
 
     private val translationCache = LruCache<String, String>(1000)
     private val recognizers = mutableMapOf<String, TextRecognizer>()

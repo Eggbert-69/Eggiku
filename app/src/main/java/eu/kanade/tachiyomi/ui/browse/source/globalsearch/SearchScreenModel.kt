@@ -8,7 +8,6 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import eu.kanade.domain.manga.model.toSManga
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.presentation.util.ioCoroutineScope
-import eu.kanade.tachiyomi.data.drop.EggikuDrops
 import eu.kanade.tachiyomi.data.search.EggikuAltTitles
 import eu.kanade.tachiyomi.data.search.EggikuSearchGroups
 import eu.kanade.tachiyomi.data.search.EggikuSearchHistory
@@ -355,7 +354,7 @@ abstract class SearchScreenModel(
         }
     }
 
-    /** Matches in your library, history and Egg Drops */
+    /** Matches in your library and history */
     private fun eggikuSearchMine(query: String) {
         eggikuMineJob?.cancel()
         if (!state.value.eggiku.includeMine || state.value.eggiku.tagMode) {
@@ -381,9 +380,8 @@ abstract class SearchScreenModel(
             } catch (_: Exception) {
                 emptyList()
             }
-            val drops = EggikuDrops.inbox().filter { matches(it.drop.title) || matches(it.drop.note) }
             if (isActive) {
-                mutableState.update { it.copy(eggiku = it.eggiku.copy(mine = EggikuMine(library, history, drops))) }
+                mutableState.update { it.copy(eggiku = it.eggiku.copy(mine = EggikuMine(library, history))) }
             }
         }
     }

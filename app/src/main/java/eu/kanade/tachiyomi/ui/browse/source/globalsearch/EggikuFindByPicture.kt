@@ -46,6 +46,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.util.Screen
+import eu.kanade.tachiyomi.data.achievements.EggikuEggHunt
+import eu.kanade.tachiyomi.data.achievements.EggikuHiddenEgg
 import eu.kanade.tachiyomi.data.search.EggikuSearchPrefs
 import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.network.POST
@@ -288,6 +290,7 @@ class EggikuFindByPictureScreen(private val sharedImage: String? = null) : Scree
                         }
                     }
                 }
+                item(key = "egg") { EggikuHiddenEgg(EggikuEggHunt.Egg.DROPS) }
                 item(key = "key") {
                     OutlinedTextField(
                         value = key,

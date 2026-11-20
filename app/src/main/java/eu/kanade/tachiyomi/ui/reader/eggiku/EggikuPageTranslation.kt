@@ -23,7 +23,10 @@ import android.view.PixelCopy
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.core.content.res.ResourcesCompat
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.presentation.theme.EggikuFont
 import exh.log.xLogE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +34,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 import kotlin.coroutines.resume
 import kotlin.math.max
 import kotlin.math.min
@@ -47,7 +52,9 @@ class EggikuPageTranslation(private val host: ViewGroup) {
     class Placed(
         val box: RectF,
         val layout: StaticLayout,
-        val original: String,
+        val bubble: EggikuTranslate.Bubble,
+        /** Zoom the page was read at, which the text size was chosen for */
+        val scale: Float,
     )
 
     class Saved(val placed: List<Placed>, val covered: List<RectF>)
@@ -96,6 +103,27 @@ class EggikuPageTranslation(private val host: ViewGroup) {
         } else {
             // Keep it on top of the new image
             overlay?.bringToFront()
+        }
+    }
+
+    /** Lays the same translations out again, e.g. after the font changed */
+    fun relayout() {
+        val image = view ?: return
+        val old = placed
+        if (old.isEmpty()) return
+        val density = host.resources.displayMetrics.scaledDensity
+        val context = host.context.applicationContext
+        EggikuTranslate.scope.launch {
+            val typeface = withContext(Dispatchers.Default) { typeface(context) }
+            val redone = withContext(Dispatchers.Default) {
+                old.groupBy { it.scale }.flatMap { (scale, items) ->
+                    place(items.map { it.bubble }, emptyList(), image.sWidth.toFloat(), image.sHeight.toFloat(), scale, density, typeface)
+                }
+            }
+            if (view !== image || placed !== old) return@launch
+            placed = redone
+            pageKey?.let { EggikuTranslate.pageCache.put("$it:${image.sWidth}x${image.sHeight}", Saved(placed, covered)) }
+            overlay?.invalidate()
         }
     }
 
@@ -240,8 +268,9 @@ class EggikuPageTranslation(private val host: ViewGroup) {
                 found.retainAll { readRegion.contains(it.rect.centerX(), it.rect.centerY()) }
 
                 val density = host.resources.displayMetrics.scaledDensity
+                val context = host.context.applicationContext
                 val newPlaced = withContext(Dispatchers.Default) {
-                    place(found, placed, image.sWidth.toFloat(), image.sHeight.toFloat(), scale, density)
+                    place(found, placed, image.sWidth.toFloat(), image.sHeight.toFloat(), scale, density, typeface(context))
                 }
                 if (view !== image) return@launch
                 placed = placed + newPlaced
@@ -354,11 +383,22 @@ class EggikuPageTranslation(private val host: ViewGroup) {
     }
 
     companion object {
-        private val textPaint = ThreadLocal.withInitial {
-            TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.BLACK
-                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        private val fontCache = mutableMapOf<String, Typeface>()
+
+        /** The translation font from settings; "APP" follows the app font */
+        internal fun typeface(context: Context): Typeface {
+            val bold = EggikuTranslate.boldPref().get()
+            val chosen = EggikuTranslate.fontPref().get().let { name ->
+                if (name == "APP") Injekt.get<UiPreferences>().eggikuFont().get().name else name
             }
+            val key = "$chosen:$bold"
+            synchronized(fontCache) { fontCache[key] }?.let { return it }
+            val font = EggikuFont.entries.firstOrNull { it.name == chosen }
+            val res = if (bold) font?.bold else font?.regular
+            val typeface = res?.let { runCatching { ResourcesCompat.getFont(context, it) }.getOrNull() }
+                ?: Typeface.create(if (bold) "sans-serif-medium" else "sans-serif", Typeface.NORMAL)
+            synchronized(fontCache) { fontCache[key] = typeface }
+            return typeface
         }
 
         /**
@@ -372,6 +412,7 @@ class EggikuPageTranslation(private val host: ViewGroup) {
             pageH: Float,
             captureScale: Float,
             scaledDensity: Float,
+            typeface: Typeface,
         ): List<Placed> {
             val taken = existing.map { it.box }.toMutableList()
             val result = mutableListOf<Placed>()
@@ -385,7 +426,7 @@ class EggikuPageTranslation(private val host: ViewGroup) {
                 val pad = min(box.width(), box.height()) * 0.08f
                 val innerW = max(1f, box.width() - pad * 2)
                 val innerH = max(1f, box.height() - pad * 2)
-                result += Placed(box, fit(bubble.translated, innerW.toInt(), innerH, minPx, maxPx), bubble.original)
+                result += Placed(box, fit(bubble.translated, innerW.toInt(), innerH, minPx, maxPx, typeface), bubble, captureScale)
             }
             return result
         }
@@ -417,8 +458,12 @@ class EggikuPageTranslation(private val host: ViewGroup) {
             return box
         }
 
-        private fun build(text: String, width: Int, size: Float, maxLines: Int = Int.MAX_VALUE): StaticLayout {
-            val paint = TextPaint(textPaint.get()).apply { textSize = size }
+        private fun build(text: String, width: Int, size: Float, typeface: Typeface, maxLines: Int = Int.MAX_VALUE): StaticLayout {
+            val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.BLACK
+                this.typeface = typeface
+                textSize = size
+            }
             return StaticLayout.Builder.obtain(text, 0, text.length, paint, max(1, width))
                 .setAlignment(Layout.Alignment.ALIGN_CENTER)
                 .setIncludePad(false)
@@ -431,13 +476,13 @@ class EggikuPageTranslation(private val host: ViewGroup) {
         }
 
         /** Biggest size whose text fits the box; at the smallest size, it trims with "…" */
-        private fun fit(text: String, width: Int, height: Float, minPx: Float, maxPx: Float): StaticLayout {
+        private fun fit(text: String, width: Int, height: Float, minPx: Float, maxPx: Float, typeface: Typeface): StaticLayout {
             var lo = minPx
             var hi = max(minPx, min(maxPx, height))
             var best: StaticLayout? = null
             repeat(8) {
                 val mid = (lo + hi) / 2f
-                val layout = build(text, width, mid)
+                val layout = build(text, width, mid, typeface)
                 if (layout.height <= height && widestLine(layout) <= width + 0.5f) {
                     best = layout
                     lo = mid
@@ -446,10 +491,10 @@ class EggikuPageTranslation(private val host: ViewGroup) {
                 }
             }
             best?.let { return it }
-            val smallest = build(text, width, minPx)
+            val smallest = build(text, width, minPx, typeface)
             if (smallest.height <= height) return smallest
             val lineHeight = smallest.height / max(1, smallest.lineCount).toFloat()
-            return build(text, width, minPx, maxLines = max(1, (height / lineHeight).toInt()))
+            return build(text, width, minPx, typeface, maxLines = max(1, (height / lineHeight).toInt()))
         }
 
         private fun widestLine(layout: StaticLayout): Float {

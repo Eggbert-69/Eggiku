@@ -43,6 +43,7 @@ import eu.kanade.tachiyomi.data.search.EggikuSearchGroups
 import eu.kanade.tachiyomi.data.search.EggikuSourceHealth
 import eu.kanade.tachiyomi.util.system.LocaleHelper
 import tachiyomi.domain.source.service.SourceManager
+import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
@@ -127,7 +128,7 @@ class EggikuSearchGroupsScreen : Screen() {
                             ) {
                                 Icon(
                                     Icons.Outlined.Delete,
-                                    contentDescription = stringResource(KMR.strings.egg_drop_delete),
+                                    contentDescription = stringResource(MR.strings.action_delete),
                                     tint = if (confirmDelete == group.id) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }

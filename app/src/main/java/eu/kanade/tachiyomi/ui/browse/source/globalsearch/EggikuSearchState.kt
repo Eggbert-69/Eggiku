@@ -1,7 +1,6 @@
 package eu.kanade.tachiyomi.ui.browse.source.globalsearch
 
 import androidx.compose.runtime.Immutable
-import eu.kanade.tachiyomi.data.drop.EggikuDrops
 import eu.kanade.tachiyomi.data.search.EggikuSearchText
 import eu.kanade.tachiyomi.source.Source
 import tachiyomi.domain.manga.model.Manga
@@ -59,9 +58,8 @@ data class EggikuSeriesDetails(
 data class EggikuMine(
     val library: List<Manga> = emptyList(),
     val history: List<Manga> = emptyList(),
-    val drops: List<EggikuDrops.Received> = emptyList(),
 ) {
-    val isEmpty: Boolean get() = library.isEmpty() && history.isEmpty() && drops.isEmpty()
+    val isEmpty: Boolean get() = library.isEmpty() && history.isEmpty()
 }
 
 /** One series found on several sources */

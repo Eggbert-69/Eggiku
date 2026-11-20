@@ -8,7 +8,9 @@
       "Text is grouped into whole speech bubbles first, and boxes never overlap each other anymore",
       "Text size is fitted to each bubble once, so long lines shrink to fit instead of spilling out",
       "Much faster: only new parts of a page are read, pages you go back to show instantly, and the language models stay loaded",
-      "Bubbles cut off at the screen edge wait until they're fully in view instead of being half-read"
+      "Bubbles cut off at the screen edge wait until they're fully in view instead of being half-read",
+      "New Translation settings (Settings → Reader): pick a separate font for translations (Comic Neue by default), bold or regular, and which language the raws are in",
+      "Egg Drop has been removed; Share on a series works the way it did before"
     ]
   },
   {

@@ -7,6 +7,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import eu.kanade.presentation.more.settings.Preference
+import eu.kanade.presentation.theme.EggikuFont
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuTranslate
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderBottomButton
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
@@ -14,6 +16,7 @@ import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences.Companion.zoomWid
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences.WebtoonScaleType
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerConfig
+import eu.kanade.tachiyomi.util.system.LocaleHelper
 import eu.kanade.tachiyomi.util.system.hasDisplayCutout
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
@@ -102,6 +105,9 @@ object SettingsReaderScreen : SearchableSettings {
             ),
             SY <-- */
             getDisplayGroup(readerPreferences = readerPref),
+            // KMK -->
+            getEggikuTranslateGroup(),
+            // KMK <--
             getEInkGroup(readerPreferences = readerPref),
             getReadingGroup(readerPreferences = readerPref),
             getPagedGroup(readerPreferences = readerPref),
@@ -162,6 +168,50 @@ object SettingsReaderScreen : SearchableSettings {
             ),
         )
     }
+
+    // KMK -->
+    /** Eggiku raw translation: its own font, weight, and the language raws are in */
+    @Composable
+    private fun getEggikuTranslateGroup(): Preference.PreferenceGroup {
+        val fonts = buildList {
+            add("APP" to stringResource(KMR.strings.translate_font_app))
+            EggikuFont.entries.forEach { add(it.name to stringResource(it.title)) }
+        }.toMap().toImmutableMap()
+        return Preference.PreferenceGroup(
+            title = stringResource(KMR.strings.translate_settings),
+            preferenceItems = persistentListOf(
+                Preference.PreferenceItem.ListPreference(
+                    preference = EggikuTranslate.fontPref(),
+                    entries = fonts,
+                    title = stringResource(KMR.strings.translate_font),
+                ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = EggikuTranslate.boldPref(),
+                    title = stringResource(KMR.strings.translate_bold),
+                ),
+                Preference.PreferenceItem.ListPreference(
+                    preference = EggikuTranslate.rawLanguage(),
+                    entries = persistentMapOf(
+                        "auto" to stringResource(KMR.strings.translate_from_auto),
+                        "ja" to LocaleHelper.getLocalizedDisplayName("ja"),
+                        "ko" to LocaleHelper.getLocalizedDisplayName("ko"),
+                        "zh" to LocaleHelper.getLocalizedDisplayName("zh"),
+                        "es" to LocaleHelper.getLocalizedDisplayName("es"),
+                        "fr" to LocaleHelper.getLocalizedDisplayName("fr"),
+                        "id" to LocaleHelper.getLocalizedDisplayName("id"),
+                        "pt" to LocaleHelper.getLocalizedDisplayName("pt"),
+                    ),
+                    title = stringResource(KMR.strings.translate_from),
+                ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = EggikuTranslate.allowMobileData(),
+                    title = stringResource(KMR.strings.translate_mobile_data),
+                    subtitle = stringResource(KMR.strings.translate_mobile_data_summary),
+                ),
+            ),
+        )
+    }
+    // KMK <--
 
     @Composable
     private fun getEInkGroup(readerPreferences: ReaderPreferences): Preference.PreferenceGroup {
