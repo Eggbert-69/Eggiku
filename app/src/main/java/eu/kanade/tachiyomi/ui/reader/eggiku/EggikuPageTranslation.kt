@@ -69,6 +69,11 @@ class EggikuPageTranslation(private val host: ViewGroup) {
     /** Identifies the page (chapter + page + image size), for the cache */
     var pageKey: String? = null
 
+    /** Which chapter page this is, to use the whole-chapter translation; null for merged double pages */
+    var chapterId: Long? = null
+    var pageIndex: Int? = null
+    private var fromChapter = false
+
     private val runnable = Runnable { run() }
     private val scrollListener = ViewTreeObserver.OnScrollChangedListener { onMoved() }
     private val attachListener = object : View.OnAttachStateChangeListener {
@@ -129,6 +134,7 @@ class EggikuPageTranslation(private val host: ViewGroup) {
 
     /** The page view is being reused for another page */
     fun reset() {
+        fromChapter = false
         job?.cancel()
         host.removeCallbacks(runnable)
         placed = emptyList()
@@ -137,6 +143,7 @@ class EggikuPageTranslation(private val host: ViewGroup) {
     }
 
     fun unbind() {
+        fromChapter = false
         job?.cancel()
         host.removeCallbacks(runnable)
         view = null
@@ -149,6 +156,7 @@ class EggikuPageTranslation(private val host: ViewGroup) {
     /** The image finished loading: show anything remembered for it, then read the rest */
     fun onReady() {
         val image = view ?: return
+        if (applyChapterResult(image)) return
         val key = pageKey?.let { "$it:${image.sWidth}x${image.sHeight}" }
         val saved = key?.let { EggikuTranslate.pageCache.get(it) }
         placed = saved?.placed.orEmpty()
@@ -179,6 +187,15 @@ class EggikuPageTranslation(private val host: ViewGroup) {
     private fun run() {
         val image = view ?: return
         if (!EggikuTranslate.active.value || !attached || !image.isReady) return
+        if (applyChapterResult(image)) return
+        // The whole chapter is being translated (egg screen showing): wait for it
+        val progress = EggikuChapterTranslator.progress.value
+        val chapter = chapterId
+        if (chapter != null && progress is EggikuChapterTranslator.Progress.Working &&
+            progress.chapterId == chapter && chapter !in EggikuChapterTranslator.skipped.value
+        ) {
+            return
+        }
         if (job?.isActive == true) {
             schedule(400)
             return
@@ -286,6 +303,33 @@ class EggikuPageTranslation(private val host: ViewGroup) {
                 EggikuTranslate.fail(e.message)
             }
         }
+    }
+
+    /**
+     * Uses this page's part of the whole-chapter translation, once it's ready. Replaces any quick
+     * translation already showing. Returns true if the page is now done.
+     */
+    private fun applyChapterResult(image: SubsamplingScaleImageView): Boolean {
+        if (fromChapter) return true
+        val chapter = chapterId ?: return false
+        val index = pageIndex ?: return false
+        if (!image.isReady) return false
+        val bubbles = EggikuChapterTranslator.pageResult(chapter, index, image.sWidth, image.sHeight) ?: return false
+        fromChapter = true
+        job?.cancel()
+        val density = host.resources.displayMetrics.scaledDensity
+        val context = host.context.applicationContext
+        val scale = image.scale
+        EggikuTranslate.scope.launch {
+            val laidOut = withContext(Dispatchers.Default) {
+                place(bubbles, emptyList(), image.sWidth.toFloat(), image.sHeight.toFloat(), scale, density, typeface(context))
+            }
+            if (view !== image) return@launch
+            placed = laidOut
+            covered = listOf(RectF(0f, 0f, image.sWidth.toFloat(), image.sHeight.toFloat()))
+            overlay?.invalidate()
+        }
+        return true
     }
 
     private fun isCovered(region: RectF): Boolean {

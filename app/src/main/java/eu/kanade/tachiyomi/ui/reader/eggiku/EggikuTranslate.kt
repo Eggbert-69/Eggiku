@@ -217,25 +217,29 @@ object EggikuTranslate {
         }
     }
 
-    private data class Piece(val rect: Rect, val text: String, val vertical: Boolean, val thickness: Int)
+    internal data class Piece(val rect: Rect, val text: String, val vertical: Boolean, val thickness: Int)
 
-    /**
-     * Reads [bitmap], groups the text into bubbles and translates each one. Text whose centre is
-     * inside [skip] (already translated parts of the page) is left out.
-     */
-    suspend fun process(bitmap: Bitmap, skip: List<RectF>): List<Bubble> {
+    /** A bubble's text before translation, in the coordinates of the image it was read from */
+    internal data class Raw(val rect: RectF, val original: String, val vertical: Boolean)
+
+    /** The language the raws are in, working it out from [sample] text if the series doesn't say */
+    internal suspend fun resolveLanguage(sample: () -> String): String =
+        pickLanguage() ?: autoLang ?: identify(sample()).also { autoLang = it }
+
+    /** Reads the text lines in [bitmap] */
+    internal suspend fun readPieces(bitmap: Bitmap): List<Piece> {
         val lang = pickLanguage()
         val text = ocrMutex.withLock {
             recognizer(lang).process(InputImage.fromBitmap(bitmap, 0)).await()
         }
-        val pieces = pieces(text).filter { piece ->
-            skip.none { it.contains(piece.rect.exactCenterX(), piece.rect.exactCenterY()) }
-        }
-        if (pieces.isEmpty()) return emptyList()
-        val from = lang ?: autoLang ?: identify(pieces.joinToString("\n") { it.text }).also { autoLang = it }
-        val groups = mergeIntoBubbles(pieces)
+        return pieces(text)
+    }
+
+    /** Groups lines into bubbles and puts each bubble's text in reading order */
+    internal fun group(pieces: List<Piece>, from: String): List<Raw> {
+        val cleaned = if (from == "ja") dropFurigana(pieces) else pieces
         val joiner = if (from == "ja" || from == "zh") "" else " "
-        val bubbles = groups.mapNotNull { group ->
+        return mergeIntoBubbles(cleaned).mapNotNull { group ->
             val vertical = group.count { it.vertical } * 2 > group.size
             val ordered = if (vertical) {
                 // Vertical columns read right to left
@@ -247,13 +251,37 @@ object EggikuTranslate {
             if (original.count { it.isLetter() } < 2) return@mapNotNull null
             val rect = RectF(ordered.first().rect)
             ordered.forEach { rect.union(RectF(it.rect)) }
-            rect to (original to vertical)
+            Raw(rect, original, vertical)
         }
-        if (bubbles.isEmpty()) return emptyList()
-        val translated = translateAll(bubbles.map { it.second.first }, from)
-        return bubbles.mapIndexed { i, (rect, info) ->
-            Bubble(rect, info.first, translated[i], info.second)
+    }
+
+    private val kanaOnly = Regex("""^[\u3040-\u30FF\u30FC・]+$""")
+
+    /**
+     * Furigana: the tiny kana printed beside kanji to show how to read them. They aren't part of
+     * the line, and translating them doubles words up, so small kana-only lines right next to a
+     * much bigger line are dropped.
+     */
+    private fun dropFurigana(pieces: List<Piece>): List<Piece> = pieces.filterNot { small ->
+        if (!kanaOnly.matches(small.text)) return@filterNot false
+        val reach = Rect(small.rect).apply { inset(-small.thickness, -small.thickness) }
+        pieces.any { big -> big !== small && big.thickness > small.thickness * 1.7f && Rect.intersects(reach, big.rect) }
+    }
+
+    /**
+     * Reads [bitmap], groups the text into bubbles and translates each one with the quick offline
+     * translator. Text whose centre is inside [skip] (already translated parts of the page) is left out.
+     */
+    suspend fun process(bitmap: Bitmap, skip: List<RectF>): List<Bubble> {
+        val pieces = readPieces(bitmap).filter { piece ->
+            skip.none { it.contains(piece.rect.exactCenterX(), piece.rect.exactCenterY()) }
         }
+        if (pieces.isEmpty()) return emptyList()
+        val from = resolveLanguage { pieces.joinToString("\n") { it.text } }
+        val raws = group(pieces, from)
+        if (raws.isEmpty()) return emptyList()
+        val translated = translateOffline(raws.map { it.original }, from)
+        return raws.mapIndexed { i, raw -> Bubble(raw.rect, raw.original, translated[i], raw.vertical) }
     }
 
     private fun pieces(text: Text): List<Piece> = text.textBlocks.flatMap { block ->
@@ -317,9 +345,14 @@ object EggikuTranslate {
         }
     }
 
-    private suspend fun translateAll(texts: List<String>, lang: String): List<String> {
+    /** The phone's language, as a translation target */
+    internal fun targetLanguage(): String =
+        TranslateLanguage.fromLanguageTag(Locale.getDefault().language) ?: TranslateLanguage.ENGLISH
+
+    /** Google's offline translator: quick, works anywhere, but literal */
+    internal suspend fun translateOffline(texts: List<String>, lang: String): List<String> {
         val source = TranslateLanguage.fromLanguageTag(lang) ?: error("Can't translate from \"$lang\" yet")
-        val target = TranslateLanguage.fromLanguageTag(Locale.getDefault().language) ?: TranslateLanguage.ENGLISH
+        val target = targetLanguage()
         if (source == target) return texts
         val key = "$source>$target"
         val client = translator?.takeIf { it.first == key }?.second ?: run {

@@ -1076,4 +1076,27 @@
     <string name="translate_from_auto">From the series\' source</string>
     <string name="translate_mobile_data">Download language packs on mobile data</string>
     <string name="translate_mobile_data_summary">Each pack is about 30 MB and only downloads once</string>
+    <!-- Eggiku Gemini and whole-chapter translation -->
+    <string name="translate_gemini_key">Gemini API key</string>
+    <string name="translate_gemini_key_none">Not set. Without it, translation uses Gemini Nano on your phone or the quick offline translator</string>
+    <string name="translate_gemini_key_set">Set (ends in %1$s). Chapters are translated with Gemini</string>
+    <string name="translate_gemini_get_key">Get a free key</string>
+    <string name="translate_gemini_get_key_summary">Opens Google AI Studio: sign in, tap Create API key, copy it, and paste it above</string>
+    <string name="translate_gemini_test">Test the key</string>
+    <string name="translate_gemini_testing">Asking Gemini…</string>
+    <string name="translate_gemini_test_ok">Gemini works!</string>
+    <string name="translate_gemini_test_failed">Gemini didn\'t work: %1$s</string>
+    <string name="translate_ahead">Translate the next chapter ahead</string>
+    <string name="translate_ahead_summary">While you read, the next chapter gets translated so it opens without waiting</string>
+    <string name="translate_clear_saved">Clear saved translations</string>
+    <string name="translate_clear_saved_summary">Translated chapters are kept so they open instantly; this frees that space</string>
+    <string name="translate_cleared">Saved translations cleared</string>
+    <string name="translate_chapter_title">Translating…</string>
+    <string name="translate_chapter_loading">Getting the chapter ready</string>
+    <string name="translate_chapter_reading">Reading page %1$d of %2$d</string>
+    <string name="translate_chapter_gemini">Translating the whole chapter with Gemini</string>
+    <string name="translate_chapter_nano">Translating on your phone with Gemini Nano</string>
+    <string name="translate_chapter_offline">Translating with the quick offline translator</string>
+    <string name="translate_chapter_skip">Skip and start reading</string>
+    <string name="translate_chapter_skip_hint">Pages get quick translations right away, and switch to the better ones when the chapter is done</string>
 </resources>

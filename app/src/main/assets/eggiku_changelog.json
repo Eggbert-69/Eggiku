@@ -1,5 +1,16 @@
 [
   {
+    "build": 31,
+    "date": "2026-11-20",
+    "changes": [
+      "Translation with Gemini: paste a free Gemini key in Settings → Reader → Translation and chapters are translated like a scanlation team would, with names and tone kept consistent",
+      "Whole chapters at once: a spinning egg screen shows while the chapter translates, with Skip to start reading right away (quick translations switch to the Gemini ones when they're ready)",
+      "No signal or out of Gemini's free limit? It uses Gemini Nano on your phone instead, then the quick offline translator",
+      "Translated chapters are saved and open instantly, and the next chapter gets translated while you read",
+      "Pages are read straight from their images now, and the little reading guides beside Japanese text (furigana) are skipped"
+    ]
+  },
+  {
     "build": 30,
     "date": "2026-11-19",
     "changes": [

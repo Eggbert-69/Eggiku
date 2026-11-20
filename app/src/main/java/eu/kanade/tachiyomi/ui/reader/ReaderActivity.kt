@@ -74,6 +74,7 @@ import eu.kanade.domain.manga.model.readingMode
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.reader.ChapterListDialog
 import eu.kanade.presentation.reader.DisplayRefreshHost
+import eu.kanade.presentation.reader.EggikuChapterTranslatingScreen
 import eu.kanade.presentation.reader.EggikuEdgeGlow
 import eu.kanade.presentation.reader.EggikuEggTimerOverlay
 import eu.kanade.presentation.reader.EggikuGlowEdge
@@ -106,6 +107,7 @@ import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.AddToLibraryFirst
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Error
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Success
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuChapterTranslator
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuEggTimer
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGuided
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuHaptics
@@ -652,6 +654,7 @@ class ReaderActivity : BaseActivity() {
         EggikuPageTint.reset()
         EggikuEggTimer.onReaderClosed()
         EggikuTilt.off()
+        EggikuChapterTranslator.cancelAll()
         EggikuTranslate.release()
         // KMK <--
         viewModel.state.value.viewer?.destroy()
@@ -851,6 +854,7 @@ class ReaderActivity : BaseActivity() {
         )
         EggikuPeekOverlay()
         EggikuTranslateOverlay()
+        EggikuChapterTranslatingScreen()
         // KMK <--
     }
 
@@ -935,7 +939,10 @@ class ReaderActivity : BaseActivity() {
             }.takeIf { state.viewer is PagerViewer },
             translateActive = translateActive,
             onClickTranslate = {
-                if (EggikuTranslate.toggle()) {
+                val on = EggikuTranslate.toggle()
+                EggikuChapterTranslator.seriesTitle = viewModel.manga?.title
+                EggikuChapterTranslator.onChapters(this, viewModel.state.value.viewerChapters)
+                if (on) {
                     toast(KMR.strings.translate_on_hint, Toast.LENGTH_LONG)
                     // Pages are read once the menu is out of the way
                     setMenuVisibility(false)
@@ -1316,6 +1323,10 @@ class ReaderActivity : BaseActivity() {
     @SuppressLint("RestrictedApi")
     private fun setChapters(viewerChapters: ViewerChapters) {
         binding.readerContainer.removeView(loadingIndicator)
+        // KMK -->
+        EggikuChapterTranslator.seriesTitle = viewModel.manga?.title
+        EggikuChapterTranslator.onChapters(this, viewerChapters)
+        // KMK <--
         // SY -->
         val state = viewModel.state.value
         if (state.indexChapterToShift != null && state.indexPageToShift != null) {

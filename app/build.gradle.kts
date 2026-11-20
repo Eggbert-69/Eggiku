@@ -312,6 +312,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-mlkit-text-recognition-chinese:16.0.1")
     implementation("com.google.mlkit:language-id:17.0.6")
     implementation("com.google.mlkit:translate:17.0.3")
+    // Eggiku: Gemini Nano on the phone (Galaxy S25/S26, Z Fold7/Fold8 and others) as the offline backup
+    implementation("com.google.mlkit:genai-prompt:1.0.0-beta4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services")
     // KMK <--
 

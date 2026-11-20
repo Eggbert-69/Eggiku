@@ -4,10 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.theme.EggikuFont
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuChapterTranslator
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGemini
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuTranslate
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderBottomButton
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
@@ -18,9 +23,12 @@ import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerConfig
 import eu.kanade.tachiyomi.util.system.LocaleHelper
 import eu.kanade.tachiyomi.util.system.hasDisplayCutout
+import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableMap
+import kotlinx.coroutines.launch
+import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
@@ -173,6 +181,10 @@ object SettingsReaderScreen : SearchableSettings {
     /** Eggiku raw translation: its own font, weight, and the language raws are in */
     @Composable
     private fun getEggikuTranslateGroup(): Preference.PreferenceGroup {
+        val context = LocalContext.current
+        val uriHandler = LocalUriHandler.current
+        val scope = rememberCoroutineScope()
+        val key by EggikuGemini.apiKey().collectAsState()
         val fonts = buildList {
             add("APP" to stringResource(KMR.strings.translate_font_app))
             EggikuFont.entries.forEach { add(it.name to stringResource(it.title)) }
@@ -180,6 +192,40 @@ object SettingsReaderScreen : SearchableSettings {
         return Preference.PreferenceGroup(
             title = stringResource(KMR.strings.translate_settings),
             preferenceItems = persistentListOf(
+                Preference.PreferenceItem.EditTextPreference(
+                    preference = EggikuGemini.apiKey(),
+                    title = stringResource(KMR.strings.translate_gemini_key),
+                    subtitle = if (key.isBlank()) {
+                        stringResource(KMR.strings.translate_gemini_key_none)
+                    } else {
+                        stringResource(KMR.strings.translate_gemini_key_set, key.takeLast(4))
+                    },
+                ),
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.translate_gemini_get_key),
+                    subtitle = stringResource(KMR.strings.translate_gemini_get_key_summary),
+                    onClick = { uriHandler.openUri(EggikuGemini.KEY_URL) },
+                ),
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.translate_gemini_test),
+                    enabled = key.isNotBlank(),
+                    onClick = {
+                        scope.launch {
+                            context.toast(KMR.strings.translate_gemini_testing)
+                            val problem = EggikuGemini.test()
+                            if (problem == null) {
+                                context.toast(KMR.strings.translate_gemini_test_ok)
+                            } else {
+                                context.toast(context.stringResource(KMR.strings.translate_gemini_test_failed, problem))
+                            }
+                        }
+                    },
+                ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = EggikuGemini.translateAhead(),
+                    title = stringResource(KMR.strings.translate_ahead),
+                    subtitle = stringResource(KMR.strings.translate_ahead_summary),
+                ),
                 Preference.PreferenceItem.ListPreference(
                     preference = EggikuTranslate.fontPref(),
                     entries = fonts,
@@ -207,6 +253,14 @@ object SettingsReaderScreen : SearchableSettings {
                     preference = EggikuTranslate.allowMobileData(),
                     title = stringResource(KMR.strings.translate_mobile_data),
                     subtitle = stringResource(KMR.strings.translate_mobile_data_summary),
+                ),
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(KMR.strings.translate_clear_saved),
+                    subtitle = stringResource(KMR.strings.translate_clear_saved_summary),
+                    onClick = {
+                        EggikuChapterTranslator.clearSaved(context)
+                        context.toast(KMR.strings.translate_cleared)
+                    },
                 ),
             ),
         )
