@@ -1,6 +1,6 @@
 package eu.kanade.tachiyomi.ui.reader.eggiku
 
-import com.google.mlkit.genai.prompt.FeatureStatus
+import com.google.mlkit.genai.common.FeatureStatus
 import com.google.mlkit.genai.prompt.Generation
 import com.google.mlkit.genai.prompt.TextPart
 import com.google.mlkit.genai.prompt.generateContentRequest
@@ -96,7 +96,7 @@ object EggikuGemini {
     fun hasKey() = apiKey().get().isNotBlank()
 
     /** Translates [lines] (a whole chapter, in reading order). Missing ids just aren't in the map */
-    suspend fun translate(lines: List<EggikuLine>, from: String, to: String, title: String?): Map<String, String> {
+    internal suspend fun translate(lines: List<EggikuLine>, from: String, to: String, title: String?): Map<String, String> {
         val result = mutableMapOf<String, String>()
         // Long chapters are split by page; each part gets the end of the previous part as context
         val chunks = mutableListOf<MutableList<EggikuLine>>(mutableListOf())
@@ -235,7 +235,7 @@ object EggikuNano {
         return ok
     }
 
-    suspend fun translate(lines: List<EggikuLine>, from: String, to: String): Map<String, String> {
+    internal suspend fun translate(lines: List<EggikuLine>, from: String, to: String): Map<String, String> {
         val model = Generation.getClient()
         val result = mutableMapOf<String, String>()
         lines.chunked(LINES_PER_PART).forEach { part ->
