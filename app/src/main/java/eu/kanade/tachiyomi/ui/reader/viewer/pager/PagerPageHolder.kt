@@ -77,6 +77,9 @@ class PagerPageHolder(
     private var extraLoadJob: Job? = null
 
     init {
+        // KMK -->
+        eggikuTranslation.pageKey = "${page.chapter.chapter.id}:${page.index}:${extraPage?.index ?: -1}"
+        // KMK <--
         loadJob = scope.launch { loadPageAndProcessStatus(1) }
         // SY -->
         extraLoadJob = scope.launch { loadPageAndProcessStatus(2) }

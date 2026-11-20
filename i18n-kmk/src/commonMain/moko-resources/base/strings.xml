@@ -1054,7 +1054,8 @@
     <!-- Eggiku panel-by-panel and raw translation -->
     <string name="guided_view">Panel by panel</string>
     <string name="guided_view_on_hint">Panel by panel is on: each tap forward zooms to the next panel, and the page turns after the last one</string>
-    <string name="translate_page">Translate page</string>
+    <string name="translate_page">Translate pages</string>
+    <string name="translate_on_hint">Translation is on: pages translate as they come on screen and stay translated while you scroll and zoom. Tap the button again to turn it off</string>
     <string name="translate_working">Reading and translating…</string>
     <string name="translate_downloading">Downloading the language pack (first time only, about 30 MB)…</string>
     <string name="translate_nothing_found">No text found on this page</string>

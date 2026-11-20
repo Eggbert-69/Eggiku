@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.ScreenRotation
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FormatListNumbered
@@ -68,6 +69,7 @@ fun ReaderBottomBar(
     onClickTilt: (() -> Unit)? = null,
     guidedActive: Boolean = false,
     onClickGuided: (() -> Unit)? = null,
+    translateActive: Boolean = false,
     onClickTranslate: (() -> Unit)? = null,
     // KMK <--
 ) {
@@ -240,9 +242,9 @@ fun ReaderBottomBar(
         if (onClickTranslate != null) {
             IconButton(onClick = onClickTranslate) {
                 Icon(
-                    imageVector = Icons.Outlined.Translate,
+                    imageVector = if (translateActive) Icons.Filled.Translate else Icons.Outlined.Translate,
                     contentDescription = stringResource(KMR.strings.translate_page),
-                    tint = iconColor,
+                    tint = if (translateActive) iconColor else iconColor.copy(alpha = 0.6f),
                 )
             }
         }

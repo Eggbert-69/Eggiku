@@ -39,6 +39,7 @@ import eu.kanade.tachiyomi.data.coil.cropBorders
 import eu.kanade.tachiyomi.data.coil.customDecoder
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGuided
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPageTranslation
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences.LandscapeZoomScaleType
 import eu.kanade.tachiyomi.ui.reader.viewer.webtoon.WebtoonSubsamplingImageView
@@ -137,6 +138,9 @@ open class ReaderPageImageView @JvmOverloads constructor(
     fun eggikuGuidedReset() {
         eggikuPanels?.index = -1
     }
+
+    /** Raw translation for this page (only does anything while translation is on) */
+    val eggikuTranslation = EggikuPageTranslation(this)
     // KMK <--
 
     var onImageLoaded: (() -> Unit)? = null
@@ -153,6 +157,9 @@ open class ReaderPageImageView @JvmOverloads constructor(
     open fun onImageLoaded() {
         onImageLoaded?.invoke()
         background = pageBackground
+        // KMK -->
+        if (pageView is SubsamplingScaleImageView) eggikuTranslation.onReady()
+        // KMK <--
     }
 
     @CallSuper
@@ -248,6 +255,7 @@ open class ReaderPageImageView @JvmOverloads constructor(
         // KMK -->
         eggikuPanels = null
         eggikuDetecting = false
+        eggikuTranslation.reset()
         // KMK <--
         when (it) {
             is SubsamplingScaleImageView -> it.recycle()
@@ -356,6 +364,9 @@ open class ReaderPageImageView @JvmOverloads constructor(
                     override fun onScaleChanged(newScale: Float, origin: Int) {
                         this@ReaderPageImageView.onScaleChanged(newScale)
                         // KMK -->
+                        eggikuTranslation.onMoved()
+                        // KMK <--
+                        // KMK -->
                         if (origin == SubsamplingScaleImageView.ORIGIN_TOUCH) EggikuReadingLog.zoomGesture()
                         // KMK <--
                     }
@@ -374,6 +385,7 @@ open class ReaderPageImageView @JvmOverloads constructor(
                             EggikuReadingLog.panned(kotlin.math.hypot(dx, dy) * scale)
                         }
                         lastCenter = newCenter?.let { PointF(it.x, it.y) }
+                        eggikuTranslation.onMoved()
                         // KMK <--
                     }
                 },
@@ -381,6 +393,9 @@ open class ReaderPageImageView @JvmOverloads constructor(
             setOnClickListener { this@ReaderPageImageView.onViewClicked() }
         }
         addView(pageView, MATCH_PARENT, MATCH_PARENT)
+        // KMK -->
+        (pageView as? SubsamplingScaleImageView)?.let { eggikuTranslation.bind(it) }
+        // KMK <--
     }
 
     private fun SubsamplingScaleImageView.setupZoom(config: Config?) {
@@ -474,6 +489,9 @@ open class ReaderPageImageView @JvmOverloads constructor(
     private fun prepareAnimatedImageView() {
         if (pageView is AppCompatImageView) return
         removeView(pageView)
+        // KMK -->
+        eggikuTranslation.unbind()
+        // KMK <--
 
         pageView = if (isWebtoon) {
             AppCompatImageView(context)

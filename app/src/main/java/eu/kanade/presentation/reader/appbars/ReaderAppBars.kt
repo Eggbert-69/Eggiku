@@ -95,6 +95,7 @@ fun ReaderAppBars(
     onClickTilt: (() -> Unit)? = null,
     guidedActive: Boolean = false,
     onClickGuided: (() -> Unit)? = null,
+    translateActive: Boolean = false,
     onClickTranslate: (() -> Unit)? = null,
     // KMK <--
     onPageIndexChange: (Int) -> Unit,
@@ -378,6 +379,7 @@ fun ReaderAppBars(
                     onClickTilt = onClickTilt,
                     guidedActive = guidedActive,
                     onClickGuided = onClickGuided,
+                    translateActive = translateActive,
                     onClickTranslate = onClickTranslate,
                     // KMK <--
                 )

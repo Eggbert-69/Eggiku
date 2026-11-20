@@ -233,6 +233,11 @@ class ReaderActivity : BaseActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         registerSecureActivity(this)
+        // KMK -->
+        EggikuTranslate.sourceLangProvider = {
+            viewModel.manga?.source?.let { Injekt.get<SourceManager>().get(it)?.lang }
+        }
+        // KMK <--
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             overrideActivityTransition(
                 OVERRIDE_TRANSITION_OPEN,
@@ -647,7 +652,7 @@ class ReaderActivity : BaseActivity() {
         EggikuPageTint.reset()
         EggikuEggTimer.onReaderClosed()
         EggikuTilt.off()
-        EggikuTranslate.close()
+        EggikuTranslate.release()
         // KMK <--
         viewModel.state.value.viewer?.destroy()
         config = null
@@ -860,6 +865,7 @@ class ReaderActivity : BaseActivity() {
         val eggSession by EggikuEggTimer.session.collectAsState()
         val tiltActive by EggikuTilt.active.collectAsState()
         val guidedActive by EggikuGuided.active.collectAsState()
+        val translateActive by EggikuTranslate.active.collectAsState()
         // KMK <--
 
         val cropBorderPaged by readerPreferences.cropBorders().collectAsState()
@@ -927,16 +933,13 @@ class ReaderActivity : BaseActivity() {
             onClickGuided = {
                 if (EggikuGuided.toggle()) toast(KMR.strings.guided_view_on_hint, Toast.LENGTH_LONG)
             }.takeIf { state.viewer is PagerViewer },
+            translateActive = translateActive,
             onClickTranslate = {
-                viewModel.showMenus(false)
-                // Give the menu a moment to slide away so it isn't read as page text
-                binding.readerContainer.postDelayed(
-                    {
-                        val sourceLang = viewModel.manga?.source?.let { Injekt.get<SourceManager>().get(it)?.lang }
-                        EggikuTranslate.run(this, binding.readerContainer, sourceLang, lifecycleScope)
-                    },
-                    350,
-                )
+                if (EggikuTranslate.toggle()) {
+                    toast(KMR.strings.translate_on_hint, Toast.LENGTH_LONG)
+                    // Pages are read once the menu is out of the way
+                    setMenuVisibility(false)
+                }
             },
             // KMK <--
             onPageIndexChange = {
@@ -1185,6 +1188,9 @@ class ReaderActivity : BaseActivity() {
      */
     private fun setMenuVisibility(visible: Boolean) {
         viewModel.showMenus(visible)
+        // KMK -->
+        EggikuTranslate.menuVisible = visible
+        // KMK <--
         if (visible) {
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
         } else if (readerPreferences.fullscreen().get()) {
@@ -1407,10 +1413,6 @@ class ReaderActivity : BaseActivity() {
      * bottom menu and delegates the change to the presenter.
      */
     fun onPageSelected(page: ReaderPage, hasExtraPage: Boolean = false) {
-        // KMK -->
-        // A translation only fits the page it was made for
-        EggikuTranslate.close()
-        // KMK <--
         // SY -->
         val currentPageText = if (hasExtraPage) {
             val invertDoublePage = (viewModel.state.value.viewer as? PagerViewer)?.config?.invertDoublePages ?: false

@@ -97,6 +97,9 @@ class WebtoonPageHolder(
      */
     fun bind(page: ReaderPage) {
         this.page = page
+        // KMK -->
+        frame.eggikuTranslation.pageKey = "${page.chapter.chapter.id}:${page.index}"
+        // KMK <--
         loadJob?.cancel()
         loadJob = scope.launch { loadPageAndProcessStatus() }
         refreshLayoutParams()
