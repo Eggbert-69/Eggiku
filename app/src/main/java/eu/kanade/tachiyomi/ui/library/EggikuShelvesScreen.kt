@@ -137,76 +137,79 @@ class EggikuShelvesScreen(private val startShelf: Int = 0) : Screen() {
             }
             val shelf = Shelf.entries[selected]
             val rows: List<ShelfRow> = when (shelf) {
-                Shelf.DROPPED -> store.dropped.entries
-                    .sortedByDescending { it.value.at }
-                    .mapNotNull { (id, drop) ->
-                        val manga = lib[id] ?: return@mapNotNull null
-                        val grew = manga.totalChapters - drop.chaptersAt
-                        val news = when {
-                            EggikuShelves.isFinished(manga.manga.status) && !EggikuShelves.isFinished(drop.statusAt) ->
-                                context.stringResource(KMR.strings.shelf_dropped_finished_since)
-                            drop.chaptersAt > 0 && grew >= EggikuShelfNotifier.GREW_BY ->
-                                context.stringResource(KMR.strings.shelf_dropped_grew, grew.toInt())
-                            else -> null
-                        }
-                        val days = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - drop.at).toInt()
-                        ShelfRow(
-                            key = "d$id",
-                            cover = manga.manga,
-                            title = manga.manga.title,
-                            lines = listOfNotNull(
-                                context.stringResource(reasonLabel(drop.reasonEnum)) +
-                                    drop.note.takeIf { it.isNotBlank() }?.let { " · $it" }.orEmpty(),
-                                context.stringResource(KMR.strings.shelf_dropped_ago, days),
-                            ),
-                            highlight = news?.let { context.stringResource(KMR.strings.shelf_maybe_another_shot, it) },
-                            onClick = { navigator.push(MangaScreen(id)) },
-                            action = Icons.Outlined.Replay to KMR.strings.shelf_undrop,
-                            onAction = { EggikuShelves.undrop(id) },
-                        )
-                    }
-                Shelf.WAITING -> store.waiting.keys
-                    .mapNotNull { lib[it] }
-                    .sortedWith(
-                        compareByDescending<LibraryManga> { EggikuShelves.isFinished(it.manga.status) }
-                            .thenBy { it.manga.title.lowercase() },
-                    )
-                    .map { manga ->
-                        val finished = EggikuShelves.isFinished(manga.manga.status)
-                        val time = EggikuShelves.formatTime(context, EggikuShelves.bingeSeconds(manga.unreadCount, perChapter))
-                        ShelfRow(
-                            key = "w${manga.id}",
-                            cover = manga.manga,
-                            title = manga.manga.title,
-                            lines = listOf(context.stringResource(KMR.strings.shelf_unread_time, manga.unreadCount.toInt(), time)),
-                            highlight = if (finished) context.stringResource(KMR.strings.shelf_waiting_done, time) else null,
-                            onClick = { navigator.push(MangaScreen(manga.id)) },
-                            action = Icons.Outlined.Close to KMR.strings.shelf_waiting_remove,
-                            onAction = { EggikuShelves.setWaiting(manga.id, false) },
-                        )
-                    }
-                Shelf.QUICKEST -> lib.values
-                    .filter { it.hasStarted && it.unreadCount > 0 && it.id !in store.dropped }
-                    .sortedBy { it.unreadCount }
-                    .take(QUICKEST_SIZE)
-                    .map { manga ->
-                        val seconds = EggikuShelves.bingeSeconds(manga.unreadCount, perChapter)
-                        val doneBy = EggikuShelves.doneBy(seconds, perDay)
-                        ShelfRow(
-                            key = "q${manga.id}",
-                            cover = manga.manga,
-                            title = manga.manga.title,
-                            lines = listOfNotNull(
-                                context.stringResource(
-                                    KMR.strings.shelf_unread_time,
-                                    manga.unreadCount.toInt(),
-                                    EggikuShelves.formatTime(context, seconds),
+                Shelf.DROPPED ->
+                    store.dropped.entries
+                        .sortedByDescending { it.value.at }
+                        .mapNotNull { (id, drop) ->
+                            val manga = lib[id] ?: return@mapNotNull null
+                            val grew = manga.totalChapters - drop.chaptersAt
+                            val news = when {
+                                EggikuShelves.isFinished(manga.manga.status) && !EggikuShelves.isFinished(drop.statusAt) ->
+                                    context.stringResource(KMR.strings.shelf_dropped_finished_since)
+                                drop.chaptersAt > 0 && grew >= EggikuShelfNotifier.GREW_BY ->
+                                    context.stringResource(KMR.strings.shelf_dropped_grew, grew.toInt())
+                                else -> null
+                            }
+                            val days = TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - drop.at).toInt()
+                            ShelfRow(
+                                key = "d$id",
+                                cover = manga.manga,
+                                title = manga.manga.title,
+                                lines = listOfNotNull(
+                                    context.stringResource(reasonLabel(drop.reasonEnum)) +
+                                        drop.note.takeIf { it.isNotBlank() }?.let { " · $it" }.orEmpty(),
+                                    context.stringResource(KMR.strings.shelf_dropped_ago, days),
                                 ),
-                                doneBy?.let { context.stringResource(KMR.strings.shelf_done_by, it.format(dateFormat)) },
-                            ),
-                            onClick = { navigator.push(MangaScreen(manga.id)) },
+                                highlight = news?.let { context.stringResource(KMR.strings.shelf_maybe_another_shot, it) },
+                                onClick = { navigator.push(MangaScreen(id)) },
+                                action = Icons.Outlined.Replay to KMR.strings.shelf_undrop,
+                                onAction = { EggikuShelves.undrop(id) },
+                            )
+                        }
+                Shelf.WAITING ->
+                    store.waiting.keys
+                        .mapNotNull { lib[it] }
+                        .sortedWith(
+                            compareByDescending<LibraryManga> { EggikuShelves.isFinished(it.manga.status) }
+                                .thenBy { it.manga.title.lowercase() },
                         )
-                    }
+                        .map { manga ->
+                            val finished = EggikuShelves.isFinished(manga.manga.status)
+                            val time = EggikuShelves.formatTime(context, EggikuShelves.bingeSeconds(manga.unreadCount, perChapter))
+                            ShelfRow(
+                                key = "w${manga.id}",
+                                cover = manga.manga,
+                                title = manga.manga.title,
+                                lines = listOf(context.stringResource(KMR.strings.shelf_unread_time, manga.unreadCount.toInt(), time)),
+                                highlight = if (finished) context.stringResource(KMR.strings.shelf_waiting_done, time) else null,
+                                onClick = { navigator.push(MangaScreen(manga.id)) },
+                                action = Icons.Outlined.Close to KMR.strings.shelf_waiting_remove,
+                                onAction = { EggikuShelves.setWaiting(manga.id, false) },
+                            )
+                        }
+                Shelf.QUICKEST ->
+                    lib.values
+                        .filter { it.hasStarted && it.unreadCount > 0 && it.id !in store.dropped }
+                        .sortedBy { it.unreadCount }
+                        .take(QUICKEST_SIZE)
+                        .map { manga ->
+                            val seconds = EggikuShelves.bingeSeconds(manga.unreadCount, perChapter)
+                            val doneBy = EggikuShelves.doneBy(seconds, perDay)
+                            ShelfRow(
+                                key = "q${manga.id}",
+                                cover = manga.manga,
+                                title = manga.manga.title,
+                                lines = listOfNotNull(
+                                    context.stringResource(
+                                        KMR.strings.shelf_unread_time,
+                                        manga.unreadCount.toInt(),
+                                        EggikuShelves.formatTime(context, seconds),
+                                    ),
+                                    doneBy?.let { context.stringResource(KMR.strings.shelf_done_by, it.format(dateFormat)) },
+                                ),
+                                onClick = { navigator.push(MangaScreen(manga.id)) },
+                            )
+                        }
                 Shelf.SPINOFFS -> store.found.sortedByDescending { it.at }.map { found ->
                     ShelfRow(
                         key = "s${found.key}",
@@ -234,22 +237,23 @@ class EggikuShelvesScreen(private val startShelf: Int = 0) : Screen() {
                         onSecondAction = { EggikuShelves.dismissFound(found.key) },
                     )
                 }
-                Shelf.REREADS -> store.rereads.entries
-                    .filter { it.value.count > 0 || it.value.active }
-                    .mapNotNull { (id, reread) -> lib[id]?.let { it to reread } }
-                    .sortedByDescending { it.second.count }
-                    .map { (manga, reread) ->
-                        ShelfRow(
-                            key = "r${manga.id}",
-                            cover = manga.manga,
-                            title = manga.manga.title,
-                            lines = listOfNotNull(
-                                context.stringResource(KMR.strings.shelf_reread_count, reread.count),
-                                context.stringResource(KMR.strings.shelf_rereading_now).takeIf { reread.active },
-                            ),
-                            onClick = { navigator.push(MangaScreen(manga.id)) },
-                        )
-                    }
+                Shelf.REREADS ->
+                    store.rereads.entries
+                        .filter { it.value.count > 0 || it.value.active }
+                        .mapNotNull { (id, reread) -> lib[id]?.let { it to reread } }
+                        .sortedByDescending { it.second.count }
+                        .map { (manga, reread) ->
+                            ShelfRow(
+                                key = "r${manga.id}",
+                                cover = manga.manga,
+                                title = manga.manga.title,
+                                lines = listOfNotNull(
+                                    context.stringResource(KMR.strings.shelf_reread_count, reread.count),
+                                    context.stringResource(KMR.strings.shelf_rereading_now).takeIf { reread.active },
+                                ),
+                                onClick = { navigator.push(MangaScreen(manga.id)) },
+                            )
+                        }
             }
 
             if (rows.isEmpty()) {
