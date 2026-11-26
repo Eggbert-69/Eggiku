@@ -1,5 +1,24 @@
 [
   {
+    "build": 32,
+    "date": "2026-11-25",
+    "changes": [
+      "Shelves (Library ⋮ → Shelves): Dropped, Waiting to finish, Quickest to finish, Spin-offs and Rereads",
+      "Drop a series from its page and pick why (art changed, too slow…). If it finishes or gets 20+ new chapters, Eggiku suggests giving it another shot",
+      "Waiting to finish: put ongoing series on the list and get a ping when they finish, with how long the binge takes",
+      "Every series page shows about how long it takes to catch up at your pace, and the day you'd be done",
+      "Reread mode: start a series over without losing your progress. It counts your rereads, and there's a new Rereads achievement",
+      "Universe: link sequels, prequels, spin-offs and side stories to see them in reading order. Once a week Eggiku looks for new spin-offs of what you read most",
+      "More like this (Library ⋮): picks from your unread pile like the series you rated highest, steered by why you dropped things, plus your friends' favourites",
+      "Bulk edit: select series, then ⋮ → Bulk edit for tags, dropped, waiting list and ratings in one go, with one undo. Select by rule picks series for you",
+      "Find duplicates now also catches the same series under another name (look up names on AniList with the globe) or tracked to the same entry, and keeps the copy that updates sooner",
+      "Smart categories can use dropped, waiting and reread, and sort by quickest to finish",
+      "Seasonal app icons: frosty, firework, spring, summer, autumn and pumpkin eggs switch by the date (plus a secret one). Pick an icon yourself to lock it",
+      "Smart auto-scroll in the reader: goes at your usual reading speed, pauses while you touch the screen, with − and + to adjust",
+      "Eggiku checks for a newer build when you open it and asks if you want it"
+    ]
+  },
+  {
     "build": 31,
     "date": "2026-11-20",
     "changes": [

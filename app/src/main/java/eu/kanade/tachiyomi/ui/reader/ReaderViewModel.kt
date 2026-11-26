@@ -28,6 +28,7 @@ import eu.kanade.tachiyomi.data.download.model.Download
 import eu.kanade.tachiyomi.data.saver.Image
 import eu.kanade.tachiyomi.data.saver.ImageSaver
 import eu.kanade.tachiyomi.data.saver.Location
+import eu.kanade.tachiyomi.data.shelves.EggikuShelves
 import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
 import eu.kanade.tachiyomi.source.model.Page
@@ -946,6 +947,11 @@ class ReaderViewModel @JvmOverloads constructor(
         if (loggedChapterId != null && eggikuLoggedChapters.add(loggedChapterId)) {
             manga?.id?.let { mangaId ->
                 EggikuReadingLog.chapterRead(mangaId, eggikuIsPrivate(mangaId))
+                // A reread ends once everything from before has been read again
+                viewModelScope.launchIO {
+                    delay(3_000)
+                    EggikuShelves.onChapterRead(mangaId)
+                }
             }
         }
         // KMK <--

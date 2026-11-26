@@ -100,6 +100,7 @@ import eu.kanade.tachiyomi.ui.browse.source.globalsearch.GlobalSearchScreen
 import eu.kanade.tachiyomi.ui.deeplink.DeepLinkScreen
 import eu.kanade.tachiyomi.ui.home.HomeScreen
 import eu.kanade.tachiyomi.ui.manga.MangaScreen
+import eu.kanade.tachiyomi.ui.more.EggikuUpdateScreen
 import eu.kanade.tachiyomi.ui.more.NewUpdateScreen
 import eu.kanade.tachiyomi.ui.more.OnboardingScreen
 import eu.kanade.tachiyomi.ui.more.WhatsNewScreen
@@ -118,6 +119,7 @@ import exh.log.DebugModeOverlay
 import exh.source.ExhPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
@@ -451,6 +453,12 @@ class MainActivity : BaseActivity() {
                     eggikuNotes = emptyList()
                 }
             }
+            // A newer build on GitHub, then a new seasonal icon's welcome
+            EggikuLaunchExtras(
+                isLaunch = isLaunch,
+                ready = eggikuNotes.isEmpty() && (introDone || !isLaunch),
+                onOpenUpdates = { navigator?.push(EggikuUpdateScreen()) },
+            )
             // KMK <--
             if (showChangelog) {
                 // KMK -->
@@ -513,6 +521,22 @@ class MainActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         MangaCoverMetadata.savePrefs()
+    }
+
+    // Seasonal icons change while Eggiku is out of sight, so the screen you're on never closes
+    override fun onStop() {
+        super.onStop()
+        if (!isChangingConfigurations) {
+            lifecycleScope.launchIO {
+                try {
+                    // Android marks the app as backgrounded a moment after the last screen stops
+                    delay(2_000)
+                    EggikuAppIcons.applySeasonal(applicationContext)
+                } catch (e: Exception) {
+                    logcat(LogPriority.ERROR, e)
+                }
+            }
+        }
     }
     // KMK <--
 

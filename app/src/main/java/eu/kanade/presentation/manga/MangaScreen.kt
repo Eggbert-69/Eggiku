@@ -73,6 +73,7 @@ import eu.kanade.presentation.manga.components.ChapterDownloadAction
 import eu.kanade.presentation.manga.components.ChapterHeader
 import eu.kanade.presentation.manga.components.EggikuCookTimerCard
 import eu.kanade.presentation.manga.components.EggikuRatingRow
+import eu.kanade.presentation.manga.components.EggikuShelfCard
 import eu.kanade.presentation.manga.components.EggikuTimelineCard
 import eu.kanade.presentation.manga.components.ExpandableMangaDescription
 import eu.kanade.presentation.manga.components.MangaActionRow
@@ -721,6 +722,9 @@ private fun MangaScreenSmallImpl(
                             EggikuTimelineCard(mangaId = state.manga.id)
                         }
                     }
+                    item(key = "eggiku-shelf") {
+                        EggikuShelfCard(manga = state.manga)
+                    }
                     // KMK <--
 
                     // KMK -->
@@ -1162,6 +1166,7 @@ private fun MangaScreenLargeImpl(
                             EggikuCookTimerCard(mangaId = state.manga.id)
                         }
                         EggikuTimelineCard(mangaId = state.manga.id)
+                        EggikuShelfCard(manga = state.manga)
                         // KMK <--
                         // SY -->
                         if (!state.showRecommendationsInOverflow || state.showMergeWithAnother) {

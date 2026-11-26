@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.data.smart
 import dev.icerock.moko.resources.StringResource
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.rating.EggikuRatings
+import eu.kanade.tachiyomi.data.shelves.EggikuShelves
 import eu.kanade.tachiyomi.data.tags.EggikuTags
 import eu.kanade.tachiyomi.source.model.SManga
 import kotlinx.serialization.Serializable
@@ -49,6 +50,9 @@ object EggikuSmart {
         HAS_DOWNLOADS,
         COOKING,
         TRACKED,
+        MARKED_DROPPED,
+        WAITING_TO_FINISH,
+        REREAD_BEFORE,
         ;
 
         /** What kind of value the condition needs */
@@ -67,7 +71,17 @@ object EggikuSmart {
     enum class Input { NONE, NUMBER, TEXT, CATEGORY, TAG }
 
     @Serializable
-    enum class Sort { LAST_READ, MOST_UNREAD, LEAST_UNREAD, RECENTLY_UPDATED, OLDEST_UPDATE, TITLE, RATING, DATE_ADDED }
+    enum class Sort {
+        LAST_READ,
+        MOST_UNREAD,
+        LEAST_UNREAD,
+        RECENTLY_UPDATED,
+        OLDEST_UPDATE,
+        TITLE,
+        RATING,
+        DATE_ADDED,
+        QUICKEST_TO_FINISH,
+    }
 
     @Serializable
     data class Condition(val type: Type, val number: Long = 0, val text: String = "")
@@ -97,6 +111,7 @@ object EggikuSmart {
         val cooking: Set<Long> = EggikuCookTimer.parse(EggikuCookTimer.timers().get()).keys +
             EggikuCookTimer.chapterGoals().keys,
         val now: Long = System.currentTimeMillis(),
+        val shelves: EggikuShelves.Store = EggikuShelves.store(),
     )
 
     /** Built-in names, used while a ready-made smart category keeps an empty name */
@@ -219,6 +234,9 @@ object EggikuSmart {
             Type.HAS_DOWNLOADS -> item.downloadCount > 0
             Type.COOKING -> m.id in ctx.cooking
             Type.TRACKED -> item.tracked
+            Type.MARKED_DROPPED -> m.id in ctx.shelves.dropped
+            Type.WAITING_TO_FINISH -> m.id in ctx.shelves.waiting
+            Type.REREAD_BEFORE -> (ctx.shelves.rereads[m.id]?.count ?: 0) > 0
         }
     }
 
@@ -242,6 +260,10 @@ object EggikuSmart {
             compareByDescending<T> { ctx.ratings[manga(it).id] ?: 0 }.thenBy { manga(it).manga.title.lowercase() },
         )
         Sort.DATE_ADDED -> items.sortedByDescending { manga(it).manga.dateAdded }
+        // Same time per chapter for everything, so fewest unread is quickest; finished ones last
+        Sort.QUICKEST_TO_FINISH -> items.sortedWith(
+            compareBy<T> { manga(it).unreadCount <= 0 }.thenBy { manga(it).unreadCount },
+        )
     }
 }
 // KMK <--

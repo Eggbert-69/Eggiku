@@ -13,6 +13,9 @@ import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.cook.EggikuCookTimer
 import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
 import eu.kanade.tachiyomi.data.notification.Notifications
+import eu.kanade.tachiyomi.data.shelves.EggikuForYou
+import eu.kanade.tachiyomi.data.shelves.EggikuShelfNotifier
+import eu.kanade.tachiyomi.ui.main.EggikuAppIcons
 import eu.kanade.tachiyomi.ui.main.EggikuOpen
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.util.system.notify
@@ -68,6 +71,14 @@ class EggikuStatsWorker(context: Context, params: WorkerParameters) : CoroutineW
             } catch (_: Exception) {
                 // Offline or GitHub rate limit; try again tomorrow
             }
+        }
+        // Weekly look for spin-offs, and keep the friend-card picks and seasonal icon current
+        try {
+            EggikuForYou.refreshMyTopTitles()
+            EggikuAppIcons.applySeasonal(applicationContext)
+            EggikuShelfNotifier.scanForSpinoffs(applicationContext)
+        } catch (_: Exception) {
+            // Extras; try again tomorrow
         }
         val log = EggikuReadingLog.all()
         val today = EggikuReadingLog.today()

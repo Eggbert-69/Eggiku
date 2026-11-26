@@ -12,8 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -32,6 +34,9 @@ import eu.kanade.presentation.category.components.ChangeCategoryDialog
 import eu.kanade.presentation.components.EggikuTabIcons
 import eu.kanade.presentation.library.DeleteLibraryMangaDialog
 import eu.kanade.presentation.library.LibrarySettingsDialog
+import eu.kanade.presentation.library.components.EggikuBulkEdit
+import eu.kanade.presentation.library.components.EggikuBulkEditDialog
+import eu.kanade.presentation.library.components.EggikuSelectByRuleDialog
 import eu.kanade.presentation.library.components.LibraryContent
 import eu.kanade.presentation.library.components.LibraryToolbar
 import eu.kanade.presentation.library.components.SyncFavoritesConfirmDialog
@@ -126,6 +131,8 @@ data object LibraryTab : Tab {
 
         val snackbarHostState = remember { SnackbarHostState() }
         // KMK -->
+        var eggikuSelectByRule by remember { mutableStateOf(false) }
+        var eggikuBulkEdit by remember { mutableStateOf(false) }
         val libraryDisplayMode by remember { Injekt.get<LibraryPreferences>().displayMode() }.collectAsState()
         // KMK <--
 
@@ -179,6 +186,10 @@ data object LibraryTab : Tab {
                     onClickSelectAll = screenModel::selectAll,
                     onClickInvertSelection = screenModel::invertSelection,
                     onClickFilter = screenModel::showSettingsDialog,
+                    // KMK -->
+                    onClickSelectByRule = { eggikuSelectByRule = true },
+                    onClickBulkEdit = { eggikuBulkEdit = true },
+                    // KMK <--
                     onClickRefresh = { onClickRefresh(state.activeCategory) },
                     onClickGlobalUpdate = { onClickRefresh(null) },
                     onClickOpenRandomManga = {
@@ -514,6 +525,48 @@ data object LibraryTab : Tab {
             setStatusCancelling = { screenModel.recommendationSearch.status.value = SearchStatus.Cancelling },
         )
         // SY <--
+
+        // KMK -->
+        if (eggikuSelectByRule) {
+            EggikuSelectByRuleDialog(
+                hasSelection = state.selection.isNotEmpty(),
+                onDismiss = { eggikuSelectByRule = false },
+                onPick = { rule ->
+                    eggikuSelectByRule = false
+                    val selected = state.selectedManga
+                    val ids = EggikuBulkEdit.select(
+                        items = screenModel.eggikuVisibleItems(),
+                        rule = rule,
+                        selectedSources = selected.map { it.source }.toSet(),
+                    )
+                    screenModel.eggikuSelect(ids)
+                    scope.launch {
+                        snackbarHostState.showSnackbar(context.stringResource(KMR.strings.bulk_selected, ids.size))
+                    }
+                },
+            )
+        }
+        if (eggikuBulkEdit) {
+            EggikuBulkEditDialog(
+                count = state.selection.size,
+                onDismiss = { eggikuBulkEdit = false },
+                onApply = { action ->
+                    eggikuBulkEdit = false
+                    val selection = state.selection.mapNotNull { state.libraryData.favoritesById[it]?.libraryManga }
+                    val snapshot = EggikuBulkEdit.apply(selection, action)
+                    screenModel.clearSelection()
+                    scope.launch {
+                        showUndoSnackbar(
+                            snackbarHostState,
+                            context.stringResource(KMR.strings.bulk_done, selection.size),
+                            context.stringResource(MR.strings.action_undo),
+                            snapshot::restore,
+                        )
+                    }
+                },
+            )
+        }
+        // KMK <--
 
         BackHandler(enabled = state.selectionMode || state.searchQuery != null) {
             when {

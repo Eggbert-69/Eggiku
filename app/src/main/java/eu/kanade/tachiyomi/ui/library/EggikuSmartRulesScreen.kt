@@ -396,6 +396,9 @@ class EggikuSmartRulesScreen : Screen() {
         EggikuSmart.Type.HAS_DOWNLOADS -> KMR.strings.smart_t_downloads
         EggikuSmart.Type.COOKING -> KMR.strings.smart_t_cooking
         EggikuSmart.Type.TRACKED -> KMR.strings.smart_t_tracked
+        EggikuSmart.Type.MARKED_DROPPED -> KMR.strings.smart_t_marked_dropped
+        EggikuSmart.Type.WAITING_TO_FINISH -> KMR.strings.smart_t_waiting
+        EggikuSmart.Type.REREAD_BEFORE -> KMR.strings.smart_t_reread
     }
 
     private fun sortLabel(sort: EggikuSmart.Sort): StringResource = when (sort) {
@@ -407,6 +410,7 @@ class EggikuSmartRulesScreen : Screen() {
         EggikuSmart.Sort.TITLE -> KMR.strings.smart_s_title
         EggikuSmart.Sort.RATING -> KMR.strings.smart_s_rating
         EggikuSmart.Sort.DATE_ADDED -> KMR.strings.smart_s_date_added
+        EggikuSmart.Sort.QUICKEST_TO_FINISH -> KMR.strings.smart_s_quickest
     }
 }
 // KMK <--

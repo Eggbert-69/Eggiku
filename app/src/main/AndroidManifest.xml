@@ -185,6 +185,111 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconFrosty"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_frosty"
+            android:roundIcon="@mipmap/eggiku_icon_frosty"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconFirework"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_firework"
+            android:roundIcon="@mipmap/eggiku_icon_firework"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconSpring"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_spring"
+            android:roundIcon="@mipmap/eggiku_icon_spring"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconSummer"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_summer"
+            android:roundIcon="@mipmap/eggiku_icon_summer"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconAutumn"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_autumn"
+            android:roundIcon="@mipmap/eggiku_icon_autumn"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconPumpkin"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_pumpkin"
+            android:roundIcon="@mipmap/eggiku_icon_pumpkin"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
+        <activity-alias
+            android:name=".EggikuIconUfo"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/eggiku_icon_ufo"
+            android:roundIcon="@mipmap/eggiku_icon_ufo"
+            android:targetActivity=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity-alias>
         <!-- KMK -->
 
         <activity

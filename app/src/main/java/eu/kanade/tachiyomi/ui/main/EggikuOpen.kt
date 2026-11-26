@@ -6,6 +6,8 @@ import android.content.Intent
 import cafe.adriel.voyager.navigator.Navigator
 import eu.kanade.tachiyomi.ui.browse.migration.manga.MigrateMangaScreen
 import eu.kanade.tachiyomi.ui.library.EggikuDeadSeriesScreen
+import eu.kanade.tachiyomi.ui.library.EggikuShelvesScreen
+import eu.kanade.tachiyomi.ui.manga.MangaScreen
 import eu.kanade.tachiyomi.ui.stats.EggikuAchievementsScreen
 import eu.kanade.tachiyomi.ui.stats.EggikuRecapScreen
 import mihon.feature.migration.config.MigrationConfigScreen
@@ -23,6 +25,14 @@ object EggikuOpen {
     const val DEAD_SERIES = "dead_series"
     const val ACHIEVEMENTS = "achievements"
     const val LAST_MONTH_WRAP = "last_month_wrap"
+    const val SERIES = "series"
+    const val SHELVES = "shelves"
+
+    /** Which shelf to open, passed as the id */
+    const val SHELF_DROPPED = 0L
+    const val SHELF_WAITING = 1L
+    const val SHELF_QUICKEST = 2L
+    const val SHELF_SPINOFFS = 3L
 
     fun pendingIntent(context: Context, requestCode: Int, screen: String, id: Long = 0L): PendingIntent {
         val intent = Intent(context, MainActivity::class.java)
@@ -49,6 +59,8 @@ object EggikuOpen {
             DEAD_SERIES -> navigator.push(EggikuDeadSeriesScreen())
             ACHIEVEMENTS -> navigator.push(EggikuAchievementsScreen())
             LAST_MONTH_WRAP -> navigator.push(EggikuRecapScreen(startMonthOffset = -1))
+            SERIES -> navigator.push(MangaScreen(id))
+            SHELVES -> navigator.push(EggikuShelvesScreen(startShelf = id.toInt()))
         }
         return true
     }

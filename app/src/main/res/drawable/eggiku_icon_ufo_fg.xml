@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KMK: Eggiku secret UFO egg (Glib Glorb) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- tractor beam -->
+    <path android:fillColor="#557CFF6B" android:pathData="M46,64L62,64L72,88L36,88Z" />
+    <!-- egg dome -->
+    <path android:fillColor="#FFDFFFD9" android:pathData="M54,28C62,28 67,38 68,50L40,50C41,38 46,28 54,28Z" />
+    <path android:fillColor="#FF1B1B1B" android:pathData="M48,43C48,40 50,39 51.5,40.5C52.5,42 52,44.5 50,45C48.5,45 48,44 48,43ZM60,43C60,40 58,39 56.5,40.5C55.5,42 56,44.5 58,45C59.5,45 60,44 60,43Z" />
+    <!-- saucer -->
+    <path android:fillColor="#FF7CFF6B" android:pathData="M28,55C28,50.5 40,48 54,48C68,48 80,50.5 80,55C80,59.5 68,64 54,64C40,64 28,59.5 28,55Z" />
+    <path android:fillColor="#FF1B1B1B" android:pathData="M37,56m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0M54,59m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0M71,56m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M22,26l1,2.5l2.5,1l-2.5,1l-1,2.5l-1,-2.5l-2.5,-1l2.5,-1zM86,34l0.8,2l2,0.8l-2,0.8l-0.8,2l-0.8,-2l-2,-0.8l2,-0.8z" />
+</vector>

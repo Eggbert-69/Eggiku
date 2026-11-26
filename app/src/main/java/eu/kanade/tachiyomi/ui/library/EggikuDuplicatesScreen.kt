@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Undo
+import androidx.compose.material.icons.outlined.TravelExplore
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -82,6 +83,32 @@ class EggikuDuplicatesScreen : Screen() {
                     navigateUp = navigator::pop,
                     scrollBehavior = scrollBehavior,
                     actions = {
+                        IconButton(
+                            enabled = !working,
+                            onClick = {
+                                scope.launch {
+                                    working = true
+                                    val left = EggikuDuplicates.notLookedUpCount()
+                                    context.toast(context.stringResource(KMR.strings.duplicates_looking_up, minOf(left, 25)))
+                                    val looked = EggikuDuplicates.lookUpOtherNames()
+                                    val stillLeft = (left - looked).coerceAtLeast(0)
+                                    context.toast(
+                                        if (stillLeft > 0) {
+                                            context.stringResource(KMR.strings.duplicates_looked_up_more, looked, stillLeft)
+                                        } else {
+                                            context.stringResource(KMR.strings.duplicates_looked_up, looked)
+                                        },
+                                    )
+                                    working = false
+                                    reload++
+                                }
+                            },
+                        ) {
+                            Icon(
+                                Icons.Outlined.TravelExplore,
+                                contentDescription = stringResource(KMR.strings.duplicates_look_up),
+                            )
+                        }
                         IconButton(
                             enabled = EggikuDuplicates.undoable().isNotEmpty() && !working,
                             onClick = {
@@ -171,6 +198,18 @@ class EggikuDuplicatesScreen : Screen() {
                                         style = MaterialTheme.typography.titleSmall,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
+                                when (group.matchedBy) {
+                                    EggikuDuplicates.MatchedBy.OTHER_NAME -> KMR.strings.duplicates_by_other_name
+                                    EggikuDuplicates.MatchedBy.TRACKER -> KMR.strings.duplicates_by_tracker
+                                    EggikuDuplicates.MatchedBy.NAME -> null
+                                }?.let { reason ->
+                                    Text(
+                                        stringResource(reason),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.padding(start = 12.dp),
                                     )
                                 }
                                 group.entries.forEach { entry ->

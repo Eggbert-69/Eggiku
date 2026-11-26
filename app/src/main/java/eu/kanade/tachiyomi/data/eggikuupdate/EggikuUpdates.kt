@@ -47,7 +47,9 @@ object EggikuUpdates {
         val published: String,
         val apkUrl: String,
         val apkName: String,
-    )
+    ) {
+        val tag: String get() = "build-$branch-$number"
+    }
 
     data class Status(
         /** The build that's installed, if it came from these releases */
@@ -61,8 +63,13 @@ object EggikuUpdates {
         val updateAvailable: Boolean
             get() = latest != null && installed?.let { it != latest && latestIsNewer(it, latest) } ?: true
 
-        private fun latestIsNewer(installed: Build, latest: Build): Boolean =
-            installed.branch != latest.branch || latest.number > installed.number
+        // Each round of features lands on a new branch, so a build on another branch only counts
+        // when it came out later
+        private fun latestIsNewer(installed: Build, latest: Build): Boolean = if (installed.branch == latest.branch) {
+            latest.number > installed.number
+        } else {
+            latest.published > installed.published
+        }
     }
 
     private val json = Json { ignoreUnknownKeys = true }
@@ -107,7 +114,10 @@ object EggikuUpdates {
         val latest = if (all) {
             builds.maxByOrNull { it.published }
         } else {
-            builds.filter { it.branch == installed!!.branch }.maxByOrNull { it.number }
+            // This branch's builds, plus anything on a newer branch that came out after yours
+            val mine = installed!!
+            builds.filter { it.branch == mine.branch || it.published > mine.published }
+                .maxWithOrNull(compareBy<Build> { it.published }.thenBy { it.number })
         }
         val komikku = try {
             client.newCall(GET(KOMIKKU_LATEST)).awaitSuccess().use { response ->
@@ -117,7 +127,7 @@ object EggikuUpdates {
             null
         }
         val status = Status(installed, latest, all, komikku)
-        availableTag().set(if (status.updateAvailable) latest?.let { "build-${it.branch}-${it.number}" }.orEmpty() else "")
+        availableTag().set(if (status.updateAvailable) latest?.tag.orEmpty() else "")
         status
     }
 }

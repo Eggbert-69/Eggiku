@@ -1527,6 +1527,19 @@ class LibraryScreenModel(
         }
     }
 
+    // KMK -->
+    /** Eggiku select by rule: what's in the tab you're looking at */
+    fun eggikuVisibleItems(): List<LibraryItem> = state.value.let { it.getItemsForCategoryId(it.activeCategory?.id) }
+
+    /** Eggiku select by rule: adds these to the selection */
+    fun eggikuSelect(ids: Collection<Long>) {
+        lastSelectionCategory = null
+        mutableState.update { state ->
+            state.copy(selection = state.selection.mutate { it.addAll(ids) })
+        }
+    }
+    // KMK <--
+
     fun search(query: String?) {
         mutableState.update { it.copy(searchQuery = query) }
     }

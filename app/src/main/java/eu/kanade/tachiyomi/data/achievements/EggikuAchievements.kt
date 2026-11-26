@@ -53,6 +53,7 @@ object EggikuAchievements {
     const val COUNT_COOKED = "cooked"
     const val COUNT_UPDATES = "updates_installed"
     const val COUNT_MERGES = "merges"
+    const val COUNT_REREADS = "rereads"
     const val COUNT_MIGRATED = "migrated"
     const val COUNT_REVIVED = "revived"
     const val COUNT_MUSIC_SECONDS = "music_seconds"
@@ -228,6 +229,13 @@ object EggikuAchievements {
             KMR.strings.ach_l_ratings_desc,
             listOf(1, 5, 10, 25, 50, 100, 250, 500).map(Int::toLong),
         ) { it.rated },
+        Ladder(
+            "rereads",
+            "🔁",
+            KMR.strings.ach_l_rereads,
+            KMR.strings.ach_l_rereads_desc,
+            listOf(1, 2, 3, 5, 7, 10, 15, 20, 30, 50, 75, 100).map(Int::toLong),
+        ) { it.counters[COUNT_REREADS] ?: 0L },
     )
 
     /** Shared egg-themed names for tiers, spread over each ladder so the top is always Cosmic Egg */
@@ -445,6 +453,7 @@ object EggikuAchievements {
                 COUNT_COOKED,
                 COUNT_UPDATES,
                 COUNT_MERGES,
+                COUNT_REREADS,
                 COUNT_MIGRATED,
                 COUNT_REVIVED,
             ).associateWith { counter(it).get() },

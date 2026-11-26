@@ -29,6 +29,7 @@ import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.duplicates.EggikuDuplicatesNotifier
 import eu.kanade.tachiyomi.data.eggikuhealth.EggikuHealthNudges
 import eu.kanade.tachiyomi.data.notification.Notifications
+import eu.kanade.tachiyomi.data.shelves.EggikuShelfNotifier
 import eu.kanade.tachiyomi.data.sync.SyncDataJob
 import eu.kanade.tachiyomi.data.track.TrackStatus
 import eu.kanade.tachiyomi.data.track.TrackerManager
@@ -521,6 +522,12 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
         // Let you know when duplicates show up (once per new count)
         try {
             EggikuDuplicatesNotifier.check(context)
+        } catch (_: Exception) {
+            // Never let this break the update
+        }
+        // Waiting-list series that finished, dropped ones worth another look
+        try {
+            EggikuShelfNotifier.afterLibraryUpdate(context)
         } catch (_: Exception) {
             // Never let this break the update
         }

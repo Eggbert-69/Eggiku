@@ -27,7 +27,9 @@ import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
 import eu.kanade.tachiyomi.ui.library.EggikuDeadSeriesScreen
 import eu.kanade.tachiyomi.ui.library.EggikuDuplicatesScreen
+import eu.kanade.tachiyomi.ui.library.EggikuForYouScreen
 import eu.kanade.tachiyomi.ui.library.EggikuQuickSortScreen
+import eu.kanade.tachiyomi.ui.library.EggikuShelvesScreen
 import eu.kanade.tachiyomi.ui.library.EggikuSmartRulesScreen
 import eu.kanade.tachiyomi.ui.library.EggikuTopShelfScreen
 import eu.kanade.tachiyomi.util.system.toast
@@ -51,6 +53,10 @@ fun LibraryToolbar(
     onClickSelectAll: () -> Unit,
     onClickInvertSelection: () -> Unit,
     onClickFilter: () -> Unit,
+    // KMK -->
+    onClickSelectByRule: (() -> Unit)? = null,
+    onClickBulkEdit: (() -> Unit)? = null,
+    // KMK <--
     onClickRefresh: () -> Unit,
     onClickGlobalUpdate: () -> Unit,
     onClickOpenRandomManga: () -> Unit,
@@ -73,6 +79,10 @@ fun LibraryToolbar(
         onClickUnselectAll = onClickUnselectAll,
         onClickSelectAll = onClickSelectAll,
         onClickInvertSelection = onClickInvertSelection,
+        // KMK -->
+        onClickSelectByRule = onClickSelectByRule,
+        onClickBulkEdit = onClickBulkEdit,
+        // KMK <--
     )
     else -> LibraryRegularToolbar(
         title = title,
@@ -189,6 +199,14 @@ private fun LibraryRegularToolbar(
                         onClick = { navigator?.push(EggikuDeadSeriesScreen()) },
                     ),
                     AppBar.OverflowAction(
+                        title = stringResource(KMR.strings.shelf_title),
+                        onClick = { navigator?.push(EggikuShelvesScreen()) },
+                    ),
+                    AppBar.OverflowAction(
+                        title = stringResource(KMR.strings.for_you_title),
+                        onClick = { navigator?.push(EggikuForYouScreen()) },
+                    ),
+                    AppBar.OverflowAction(
                         title = stringResource(KMR.strings.migration_undo),
                         onClick = {
                             scope.launch {
@@ -256,12 +274,18 @@ private fun LibrarySelectionToolbar(
     onClickUnselectAll: () -> Unit,
     onClickSelectAll: () -> Unit,
     onClickInvertSelection: () -> Unit,
+    // KMK -->
+    onClickSelectByRule: (() -> Unit)?,
+    onClickBulkEdit: (() -> Unit)?,
+    // KMK <--
 ) {
     AppBar(
         titleContent = { Text(text = "$selectedCount") },
         actions = {
             AppBarActions(
-                persistentListOf(
+                // KMK -->
+                persistentListOf<AppBar.AppBarAction>(
+                    // KMK <--
                     AppBar.Action(
                         title = stringResource(MR.strings.action_select_all),
                         icon = Icons.Outlined.SelectAll,
@@ -272,7 +296,26 @@ private fun LibrarySelectionToolbar(
                         icon = Icons.Outlined.FlipToBack,
                         onClick = onClickInvertSelection,
                     ),
-                ),
+                ).builder().apply {
+                    // KMK -->
+                    if (onClickSelectByRule != null) {
+                        add(
+                            AppBar.OverflowAction(
+                                title = stringResource(KMR.strings.bulk_select_by_rule),
+                                onClick = onClickSelectByRule,
+                            ),
+                        )
+                    }
+                    if (onClickBulkEdit != null) {
+                        add(
+                            AppBar.OverflowAction(
+                                title = stringResource(KMR.strings.bulk_edit),
+                                onClick = onClickBulkEdit,
+                            ),
+                        )
+                    }
+                    // KMK <--
+                }.build(),
             )
         },
         isActionMode = true,

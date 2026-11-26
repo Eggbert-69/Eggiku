@@ -92,4 +92,12 @@
         <item quantity="one">Updated %d extension</item>
         <item quantity="other">Updated %d extensions</item>
     </plurals>
+    <plurals name="shelf_finished_title">
+        <item quantity="one">%d series you were waiting on finished</item>
+        <item quantity="other">%d series you were waiting on finished</item>
+    </plurals>
+    <plurals name="shelf_spinoffs_title">
+        <item quantity="one">%d possible spin-off found</item>
+        <item quantity="other">%d possible spin-offs found</item>
+    </plurals>
 </resources>

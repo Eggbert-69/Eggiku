@@ -34,6 +34,7 @@ import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
 import eu.kanade.tachiyomi.data.achievements.EggikuCompare
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatar
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatarProgress
+import eu.kanade.tachiyomi.data.shelves.EggikuForYou
 import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.material.Scaffold
@@ -49,6 +50,9 @@ class EggikuCompareScreen(private val friend: EggikuCompare.Profile) : Screen() 
         val navigator = LocalNavigator.currentOrThrow
         val me by produceState<EggikuCompare.Profile?>(null) {
             value = withIOContext {
+                // Their best-rated series feed your "More like this"
+                EggikuForYou.rememberFriend(friend)
+                EggikuForYou.refreshMyTopTitles()
                 val facts = EggikuAchievements.facts()
                 EggikuAchievements.checkNew(facts)
                 EggikuCompare.mine(facts)

@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Base64
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatar
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatars
+import eu.kanade.tachiyomi.data.shelves.EggikuForYou
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -14,8 +15,9 @@ import uy.kohesive.injekt.api.get
 // KMK -->
 /**
  * Eggiku friend compare: your tiers packed into a short code (or an eggiku://compare link) that a
- * friend opens in Eggiku to see the two of you side by side. Only achievement tiers and badge
- * names go in it; nothing about your library.
+ * friend opens in Eggiku to see the two of you side by side. Achievement tiers, badge names and
+ * the titles of your best-rated series go in it (for their "More like this"); nothing else about
+ * your library.
  */
 object EggikuCompare {
 
@@ -31,6 +33,8 @@ object EggikuCompare {
         val total: Int = 0,
         /** Left out by older versions; friends then see the default egg */
         val avatar: EggikuAvatar? = null,
+        /** Their best-rated series, for "More like this" */
+        val picks: List<String> = emptyList(),
     )
 
     private const val PREFIX = "EGG1-"
@@ -48,6 +52,7 @@ object EggikuCompare {
             earned = earned.size.coerceAtMost(EggikuAchievements.totalCount),
             total = EggikuAchievements.totalCount,
             avatar = EggikuAvatars.mine(),
+            picks = EggikuForYou.myTopTitles(),
         )
     }
 

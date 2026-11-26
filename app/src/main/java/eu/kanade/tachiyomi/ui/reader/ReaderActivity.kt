@@ -74,6 +74,7 @@ import eu.kanade.domain.manga.model.readingMode
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.reader.ChapterListDialog
 import eu.kanade.presentation.reader.DisplayRefreshHost
+import eu.kanade.presentation.reader.EggikuAutoScrollIndicator
 import eu.kanade.presentation.reader.EggikuChapterTranslatingScreen
 import eu.kanade.presentation.reader.EggikuEdgeGlow
 import eu.kanade.presentation.reader.EggikuEggTimerOverlay
@@ -107,6 +108,8 @@ import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.AddToLibraryFirst
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Error
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel.SetAsCoverResult.Success
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuAutoScroll
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuAutoScroller
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuChapterTranslator
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuEggTimer
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGuided
@@ -294,6 +297,17 @@ class ReaderActivity : BaseActivity() {
                 }
             }
         }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                try {
+                    EggikuAutoScroll.active.collect { on ->
+                        if (on) eggikuAutoScroller.start() else eggikuAutoScroller.stop()
+                    }
+                } finally {
+                    eggikuAutoScroller.stop()
+                }
+            }
+        }
         // KMK <--
         // KMK -->
         // On the outer frame: the inner one carries the colour-filter layer, which can swallow the effect
@@ -447,6 +461,7 @@ class ReaderActivity : BaseActivity() {
 
                 // KMK -->
                 EggikuTiltIndicator(menuVisible = state.menuVisible, isWebtoon = state.viewer is WebtoonViewer)
+                EggikuAutoScrollIndicator(menuVisible = state.menuVisible)
                 EggikuEggTimerOverlay(menuVisible = state.menuVisible)
                 // KMK <--
             }
@@ -654,6 +669,7 @@ class ReaderActivity : BaseActivity() {
         EggikuPageTint.reset()
         EggikuEggTimer.onReaderClosed()
         EggikuTilt.off()
+        EggikuAutoScroll.off()
         EggikuChapterTranslator.cancelAll()
         EggikuTranslate.release()
         // KMK <--
@@ -769,9 +785,12 @@ class ReaderActivity : BaseActivity() {
                 EggikuPanelPeek.lastDownX = ev.x
                 EggikuPanelPeek.lastDownY = ev.y
                 EggikuPanelPeek.fingerDown = true
+                EggikuAutoScroll.fingerDown = true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 EggikuPanelPeek.fingerDown = false
+                EggikuAutoScroll.fingerDown = false
+                EggikuAutoScroll.lastTouchUpAt = System.currentTimeMillis()
                 if (EggikuPanelPeek.showing.value != null) {
                     EggikuPanelPeek.close()
                     // Let the page know the touch is over, without it counting as a tap
@@ -868,6 +887,7 @@ class ReaderActivity : BaseActivity() {
         // KMK -->
         val eggSession by EggikuEggTimer.session.collectAsState()
         val tiltActive by EggikuTilt.active.collectAsState()
+        val autoScrollActive by EggikuAutoScroll.active.collectAsState()
         val guidedActive by EggikuGuided.active.collectAsState()
         val translateActive by EggikuTranslate.active.collectAsState()
         // KMK <--
@@ -933,6 +953,8 @@ class ReaderActivity : BaseActivity() {
             onClickEggTimer = { EggikuEggTimer.pickerOpen.value = true },
             tiltActive = tiltActive,
             onClickTilt = ::toggleEggikuTilt.takeIf { state.viewer is WebtoonViewer },
+            autoScrollActive = autoScrollActive,
+            onClickAutoScroll = ::toggleEggikuAutoScroll,
             guidedActive = guidedActive,
             onClickGuided = {
                 if (EggikuGuided.toggle()) toast(KMR.strings.guided_view_on_hint, Toast.LENGTH_LONG)
@@ -1020,12 +1042,38 @@ class ReaderActivity : BaseActivity() {
         )
     }
 
+    private val eggikuAutoScroller by lazy {
+        EggikuAutoScroller(
+            context = this,
+            target = { (viewModel.state.value.viewer as? WebtoonViewer)?.recycler },
+            isWebtoon = { viewModel.state.value.viewer is WebtoonViewer },
+            nextPage = { (viewModel.state.value.viewer as? PagerViewer)?.moveToNext() },
+            paused = {
+                val state = viewModel.state.value
+                state.menuVisible || state.dialog != null || EggikuPanelPeek.showing.value != null
+            },
+        )
+    }
+
+    private fun toggleEggikuAutoScroll() {
+        val on = EggikuAutoScroll.toggle(isWebtoon = viewModel.state.value.viewer is WebtoonViewer)
+        if (on) {
+            // Two ways of scrolling at once would fight each other
+            EggikuTilt.off()
+            toast(KMR.strings.auto_scroll_on_hint, Toast.LENGTH_LONG)
+            setMenuVisibility(false)
+        }
+    }
+
     private fun toggleEggikuTilt() {
         if (!eggikuTiltScroller.available) {
             toast(KMR.strings.tilt_scroll_unavailable)
             return
         }
-        if (EggikuTilt.toggle()) toast(KMR.strings.tilt_scroll_on_hint, Toast.LENGTH_LONG)
+        if (EggikuTilt.toggle()) {
+            EggikuAutoScroll.off()
+            toast(KMR.strings.tilt_scroll_on_hint, Toast.LENGTH_LONG)
+        }
     }
 
     @Composable

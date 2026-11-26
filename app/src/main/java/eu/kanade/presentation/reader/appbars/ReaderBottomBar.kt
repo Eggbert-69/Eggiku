@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.ScreenRotation
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Translate
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FormatListNumbered
 import androidx.compose.material.icons.outlined.Headphones
 import androidx.compose.material.icons.outlined.MusicNote
+import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.ScreenRotation
 import androidx.compose.material.icons.outlined.Settings
@@ -67,6 +69,8 @@ fun ReaderBottomBar(
     onClickEggTimer: (() -> Unit)? = null,
     tiltActive: Boolean = false,
     onClickTilt: (() -> Unit)? = null,
+    autoScrollActive: Boolean = false,
+    onClickAutoScroll: (() -> Unit)? = null,
     guidedActive: Boolean = false,
     onClickGuided: (() -> Unit)? = null,
     translateActive: Boolean = false,
@@ -227,6 +231,15 @@ fun ReaderBottomBar(
                     imageVector = if (eggTimerActive) Icons.Filled.Timer else Icons.Outlined.Timer,
                     contentDescription = stringResource(KMR.strings.egg_timer_title),
                     tint = iconColor,
+                )
+            }
+        }
+        if (onClickAutoScroll != null) {
+            IconButton(onClick = onClickAutoScroll) {
+                Icon(
+                    imageVector = if (autoScrollActive) Icons.Filled.PlayCircle else Icons.Outlined.PlayCircle,
+                    contentDescription = stringResource(KMR.strings.auto_scroll),
+                    tint = if (autoScrollActive) iconColor else iconColor.copy(alpha = 0.6f),
                 )
             }
         }

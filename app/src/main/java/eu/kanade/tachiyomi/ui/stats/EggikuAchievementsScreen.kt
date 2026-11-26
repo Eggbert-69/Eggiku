@@ -75,6 +75,7 @@ import eu.kanade.tachiyomi.data.achievements.EggikuCompare
 import eu.kanade.tachiyomi.data.achievements.EggikuEggHuntCard
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatarProgress
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatars
+import eu.kanade.tachiyomi.data.shelves.EggikuForYou
 import eu.kanade.tachiyomi.ui.avatar.EggikuAvatarEditorScreen
 import eu.kanade.tachiyomi.util.storage.getUriCompat
 import kotlinx.coroutines.launch
@@ -104,6 +105,8 @@ class EggikuAchievementsScreen : Screen() {
         var comparing by remember { mutableStateOf(false) }
         val data by produceState<Pair<EggikuAchievements.Facts, Map<String, LocalDate>>?>(null) {
             value = withIOContext {
+                // So a friend code shared from here carries your current best-rated series
+                EggikuForYou.refreshMyTopTitles()
                 val facts = EggikuAchievements.facts()
                 EggikuAchievements.checkNew(facts)
                 facts to EggikuAchievements.earned()
