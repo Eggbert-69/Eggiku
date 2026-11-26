@@ -4,8 +4,12 @@ import android.graphics.Bitmap
 import android.view.HapticFeedbackConstants
 import android.view.View
 import androidx.core.graphics.scale
+import eu.kanade.tachiyomi.data.music.EggikuMusicPreferences
+import eu.kanade.tachiyomi.ui.reader.setting.ReaderBottomButton
+import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
 import exh.log.xLogE
 import kotlinx.coroutines.flow.MutableStateFlow
+import tachiyomi.core.common.preference.Preference
 import tachiyomi.core.common.preference.PreferenceStore
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -154,6 +158,26 @@ object EggikuPanelPeek {
         val pw = ((right - left + 1) * STEP).coerceIn(1, w - px)
         val ph = ((bottom - top + 1) * STEP).coerceIn(1, h - py)
         return Bitmap.createBitmap(bitmap, px, py, pw, ph)
+    }
+}
+// KMK <--
+
+// KMK -->
+/**
+ * Eggiku: one-time tidy of the reader's bottom bar. Turns off the share and headphones buttons
+ * once; both can be turned back on (Reader settings → bottom buttons, Settings → Music).
+ */
+object EggikuReaderTidy {
+
+    private val preferenceStore: PreferenceStore by lazy { Injekt.get() }
+
+    fun runOnce() {
+        val done = preferenceStore.getBoolean(Preference.appStateKey("eggiku_reader_tidy_1"), false)
+        if (done.get()) return
+        val buttons = Injekt.get<ReaderPreferences>().readerBottomButtons()
+        buttons.set(buttons.get() - ReaderBottomButton.Share.value)
+        Injekt.get<EggikuMusicPreferences>().audioOutputButton().set(false)
+        done.set(true)
     }
 }
 // KMK <--

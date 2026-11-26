@@ -116,6 +116,7 @@ import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGuided
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuHaptics
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPageTint
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPanelPeek
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReaderTidy
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuSharpen
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuTilt
@@ -310,6 +311,7 @@ class ReaderActivity : BaseActivity() {
         }
         // KMK <--
         // KMK -->
+        EggikuReaderTidy.runOnce()
         // On the outer frame: the inner one carries the colour-filter layer, which can swallow the effect
         EggikuSharpen.attach(binding.readerContainer, lifecycleScope)
         // A little tap on each page turn, a firmer one at the end of a chapter

@@ -1,5 +1,12 @@
 [
   {
+    "build": 33,
+    "date": "2026-11-25",
+    "changes": [
+      "Reader bottom bar is less crowded: the share and headphones buttons are off. Turn them back on under Reader settings (bottom buttons) and Settings → Music"
+    ]
+  },
+  {
     "build": 32,
     "date": "2026-11-25",
     "changes": [
