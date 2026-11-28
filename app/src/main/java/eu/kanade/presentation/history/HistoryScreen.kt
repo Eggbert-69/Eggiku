@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import eu.kanade.presentation.components.AppBar
@@ -26,8 +27,10 @@ import eu.kanade.presentation.components.AppBarTitle
 import eu.kanade.presentation.components.SearchToolbar
 import eu.kanade.presentation.components.relativeDateText
 import eu.kanade.presentation.history.components.HistoryItem
+import eu.kanade.presentation.manga.components.rememberEggikuSeriesReadTimes
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import eu.kanade.presentation.util.animateItemFastScroll
+import eu.kanade.presentation.util.toDurationString
 import eu.kanade.tachiyomi.ui.history.HistoryScreenModel
 import eu.kanade.tachiyomi.ui.history.HistoryScreenModel.HistorySelectionOptions
 import kotlinx.collections.immutable.persistentListOf
@@ -41,6 +44,7 @@ import tachiyomi.presentation.core.screens.EmptyScreen
 import tachiyomi.presentation.core.screens.LoadingScreen
 import tachiyomi.presentation.core.theme.active
 import java.time.LocalDate
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun HistoryScreen(
@@ -165,6 +169,10 @@ private fun HistoryScreenContent(
     usePanoramaCover: Boolean,
     // KMK <--
 ) {
+    // KMK -->
+    val seriesReadTimes = rememberEggikuSeriesReadTimes(history)
+    val readTimeContext = LocalContext.current
+    // KMK <--
     FastScrollLazyColumn(
         contentPadding = contentPadding,
     ) {
@@ -231,6 +239,10 @@ private fun HistoryScreenContent(
                             },
                         hasUnread = value.unreadCount > 0,
                         usePanoramaCover = usePanoramaCover,
+                        seriesReadTime = seriesReadTimes[value.mangaId]
+                            ?.takeIf { it >= 1_000 }
+                            ?.milliseconds
+                            ?.toDurationString(readTimeContext, ""),
                         // KMK <--
                     )
                 }

@@ -142,6 +142,9 @@ class ReaderPreferences(
 
     // How strongly tilting scrolls webtoons: 1 gentle, 2 normal, 3 fast
     fun eggikuTiltSpeed() = preferenceStore.getInt("eggiku_tilt_speed", 2)
+
+    /** Minutes of an untouched screen before read time stops counting (0 = never) */
+    fun eggikuIdleCutoffMinutes() = preferenceStore.getInt("eggiku_idle_cutoff_minutes", 5)
     // KMK <--
 
     fun readerHideThreshold() = preferenceStore.getEnum("reader_hide_threshold", ReaderHideThreshold.LOW)

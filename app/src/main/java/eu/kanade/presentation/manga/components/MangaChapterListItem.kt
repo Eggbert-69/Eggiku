@@ -71,6 +71,7 @@ fun MangaChapterListItem(
     modifier: Modifier = Modifier,
     // KMK -->
     spoiler: Boolean = false,
+    readTime: String? = null,
     // KMK <--
 ) {
     // KMK -->
@@ -169,11 +170,24 @@ fun MangaChapterListItem(
                             )
                             if (readProgress != null ||
                                 scanlator != null/* SY --> */ ||
-                                sourceName != null/* SY <-- */
+                                sourceName != null/* SY <-- */ ||
+                                // KMK -->
+                                readTime != null
+                                // KMK <--
                             ) {
                                 DotSeparatorText()
                             }
                         }
+                        // KMK -->
+                        if (readTime != null) {
+                            Text(
+                                text = "⏱ $readTime",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            if (readProgress != null || scanlator != null || sourceName != null) DotSeparatorText()
+                        }
+                        // KMK <--
                         if (readProgress != null) {
                             Text(
                                 text = readProgress,

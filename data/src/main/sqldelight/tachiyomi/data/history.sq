@@ -80,6 +80,15 @@ SELECT coalesce(sum(time_read), 0)
 FROM history;
 
 -- KMK -->
+getReadDurationPerManga:
+SELECT C.manga_id, coalesce(sum(H.time_read), 0) AS total
+FROM history H
+JOIN chapters C
+ON H.chapter_id = C._id
+GROUP BY C.manga_id;
+-- KMK <--
+
+-- KMK -->
 -- Eggiku achievements: when each chapter was last read and for how long, with its series
 eggikuReadEvents:
 SELECT C.manga_id, H.last_read, H.time_read

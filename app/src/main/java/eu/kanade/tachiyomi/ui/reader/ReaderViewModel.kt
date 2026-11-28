@@ -37,6 +37,7 @@ import eu.kanade.tachiyomi.source.online.MetadataSource
 import eu.kanade.tachiyomi.source.online.all.MergedSource
 import eu.kanade.tachiyomi.ui.library.EggikuCategoryLock
 import eu.kanade.tachiyomi.ui.reader.chapter.ReaderChapterItem
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadClock
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.reader.loader.ChapterLoader
 import eu.kanade.tachiyomi.ui.reader.loader.DownloadPageLoader
@@ -615,7 +616,7 @@ class ReaderViewModel @JvmOverloads constructor(
 
     /** Seconds spent on the current chapter so far */
     fun eggikuChapterSeconds(): Long =
-        chapterReadStartTime?.let { (Instant.now().toEpochMilli() - it) / 1000 }?.coerceAtLeast(0) ?: 0L
+        EggikuReadClock.elapsedMs() / 1000
 
     fun eggikuSetBookmark(chapterId: Long, bookmarked: Boolean) {
         chapterList.firstOrNull { it.chapter.id == chapterId }?.chapter?.bookmark = bookmarked
@@ -755,6 +756,9 @@ class ReaderViewModel @JvmOverloads constructor(
      * [page]'s chapter is different from the currently active.
      */
     fun onPageSelected(page: ReaderPage, currentPageText: String /* SY --> */, hasExtraPage: Boolean /* SY <-- */) {
+        // KMK -->
+        EggikuReadClock.ping()
+        // KMK <--
         // InsertPage doesn't change page progress
         if (page is InsertPage) {
             return
@@ -1016,6 +1020,9 @@ class ReaderViewModel @JvmOverloads constructor(
         }
         // KMK <--
         chapterReadStartTime = Instant.now().toEpochMilli()
+        // KMK -->
+        EggikuReadClock.start()
+        // KMK <--
     }
 
     /**
@@ -1027,7 +1034,10 @@ class ReaderViewModel @JvmOverloads constructor(
 
             val chapterId = readerChapter.chapter.id!!
             val endTime = Date()
-            val sessionReadDuration = chapterReadStartTime?.let { endTime.time - it } ?: 0
+            // KMK -->
+            // Untouched stretches past the idle limit don't count
+            val sessionReadDuration = if (chapterReadStartTime != null) EggikuReadClock.stop(endTime.time) else 0L
+            // KMK <--
 
             upsertHistory.await(HistoryUpdate(chapterId, endTime, sessionReadDuration))
             chapterReadStartTime = null

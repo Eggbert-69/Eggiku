@@ -65,6 +65,7 @@ fun HistoryItem(
     hasUnread: Boolean,
     usePanoramaCover: Boolean,
     coverRatio: MutableFloatState = remember { mutableFloatStateOf(1f) },
+    seriesReadTime: String? = null,
     // KMK <--
 ) {
     // KMK -->
@@ -201,6 +202,16 @@ fun HistoryItem(
                     DotSeparatorText()
                     Text(
                         text = readProgress,
+                        maxLines = 1,
+                        color = LocalContentColor.current.copy(alpha = textAlpha),
+                        style = MaterialTheme.typography.bodySmall,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                if (seriesReadTime != null) {
+                    DotSeparatorText()
+                    Text(
+                        text = "⏱ $seriesReadTime",
                         maxLines = 1,
                         color = LocalContentColor.current.copy(alpha = textAlpha),
                         style = MaterialTheme.typography.bodySmall,

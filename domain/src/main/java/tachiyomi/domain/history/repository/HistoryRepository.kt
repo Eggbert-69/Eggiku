@@ -20,6 +20,11 @@ interface HistoryRepository {
 
     suspend fun getTotalReadDuration(): Long
 
+    // KMK -->
+    /** Milliseconds read per series, keyed by manga id */
+    suspend fun getReadDurationPerManga(): Map<Long, Long>
+    // KMK <--
+
     suspend fun getHistoryByMangaId(mangaId: Long): List<History>
 
     // KMK -->

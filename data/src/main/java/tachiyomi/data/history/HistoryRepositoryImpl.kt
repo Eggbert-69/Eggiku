@@ -52,6 +52,14 @@ class HistoryRepositoryImpl(
         return handler.awaitOne { historyQueries.getReadDuration() }
     }
 
+    // KMK -->
+    override suspend fun getReadDurationPerManga(): Map<Long, Long> {
+        return handler.awaitList {
+            historyQueries.getReadDurationPerManga { mangaId, total -> mangaId to total }
+        }.toMap()
+    }
+    // KMK <--
+
     override suspend fun getHistoryByMangaId(mangaId: Long): List<History> {
         return handler.awaitList { historyQueries.getHistoryByMangaId(mangaId, HistoryMapper::mapHistory) }
     }

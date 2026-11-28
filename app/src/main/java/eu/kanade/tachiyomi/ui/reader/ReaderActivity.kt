@@ -116,6 +116,7 @@ import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGuided
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuHaptics
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPageTint
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuPanelPeek
+import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadClock
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReaderTidy
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuReadingSpeed
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuSharpen
@@ -287,6 +288,15 @@ class ReaderActivity : BaseActivity() {
                         delay(1_800)
                         EggikuPageTint.sampleWindow(this@ReaderActivity, lifecycleScope)
                     }
+            }
+        }
+        lifecycleScope.launch {
+            // Hands-free reading (auto-scroll, tilt) counts as reading even without a touch
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (true) {
+                    if (EggikuAutoScroll.active.value || EggikuTilt.active.value) EggikuReadClock.ping()
+                    delay(30_000)
+                }
             }
         }
         lifecycleScope.launch {
@@ -771,6 +781,9 @@ class ReaderActivity : BaseActivity() {
      * Dispatches a key event. If the viewer doesn't handle it, call the default implementation.
      */
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        // KMK -->
+        EggikuReadClock.ping()
+        // KMK <--
         val handled = viewModel.state.value.viewer?.handleKeyEvent(event) ?: false
         return handled || super.dispatchKeyEvent(event)
     }
@@ -782,6 +795,7 @@ class ReaderActivity : BaseActivity() {
     // KMK -->
     // Remembers where a finger went down (for panel peek) and closes the peek when it lifts
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        EggikuReadClock.ping()
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 EggikuPanelPeek.lastDownX = ev.x

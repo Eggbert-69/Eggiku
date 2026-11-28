@@ -4,6 +4,7 @@ import eu.kanade.domain.extension.interactor.RefreshExtensionStores
 import tachiyomi.data.libraryUpdateError.LibraryUpdateErrorRepositoryImpl
 import tachiyomi.data.libraryUpdateError.LibraryUpdateErrorWithRelationsRepositoryImpl
 import tachiyomi.data.libraryUpdateErrorMessage.LibraryUpdateErrorMessageRepositoryImpl
+import tachiyomi.domain.history.interactor.GetReadDurationPerManga
 import tachiyomi.domain.libraryUpdateError.interactor.DeleteLibraryUpdateErrors
 import tachiyomi.domain.libraryUpdateError.interactor.GetLibraryUpdateErrorWithRelations
 import tachiyomi.domain.libraryUpdateError.interactor.GetLibraryUpdateErrors
@@ -27,6 +28,7 @@ class KMKDomainModule : InjektModule {
             LibraryUpdateErrorWithRelationsRepositoryImpl(get())
         }
         addFactory { GetLibraryUpdateErrorWithRelations(get()) }
+        addFactory { GetReadDurationPerManga(get()) }
 
         addSingletonFactory<LibraryUpdateErrorMessageRepository> { LibraryUpdateErrorMessageRepositoryImpl(get()) }
         addFactory { GetLibraryUpdateErrorMessages(get()) }

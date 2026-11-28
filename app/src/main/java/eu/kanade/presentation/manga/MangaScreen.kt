@@ -73,6 +73,7 @@ import eu.kanade.presentation.manga.components.ChapterDownloadAction
 import eu.kanade.presentation.manga.components.ChapterHeader
 import eu.kanade.presentation.manga.components.EggikuCookTimerCard
 import eu.kanade.presentation.manga.components.EggikuRatingRow
+import eu.kanade.presentation.manga.components.EggikuReadTimeCard
 import eu.kanade.presentation.manga.components.EggikuShelfCard
 import eu.kanade.presentation.manga.components.EggikuTimelineCard
 import eu.kanade.presentation.manga.components.ExpandableMangaDescription
@@ -88,8 +89,10 @@ import eu.kanade.presentation.manga.components.PagePreviewItems
 import eu.kanade.presentation.manga.components.PagePreviews
 import eu.kanade.presentation.manga.components.RelatedMangasRow
 import eu.kanade.presentation.manga.components.SearchMetadataChips
+import eu.kanade.presentation.manga.components.rememberEggikuChapterReadTimes
 import eu.kanade.presentation.music.EggikuReadingPlaylistCard
 import eu.kanade.presentation.util.formatChapterNumber
+import eu.kanade.presentation.util.toDurationString
 import eu.kanade.tachiyomi.data.download.model.Download
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.getNameForMangaInfo
@@ -139,6 +142,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun MangaScreen(
@@ -426,6 +430,9 @@ private fun MangaScreenSmallImpl(
     hazeState: HazeState,
     // KMK <--
 ) {
+    // KMK -->
+    val eggikuChapterReadTimes = rememberEggikuChapterReadTimes(state.manga.id)
+    // KMK <--
     val chapterListState = rememberLazyListState()
 
     val (chapters, listItem, isAnySelected) = remember(state) {
@@ -722,6 +729,9 @@ private fun MangaScreenSmallImpl(
                             EggikuTimelineCard(mangaId = state.manga.id)
                         }
                     }
+                    item(key = "eggiku-read-time") {
+                        EggikuReadTimeCard(mangaId = state.manga.id)
+                    }
                     item(key = "eggiku-shelf") {
                         EggikuShelfCard(manga = state.manga)
                     }
@@ -829,6 +839,9 @@ private fun MangaScreenSmallImpl(
                         onDownloadChapter = onDownloadChapter,
                         onChapterSelected = onChapterSelected,
                         onChapterSwipe = onChapterSwipe,
+                        // KMK -->
+                        chapterReadTimes = eggikuChapterReadTimes,
+                        // KMK <--
                     )
                 }
             }
@@ -912,6 +925,9 @@ private fun MangaScreenLargeImpl(
     hazeState: HazeState,
     // KMK <--
 ) {
+    // KMK -->
+    val eggikuChapterReadTimes = rememberEggikuChapterReadTimes(state.manga.id)
+    // KMK <--
     val layoutDirection = LocalLayoutDirection.current
     val density = LocalDensity.current
 
@@ -1166,6 +1182,7 @@ private fun MangaScreenLargeImpl(
                             EggikuCookTimerCard(mangaId = state.manga.id)
                         }
                         EggikuTimelineCard(mangaId = state.manga.id)
+                        EggikuReadTimeCard(mangaId = state.manga.id)
                         EggikuShelfCard(manga = state.manga)
                         // KMK <--
                         // SY -->
@@ -1275,6 +1292,9 @@ private fun MangaScreenLargeImpl(
                                 onDownloadChapter = onDownloadChapter,
                                 onChapterSelected = onChapterSelected,
                                 onChapterSwipe = onChapterSwipe,
+                                // KMK -->
+                                chapterReadTimes = eggikuChapterReadTimes,
+                                // KMK <--
                             )
                         }
                     }
@@ -1340,6 +1360,9 @@ private fun LazyListScope.sharedChapterItems(
     onDownloadChapter: ((List<ChapterList.Item>, ChapterDownloadAction) -> Unit)?,
     onChapterSelected: (ChapterList.Item, Boolean, Boolean) -> Unit,
     onChapterSwipe: (ChapterList.Item, LibraryPreferences.ChapterSwipeAction) -> Unit,
+    // KMK -->
+    chapterReadTimes: Map<Long, Long> = emptyMap(),
+    // KMK <--
 ) {
     // KMK -->
     // The next chapter to read stays visible; unread ones after it are shielded
@@ -1364,6 +1387,7 @@ private fun LazyListScope.sharedChapterItems(
         val haptic = LocalHapticFeedback.current
         // KMK -->
         val spoilerShield by remember { EggikuSpoilerShield.pref() }.collectAsState()
+        val readTimeContext = LocalContext.current
         // KMK <--
 
         when (item) {
@@ -1415,6 +1439,7 @@ private fun LazyListScope.sharedChapterItems(
                     !isAnyChapterSelected && !(mergedData?.manga?.get(item.chapter.mangaId) ?: manga).isLocal(),
                     // KMK -->
                     spoiler = spoilerShield && !item.chapter.read && item.id != nextUnreadId,
+                    readTime = chapterReadTimes[item.chapter.id]?.milliseconds?.toDurationString(readTimeContext, ""),
                     // KMK <--
                     downloadStateProvider = { item.downloadState },
                     downloadProgressProvider = { item.downloadProgress },

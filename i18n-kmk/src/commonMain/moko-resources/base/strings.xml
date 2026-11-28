@@ -1240,4 +1240,12 @@
     <string name="eggiku_cool_egg_paused_title">Cooling off</string>
     <string name="eggiku_cool_egg_paused_text">Your phone is hot, so downloads are resting. They\'ll carry on once it cools down.</string>
     <string name="eggiku_download_heat_info">Lower numbers above keep your phone cooler and use less battery. Downloads take a little longer.</string>
+    <string name="eggiku_read_time_title">Read time</string>
+    <string name="eggiku_read_time_none">Under a minute</string>
+    <string name="eggiku_read_time_chapters">Chapters timed</string>
+    <string name="eggiku_read_time_average">Average per chapter</string>
+    <string name="eggiku_read_time_longest">Longest chapter</string>
+    <string name="eggiku_read_time_last">Last read</string>
+    <string name="eggiku_idle_cutoff">Stop counting read time after the screen is untouched for</string>
+    <string name="eggiku_idle_cutoff_minutes">%1$d min</string>
 </resources>

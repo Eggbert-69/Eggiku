@@ -112,6 +112,24 @@ internal fun GeneralPage(screenModel: ReaderSettingsScreenModel) {
             )
         }
     }
+    val idleCutoff by screenModel.preferences.eggikuIdleCutoffMinutes().collectAsState()
+    SettingsChipRow(KMR.strings.eggiku_idle_cutoff) {
+        listOf(2, 5, 10, 0).map { minutes ->
+            FilterChip(
+                selected = idleCutoff == minutes,
+                onClick = { screenModel.preferences.eggikuIdleCutoffMinutes().set(minutes) },
+                label = {
+                    Text(
+                        if (minutes == 0) {
+                            stringResource(KMR.strings.eggiku_off)
+                        } else {
+                            stringResource(KMR.strings.eggiku_idle_cutoff_minutes, minutes)
+                        },
+                    )
+                },
+            )
+        }
+    }
     // KMK <--
 
     // SY -->
