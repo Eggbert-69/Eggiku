@@ -13,6 +13,7 @@ import androidx.compose.ui.util.fastMap
 import eu.kanade.presentation.category.visualName
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.widget.TriStateListDialog
+import eu.kanade.tachiyomi.data.download.EggikuCoolEgg
 import eu.kanade.tachiyomi.data.smartdownload.EggikuSmartDownloads
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
@@ -71,6 +72,14 @@ object SettingsDownloadScreen : SearchableSettings {
                 subtitle = stringResource(MR.strings.pref_download_concurrent_pages_summary),
                 onValueChanged = { downloadPreferences.parallelPageLimit().set(it) },
             ),
+            // KMK -->
+            Preference.PreferenceItem.InfoPreference(stringResource(KMR.strings.eggiku_download_heat_info)),
+            Preference.PreferenceItem.SwitchPreference(
+                preference = EggikuCoolEgg.enabled(),
+                title = stringResource(KMR.strings.eggiku_cool_egg),
+                subtitle = stringResource(KMR.strings.eggiku_cool_egg_summary),
+            ),
+            // KMK <--
             getDeleteChaptersGroup(
                 downloadPreferences = downloadPreferences,
                 categories = allCategories,

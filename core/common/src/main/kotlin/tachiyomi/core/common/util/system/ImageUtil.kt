@@ -262,6 +262,13 @@ object ImageUtil {
         tmpDir: UniFile,
         imageFile: UniFile,
         filenamePrefix: String,
+        // KMK -->
+        // Lets the downloader answer "is this file there?" from what it already knows, instead of
+        // asking the storage for the whole folder again for every split piece
+        findFile: (String) -> UniFile? = { tmpDir.findFile(it) },
+        onCreated: (String, UniFile) -> Unit = { _, _ -> },
+        onDeleted: (String) -> Unit = {},
+        // KMK <--
     ): Boolean {
         val imageSource = imageFile.openInputStream().use { Buffer().readFrom(it) }
         if (isAnimatedAndSupported(imageSource) || !isTallImage(imageSource)) {
@@ -284,9 +291,15 @@ object ImageUtil {
             splitDataList.forEach { splitData ->
                 val splitImageName = splitImageName(filenamePrefix, splitData.index)
                 // Remove pre-existing split if exists (this split shouldn't exist under normal circumstances)
-                tmpDir.findFile(splitImageName)?.delete()
+                // KMK -->
+                findFile(splitImageName)?.let {
+                    it.delete()
+                    onDeleted(splitImageName)
+                }
 
                 val splitFile = tmpDir.createFile(splitImageName)!!
+                onCreated(splitImageName, splitFile)
+                // KMK <--
 
                 val region = Rect(0, splitData.topOffset, splitData.splitWidth, splitData.bottomOffset)
 
@@ -306,7 +319,12 @@ object ImageUtil {
             // Image splits were not successfully saved so delete them and keep the original image
             splitDataList
                 .map { splitImageName(filenamePrefix, it.index) }
-                .forEach { tmpDir.findFile(it)?.delete() }
+                // KMK -->
+                .forEach { name ->
+                    findFile(name)?.delete()
+                    onDeleted(name)
+                }
+            // KMK <--
             logcat(LogPriority.ERROR, e)
             false
         } finally {

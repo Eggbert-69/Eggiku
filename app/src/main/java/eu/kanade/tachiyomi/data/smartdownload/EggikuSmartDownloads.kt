@@ -8,6 +8,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import eu.kanade.tachiyomi.data.download.DownloadManager
+import eu.kanade.tachiyomi.data.download.EggikuCoolEgg
 import eu.kanade.tachiyomi.ui.library.EggikuContinueReading
 import eu.kanade.tachiyomi.util.system.workManager
 import logcat.LogPriority
@@ -24,9 +25,9 @@ import java.util.concurrent.TimeUnit
 
 // KMK -->
 /**
- * Eggiku smart downloads: on Wi-Fi while charging, grab the next few unread chapters of whatever
- * you're in the middle of (your Continue reading row), and clear the ones it downloaded once
- * they've been read and a week has passed. Chapters you downloaded yourself are never touched.
+ * Eggiku smart downloads: on Wi-Fi while charging and resting (usually overnight), grab the next
+ * few unread chapters of whatever you're in the middle of (your Continue reading row), and clear
+ * the ones it downloaded once they've been read and a week has passed. Chapters you downloaded yourself are never touched.
  */
 object EggikuSmartDownloads {
 
@@ -68,15 +69,20 @@ object EggikuSmartDownloads {
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.UNMETERED)
                     .setRequiresCharging(true)
+                    // Charging already warms the phone up; wait until it's been left alone too,
+                    // so this doesn't stack on top of whatever you're doing
+                    .setRequiresDeviceIdle(true)
                     .build(),
             )
             .addTag(TAG)
             .build()
-        wm.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, request)
+        wm.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.UPDATE, request)
     }
 
-    suspend fun run() {
+    suspend fun run(context: Context) {
         if (!enabled().get()) return
+        // Already warm (charging does that): try again next time instead of adding to it
+        if (EggikuCoolEgg.current(context) != EggikuCoolEgg.Heat.COOL) return
         val downloadManager = Injekt.get<DownloadManager>()
         val sourceManager = Injekt.get<SourceManager>()
         val getChapters = Injekt.get<GetChaptersByMangaId>()
@@ -127,7 +133,7 @@ object EggikuSmartDownloads {
     class SmartDownloadWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
         override suspend fun doWork(): Result {
             return try {
-                run()
+                run(applicationContext)
                 Result.success()
             } catch (e: Exception) {
                 logcat(LogPriority.ERROR, e) { "Eggiku smart downloads failed" }

@@ -37,16 +37,16 @@ class DownloadPreferences(
 
     fun downloadNewUnreadChaptersOnly() = preferenceStore.getBoolean("download_new_unread_chapters_only", false)
 
-    fun parallelSourceLimit() = preferenceStore.getInt("download_parallel_source_limit", 5)
+    fun parallelSourceLimit() = preferenceStore.getInt("download_parallel_source_limit", /* KMK --> */ 3 /* KMK <-- */)
 
-    fun parallelPageLimit() = preferenceStore.getInt("download_parallel_page_limit", 5)
+    fun parallelPageLimit() = preferenceStore.getInt("download_parallel_page_limit", /* KMK --> */ 3 /* KMK <-- */)
 
     // SY -->
     fun includeChapterUrlHash() = preferenceStore.getBoolean("download_include_chapter_url_hash", false)
     // SY <--
 
     // KMK -->
-    fun downloadCacheRenewInterval() = preferenceStore.getInt("download_cache_renew_interval", 1)
+    fun downloadCacheRenewInterval() = preferenceStore.getInt("download_cache_renew_interval", 12)
     // KMK <--
 
     companion object {

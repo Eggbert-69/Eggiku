@@ -43,13 +43,14 @@ import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import logcat.LogPriority
 import mihon.core.archive.CbzCrypto
 import mihon.core.archive.ZipWriter
 import nl.adaptivity.xmlutil.serialization.XML
 import okhttp3.Response
 import tachiyomi.core.common.i18n.stringResource
-import tachiyomi.core.common.storage.extension
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.core.common.util.lang.launchNow
 import tachiyomi.core.common.util.lang.withIOContext
@@ -68,6 +69,7 @@ import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.io.File
 import java.util.Locale
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * This class is the one in charge of downloading chapters.
@@ -120,6 +122,15 @@ class Downloader(
      */
     @Volatile
     var isPaused: Boolean = false
+
+    // KMK -->
+    /** How warm the phone is, as last seen by Cool egg mode while downloading */
+    @Volatile
+    private var heat = EggikuCoolEgg.Heat.COOL
+
+    /** While the phone is warm, tall pages are split one at a time instead of several at once */
+    private val splitLock = Mutex()
+    // KMK <--
 
     init {
         launchNow {
@@ -209,7 +220,22 @@ class Downloader(
             val activeDownloadsFlow = combine(
                 queueState,
                 downloadPreferences.parallelSourceLimit().changes(),
-            ) { a, b -> a to b }.transformLatest { (queue, parallelCount) ->
+                // KMK -->
+                EggikuCoolEgg.heat(context),
+            ) { a, b, level ->
+                heat = level
+                val parallelCount = when (level) {
+                    EggikuCoolEgg.Heat.COOL -> b
+                    EggikuCoolEgg.Heat.WARM -> minOf(b, EggikuCoolEgg.WARM_SOURCE_LIMIT)
+                    // Hot: let everything stop until it cools down, then carry on where it left off
+                    EggikuCoolEgg.Heat.HOT -> 0
+                }
+                a to parallelCount
+            }.transformLatest { (queue, parallelCount) ->
+                if (parallelCount == 0 && queue.any { it.status.value <= Download.State.DOWNLOADING.value }) {
+                    notifier.onCoolingOff()
+                }
+                // KMK <--
                 while (true) {
                     val activeDownloads = queue.asSequence()
                         // Ignore completed downloads, leave them in the queue
@@ -393,15 +419,25 @@ class Downloader(
                 DataSaver.NoOp
             }
 
+            // KMK -->
+            // List the chapter folder once and keep track of it from here, instead of asking the
+            // storage for the whole folder again for every page
+            val folder = ChapterFolder(tmpDir)
+
             // Delete all temporary (unfinished) files
-            tmpDir.listFiles()
-                ?.filter { it.extension == "tmp" }
-                ?.forEach { it.delete() }
+            folder.names()
+                .filter { it.endsWith(".tmp") }
+                .forEach { folder.remove(it)?.delete() }
 
             download.status = Download.State.DOWNLOADING
 
+            val pageLimit = downloadPreferences.parallelPageLimit().get().let {
+                if (heat == EggikuCoolEgg.Heat.COOL) it else minOf(it, EggikuCoolEgg.WARM_PAGE_LIMIT)
+            }
+            // KMK <--
+
             // Start downloading images, consider we can have downloaded images already
-            pageList.asFlow().flatMapMerge(concurrency = downloadPreferences.parallelPageLimit().get()) { page ->
+            pageList.asFlow().flatMapMerge(concurrency = /* KMK --> */ pageLimit /* KMK <-- */) { page ->
                 flow {
                     // Fetch image URL if necessary
                     if (page.imageUrl.isNullOrEmpty()) {
@@ -413,7 +449,9 @@ class Downloader(
                         }
                     }
 
-                    withIOContext { getOrDownloadImage(page, download, tmpDir, dataSaver) }
+                    withIOContext {
+                        getOrDownloadImage(page, download, tmpDir, dataSaver, /* KMK --> */ folder /* KMK <-- */)
+                    }
                     emit(page)
                 }
                     .flowOn(Dispatchers.IO)
@@ -464,7 +502,15 @@ class Downloader(
      * @param download the download of the page.
      * @param tmpDir the temporary directory of the download.
      */
-    private suspend fun getOrDownloadImage(page: Page, download: Download, tmpDir: UniFile, dataSaver: DataSaver) {
+    private suspend fun getOrDownloadImage(
+        page: Page,
+        download: Download,
+        tmpDir: UniFile,
+        dataSaver: DataSaver,
+        // KMK -->
+        folder: ChapterFolder,
+        // KMK <--
+    ) {
         // If the image URL is empty, do nothing
         if (page.imageUrl == null) {
             return
@@ -472,27 +518,41 @@ class Downloader(
 
         val digitCount = (download.pages?.size ?: 0).toString().length.coerceAtLeast(3)
         val filename = "%0${digitCount}d".format(Locale.ENGLISH, page.number)
-        val tmpFile = tmpDir.findFile("$filename.tmp")
-
+        // KMK -->
         // Delete temp file if it exists
-        tmpFile?.delete()
+        folder.remove("$filename.tmp")?.delete()
 
         // Try to find the image file
-        val imageFile = tmpDir.listFiles()?.firstOrNull {
-            it.name!!.startsWith("$filename.") || it.name!!.startsWith("${filename}__001")
-        }
+        val imageFile = folder.first {
+            it.startsWith("$filename.") || it.startsWith("${filename}__001")
+        }?.let(folder::get)
+        // KMK <--
 
         try {
             // If the image is already downloaded, do nothing. Otherwise download from network
             val file = when {
                 imageFile != null -> imageFile
                 chapterCache.isImageInCache(page.imageUrl!!) ->
-                    copyImageFromCache(chapterCache.getImageFile(page.imageUrl!!), tmpDir, filename)
-                else -> downloadImage(page, download.source, tmpDir, filename, dataSaver)
+                    copyImageFromCache(
+                        chapterCache.getImageFile(page.imageUrl!!),
+                        tmpDir,
+                        filename,
+                        /* KMK --> */ folder, /* KMK <-- */
+                    )
+                else -> downloadImage(
+                    page,
+                    download.source,
+                    tmpDir,
+                    filename,
+                    dataSaver,
+                    /* KMK --> */ folder, /* KMK <-- */
+                )
             }
 
             // When the page is ready, set page path, progress (just in case) and status
-            splitTallImageIfNeeded(page, tmpDir)
+            // KMK -->
+            splitTallImageIfNeeded(page, tmpDir, filename, folder)
+            // KMK <--
 
             page.uri = file.uri
             page.progress = 100
@@ -520,19 +580,31 @@ class Downloader(
         tmpDir: UniFile,
         filename: String,
         dataSaver: DataSaver,
+        // KMK -->
+        folder: ChapterFolder,
+        // KMK <--
     ): UniFile {
         page.status = Page.State.DownloadImage
         page.progress = 0
         return flow {
             val response = source.getImage(page, dataSaver)
             val file = tmpDir.createFile("$filename.tmp")!!
+            // KMK -->
+            folder.put("$filename.tmp", file)
+            // KMK <--
             try {
                 response.body.source().saveTo(file.openOutputStream())
                 val extension = getImageExtension(response, file)
                 file.renameTo("$filename.$extension")
+                // KMK -->
+                folder.renamed("$filename.tmp", "$filename.$extension", file)
+                // KMK <--
             } catch (e: Exception) {
                 response.close()
                 file.delete()
+                // KMK -->
+                folder.remove("$filename.tmp")
+                // KMK <--
                 throw e
             }
             emit(file)
@@ -559,8 +631,18 @@ class Downloader(
      * @param tmpDir the temporary directory of the download.
      * @param filename the filename of the image.
      */
-    private fun copyImageFromCache(cacheFile: File, tmpDir: UniFile, filename: String): UniFile {
+    private fun copyImageFromCache(
+        cacheFile: File,
+        tmpDir: UniFile,
+        filename: String,
+        // KMK -->
+        folder: ChapterFolder,
+        // KMK <--
+    ): UniFile {
         val tmpFile = tmpDir.createFile("$filename.tmp")!!
+        // KMK -->
+        folder.put("$filename.tmp", tmpFile)
+        // KMK <--
         cacheFile.inputStream().use { input ->
             tmpFile.openOutputStream().use { output ->
                 input.copyTo(output)
@@ -568,6 +650,9 @@ class Downloader(
         }
         val extension = ImageUtil.findImageType(cacheFile.inputStream()) ?: return tmpFile
         tmpFile.renameTo("$filename.${extension.extension}")
+        // KMK -->
+        folder.renamed("$filename.tmp", "$filename.${extension.extension}", tmpFile)
+        // KMK <--
         cacheFile.delete()
         return tmpFile
     }
@@ -584,26 +669,79 @@ class Downloader(
         return ImageUtil.getExtensionFromMimeType(mime) { file.openInputStream() }
     }
 
-    private fun splitTallImageIfNeeded(page: Page, tmpDir: UniFile) {
+    // KMK -->
+    private suspend fun splitTallImageIfNeeded(
+        page: Page,
+        tmpDir: UniFile,
+        filenamePrefix: String,
+        folder: ChapterFolder,
+    ) {
         if (!downloadPreferences.splitTallImages().get()) return
 
         try {
-            val filenamePrefix = "%03d".format(Locale.ENGLISH, page.number)
-            val imageFile = tmpDir.listFiles()?.firstOrNull { it.name.orEmpty().startsWith(filenamePrefix) }
+            // Uses the same name as the saved page, so chapters with 1000+ pages split too
+            val imageName = folder.first { it.startsWith(filenamePrefix) }
                 ?: error(context.stringResource(MR.strings.download_notifier_split_page_not_found, page.number))
 
             // If the original page was previously split, then skip
-            if (imageFile.name.orEmpty().startsWith("${filenamePrefix}__")) return
+            if (imageName.startsWith("${filenamePrefix}__")) return
+            val imageFile = folder.get(imageName) ?: return
 
-            ImageUtil.splitTallImage(
-                tmpDir,
-                imageFile,
-                filenamePrefix,
-            )
+            val split: suspend () -> Unit = {
+                val created = mutableListOf<String>()
+                val done = ImageUtil.splitTallImage(
+                    tmpDir,
+                    imageFile,
+                    filenamePrefix,
+                    findFile = { folder.get(it) },
+                    onCreated = { name, file ->
+                        folder.put(name, file)
+                        created += name
+                    },
+                    onDeleted = { folder.remove(it) },
+                )
+                // The original is removed once its pieces are saved
+                if (done && created.isNotEmpty()) folder.remove(imageName)
+            }
+            // Re-saving a tall page is the heaviest thing a download does, so don't stack them
+            // up while the phone is already warm
+            if (heat == EggikuCoolEgg.Heat.COOL) split() else splitLock.withLock { split() }
         } catch (e: Exception) {
+            if (e is CancellationException) throw e
             logcat(LogPriority.ERROR, e) { "Failed to split downloaded image" }
         }
     }
+
+    /**
+     * What's in a chapter's download folder, listed once when the chapter starts and kept up to
+     * date as pages are saved, renamed, split and removed. Pages download in parallel, so it's
+     * safe to use from several at once.
+     */
+    private class ChapterFolder(dir: UniFile) {
+        private val files = ConcurrentHashMap<String, UniFile>()
+
+        init {
+            dir.listFiles()?.forEach { file -> file.name?.let { files[it] = file } }
+        }
+
+        fun names(): List<String> = files.keys.toList()
+
+        fun get(name: String): UniFile? = files[name]
+
+        fun first(predicate: (String) -> Boolean): String? = files.keys.firstOrNull(predicate)
+
+        fun put(name: String, file: UniFile) {
+            files[name] = file
+        }
+
+        fun remove(name: String): UniFile? = files.remove(name)
+
+        fun renamed(from: String, to: String, file: UniFile) {
+            files.remove(from)
+            files[to] = file
+        }
+    }
+    // KMK <--
 
     /**
      * Checks if the download was successful.

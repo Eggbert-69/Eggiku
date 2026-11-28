@@ -642,7 +642,7 @@
     <string name="recap_saved">Saved to Pictures/Eggiku</string>
     <string name="recap_save_failed">Couldn\'t save it here, so it opens to share instead</string>
     <string name="eggiku_smart_downloads">Smart downloads</string>
-    <string name="eggiku_smart_downloads_summary">On Wi-Fi while charging, download the next chapters of the series in your Continue reading row.</string>
+    <string name="eggiku_smart_downloads_summary">On Wi-Fi while charging and resting (usually overnight), download the next chapters of the series in your Continue reading row. Skipped while the phone is warm.</string>
     <string name="eggiku_smart_downloads_ahead">How many chapters ahead</string>
     <string name="eggiku_smart_downloads_clear">Clear them after reading</string>
     <string name="eggiku_smart_downloads_clear_summary">Chapters smart downloads grabbed are deleted a week after download once read. Your own downloads are never touched.</string>
@@ -1234,4 +1234,10 @@
     <string name="smart_s_quickest">Quickest to finish</string>
     <string name="ach_l_rereads">Rereads</string>
     <string name="ach_l_rereads_desc">reread %1$s series</string>
+    <!-- Eggiku: Cool egg mode -->
+    <string name="eggiku_cool_egg">Cool egg mode</string>
+    <string name="eggiku_cool_egg_summary">When your phone gets warm, download one series and two pages at a time. When it gets hot, pause until it cools down, then carry on by itself.</string>
+    <string name="eggiku_cool_egg_paused_title">Cooling off</string>
+    <string name="eggiku_cool_egg_paused_text">Your phone is hot, so downloads are resting. They\'ll carry on once it cools down.</string>
+    <string name="eggiku_download_heat_info">Lower numbers above keep your phone cooler and use less battery. Downloads take a little longer.</string>
 </resources>

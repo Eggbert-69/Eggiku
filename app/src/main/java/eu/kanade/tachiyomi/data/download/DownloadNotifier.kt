@@ -17,6 +17,7 @@ import eu.kanade.tachiyomi.util.system.notificationBuilder
 import eu.kanade.tachiyomi.util.system.notify
 import tachiyomi.core.common.i18n.stringResource
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import uy.kohesive.injekt.injectLazy
 import java.util.regex.Pattern
 
@@ -51,6 +52,12 @@ internal class DownloadNotifier(private val context: Context) {
      */
     private var isDownloading = false
 
+    // KMK -->
+    /** When the progress notification was last posted, so it's updated at most about once a second */
+    @Volatile
+    private var lastProgressPost = 0L
+    // KMK <--
+
     /**
      * Shows a notification from this builder.
      *
@@ -84,6 +91,15 @@ internal class DownloadNotifier(private val context: Context) {
      * @param download download object containing download information.
      */
     fun onProgressChange(download: Download) {
+        // KMK -->
+        // Posting a notification for every saved page keeps the phone busy for nothing; the
+        // shade can't show it that fast anyway. Always post the first and last page.
+        val now = System.currentTimeMillis()
+        val pageCount = download.pages?.size ?: 0
+        val lastPage = download.downloadedImages >= pageCount
+        if (isDownloading && !lastPage && now - lastProgressPost < PROGRESS_POST_INTERVAL_MS) return
+        lastProgressPost = now
+        // KMK <--
         with(progressNotificationBuilder) {
             if (!isDownloading) {
                 setSmallIcon(android.R.drawable.stat_sys_download)
@@ -166,6 +182,32 @@ internal class DownloadNotifier(private val context: Context) {
         isDownloading = false
     }
 
+    // KMK -->
+    /**
+     * Shown while Cool egg mode has paused downloads because the phone is hot. They carry on by
+     * themselves once it cools down.
+     */
+    fun onCoolingOff() {
+        with(progressNotificationBuilder) {
+            setContentTitle(context.stringResource(KMR.strings.eggiku_cool_egg_paused_title))
+            setContentText(context.stringResource(KMR.strings.eggiku_cool_egg_paused_text))
+            setSmallIcon(R.drawable.ic_pause_24dp)
+            setProgress(0, 0, true)
+            setOngoing(true)
+            clearActions()
+            setContentIntent(NotificationHandler.openDownloadManagerPendingActivity(context))
+            addAction(
+                R.drawable.ic_pause_24dp,
+                context.stringResource(MR.strings.action_pause),
+                NotificationReceiver.pauseDownloadsPendingBroadcast(context),
+            )
+            show(Notifications.ID_DOWNLOAD_CHAPTER_PROGRESS)
+        }
+        // Rebuild the normal progress notification when downloads pick back up
+        isDownloading = false
+    }
+    // KMK <--
+
     /**
      * Resets the state once downloads are completed.
      */
@@ -243,4 +285,10 @@ internal class DownloadNotifier(private val context: Context) {
         // Reset download information
         isDownloading = false
     }
+
+    // KMK -->
+    private companion object {
+        const val PROGRESS_POST_INTERVAL_MS = 1_000L
+    }
+    // KMK <--
 }
