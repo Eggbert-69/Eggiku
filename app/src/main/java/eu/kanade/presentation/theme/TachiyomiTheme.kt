@@ -19,7 +19,10 @@ import androidx.compose.ui.unit.dp
 import com.materialkolor.DynamicMaterialExpressiveTheme
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.domain.ui.model.AppTheme
+import eu.kanade.presentation.theme.colorscheme.AuroraColorScheme
 import eu.kanade.presentation.theme.colorscheme.BaseColorScheme
+import eu.kanade.presentation.theme.colorscheme.BubbleTeaColorScheme
+import eu.kanade.presentation.theme.colorscheme.CampfireColorScheme
 import eu.kanade.presentation.theme.colorscheme.CatppuccinColorScheme
 import eu.kanade.presentation.theme.colorscheme.CloudflareColorScheme
 import eu.kanade.presentation.theme.colorscheme.CottoncandyColorScheme
@@ -28,14 +31,18 @@ import eu.kanade.presentation.theme.colorscheme.DinoEggColorScheme
 import eu.kanade.presentation.theme.colorscheme.DoomColorScheme
 import eu.kanade.presentation.theme.colorscheme.DraculaColorScheme
 import eu.kanade.presentation.theme.colorscheme.EasterBasketColorScheme
+import eu.kanade.presentation.theme.colorscheme.EspressoColorScheme
 import eu.kanade.presentation.theme.colorscheme.EverforestColorScheme
+import eu.kanade.presentation.theme.colorscheme.FrostbiteColorScheme
 import eu.kanade.presentation.theme.colorscheme.GlibGlorbColorScheme
 import eu.kanade.presentation.theme.colorscheme.GoldenHourColorScheme
 import eu.kanade.presentation.theme.colorscheme.GreenAppleColorScheme
 import eu.kanade.presentation.theme.colorscheme.GruvboxColorScheme
 import eu.kanade.presentation.theme.colorscheme.HotSauceColorScheme
+import eu.kanade.presentation.theme.colorscheme.InkPaperColorScheme
 import eu.kanade.presentation.theme.colorscheme.KanagawaColorScheme
 import eu.kanade.presentation.theme.colorscheme.LavenderColorScheme
+import eu.kanade.presentation.theme.colorscheme.MatchaLatteColorScheme
 import eu.kanade.presentation.theme.colorscheme.MatrixColorScheme
 import eu.kanade.presentation.theme.colorscheme.MidnightArcadeColorScheme
 import eu.kanade.presentation.theme.colorscheme.MidnightDuskColorScheme
@@ -44,7 +51,10 @@ import eu.kanade.presentation.theme.colorscheme.MonetColorScheme
 import eu.kanade.presentation.theme.colorscheme.MonochromeColorScheme
 import eu.kanade.presentation.theme.colorscheme.NordColorScheme
 import eu.kanade.presentation.theme.colorscheme.OneDarkColorScheme
+import eu.kanade.presentation.theme.colorscheme.PocketPixelColorScheme
+import eu.kanade.presentation.theme.colorscheme.RamenNightColorScheme
 import eu.kanade.presentation.theme.colorscheme.RosePineColorScheme
+import eu.kanade.presentation.theme.colorscheme.SakuraDriftColorScheme
 import eu.kanade.presentation.theme.colorscheme.SapphireColorScheme
 import eu.kanade.presentation.theme.colorscheme.SolarizedColorScheme
 import eu.kanade.presentation.theme.colorscheme.StrawberryColorScheme
@@ -52,6 +62,7 @@ import eu.kanade.presentation.theme.colorscheme.SunnySideUpColorScheme
 import eu.kanade.presentation.theme.colorscheme.TachiyomiColorScheme
 import eu.kanade.presentation.theme.colorscheme.TakoColorScheme
 import eu.kanade.presentation.theme.colorscheme.TealTurqoiseColorScheme
+import eu.kanade.presentation.theme.colorscheme.ThunderstormColorScheme
 import eu.kanade.presentation.theme.colorscheme.TidalWaveColorScheme
 import eu.kanade.presentation.theme.colorscheme.TokyoNightColorScheme
 import eu.kanade.presentation.theme.colorscheme.YinYangColorScheme
@@ -244,5 +255,16 @@ private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(
     AppTheme.GOLDEN_HOUR to GoldenHourColorScheme,
     AppTheme.DINO_EGG to DinoEggColorScheme,
     AppTheme.EASTER_BASKET to EasterBasketColorScheme,
+    AppTheme.ESPRESSO to EspressoColorScheme,
+    AppTheme.INK_PAPER to InkPaperColorScheme,
+    AppTheme.MATCHA_LATTE to MatchaLatteColorScheme,
+    AppTheme.RAMEN_NIGHT to RamenNightColorScheme,
+    AppTheme.SAKURA_DRIFT to SakuraDriftColorScheme,
+    AppTheme.AURORA to AuroraColorScheme,
+    AppTheme.CAMPFIRE to CampfireColorScheme,
+    AppTheme.BUBBLE_TEA to BubbleTeaColorScheme,
+    AppTheme.POCKET_PIXEL to PocketPixelColorScheme,
+    AppTheme.FROSTBITE to FrostbiteColorScheme,
+    AppTheme.THUNDERSTORM to ThunderstormColorScheme,
     // KMK <--
 )

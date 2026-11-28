@@ -97,6 +97,14 @@ object EggikuAvatarCatalog {
         val key: String? = null,
         val rank: String? = null,
         val condition: String? = null,
+        // KMK -->
+        /** For "tree" and "prestige" unlocks: the rank tree branch key */
+        val branch: String? = null,
+        /** For "tree" unlocks: the rank (1..10) to reach in [branch] */
+        val node: Int? = null,
+        /** For "prestige" unlocks: prestige stars needed in [branch] */
+        val level: Int? = null,
+        // KMK <--
     )
 
     @Serializable
@@ -124,6 +132,10 @@ object EggikuAvatarCatalog {
         val secret: Boolean = false,
         val accent: String? = null,
         val files: FilePair? = null,
+        // KMK -->
+        val branch: String? = null,
+        val node: Int? = null,
+        // KMK <--
     )
 
     @Serializable
@@ -235,6 +247,30 @@ object EggikuAvatars {
     fun mine(): EggikuAvatar = decode(pref().get())
     fun changes(): Flow<EggikuAvatar> = pref().changes().map(::decode)
     fun save(avatar: EggikuAvatar) = pref().set(json.encodeToString(avatar))
+
+    // KMK -->
+    const val OUTFIT_SLOTS = 3
+
+    /** Saved outfits as a JSON list; empty slots are null */
+    fun outfitsPref() = preferenceStore.getString("eggiku_avatar_outfits_v1", "")
+
+    fun decodeOutfits(raw: String): List<EggikuAvatar?> = if (raw.isBlank()) {
+        emptyList()
+    } else {
+        try {
+            json.decodeFromString<List<EggikuAvatar?>>(raw)
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    fun saveOutfit(index: Int, avatar: EggikuAvatar) {
+        val outfits = decodeOutfits(outfitsPref().get()).toMutableList()
+        while (outfits.size < OUTFIT_SLOTS) outfits += null
+        outfits[index.coerceIn(0, OUTFIT_SLOTS - 1)] = avatar
+        outfitsPref().set(json.encodeToString(outfits.toList()))
+    }
+    // KMK <--
 }
 
 /**
@@ -244,25 +280,49 @@ object EggikuAvatars {
 data class EggikuAvatarProgress(
     val tiers: Map<String, Int>,
     val badges: Set<String>,
+    /** Their rank tree; null for compare codes from before the tree, then it's guessed from XP */
+    val tree: EggikuRankTree.State? = null,
 ) {
     val xp: Int get() = tiers.values.sum() * XP_PER_TIER + badges.size * XP_PER_BADGE
 
     /** The secret Glib Glorb rank, earned with the liftoff badge */
     val glorb: Boolean get() = "liftoff" in badges
 
+    val treeState: EggikuRankTree.State get() = tree ?: EggikuRankTree.guess(xp)
+
+    val standing: EggikuRankTree.Standing get() = EggikuRankTree.standing(xp, treeState)
+
     fun rank(catalog: EggikuAvatarCatalog.Catalog): EggikuAvatarCatalog.Rank? {
         if (glorb) catalog.ranks.firstOrNull { it.secret }?.let { return it }
-        return catalog.ranks.filter { !it.secret && (it.xp ?: Int.MAX_VALUE) <= xp }.maxByOrNull { it.xp ?: 0 }
-            ?: catalog.ranks.firstOrNull()
+        val standing = standing
+        val branch = standing.branch
+        if (branch != null) {
+            val node = if (standing.node > 0) standing.node else EggikuRankTree.NODES
+            catalog.rank(EggikuRankTree.rankId(branch, node))?.let { return it }
+        }
+        return catalog.rank(START_RANK) ?: catalog.ranks.firstOrNull()
     }
 
-    fun nextRank(catalog: EggikuAvatarCatalog.Catalog): EggikuAvatarCatalog.Rank? =
-        catalog.ranks.filter { !it.secret && (it.xp ?: 0) > xp }.minByOrNull { it.xp ?: 0 }
+    /** The next rank in the branch you're on, if there is one */
+    fun nextRank(catalog: EggikuAvatarCatalog.Catalog): EggikuAvatarCatalog.Rank? {
+        val standing = standing
+        val branch = standing.branch ?: return null
+        if (standing.node >= EggikuRankTree.NODES) return null
+        return catalog.rank(EggikuRankTree.rankId(branch, standing.node + 1))
+    }
 
     fun hasRank(catalog: EggikuAvatarCatalog.Catalog, id: String?): Boolean {
-        val wanted = catalog.rank(id) ?: return false
-        if (wanted.secret) return glorb
-        return (wanted.xp ?: Int.MAX_VALUE) <= xp
+        if (id == null) return false
+        if (id == START_RANK) return true
+        val wanted = catalog.rank(id)
+        if (wanted?.secret == true) return glorb
+        LEGACY_RANK_XP[id]?.let { return it <= xp }
+        val state = treeState
+        val branchKey = wanted?.branch ?: id.substringBefore('_')
+        val branch = EggikuRankTree.Branch.of(branchKey) ?: return false
+        if (id == EggikuRankTree.gildedId(branch)) return state.prestige(branch) >= 1
+        val node = wanted?.node ?: id.substringAfter('_').toIntOrNull() ?: return false
+        return state.nodesReached(branch) >= node
     }
 
     fun isUnlocked(catalog: EggikuAvatarCatalog.Catalog, part: EggikuAvatarCatalog.Part): Boolean {
@@ -287,6 +347,16 @@ data class EggikuAvatarProgress(
                 }
             }
             "rank" -> hasRank(catalog, unlock.rank)
+            // KMK -->
+            "tree" -> {
+                val branch = EggikuRankTree.Branch.of(unlock.branch) ?: return true
+                treeState.nodesReached(branch) >= (unlock.node ?: 1)
+            }
+            "prestige" -> {
+                val branch = EggikuRankTree.Branch.of(unlock.branch) ?: return true
+                treeState.prestige(branch) >= (unlock.level ?: 1)
+            }
+            // KMK <--
             else -> true
         }
     }
@@ -298,6 +368,21 @@ data class EggikuAvatarProgress(
     companion object {
         const val XP_PER_TIER = 10
         const val XP_PER_BADGE = 25
+
+        /** Where everyone starts, before their first rank step */
+        const val START_RANK = "egg"
+
+        /** XP the ranks from before the tree needed, so parts that asked for them still unlock */
+        private val LEGACY_RANK_XP = mapOf(
+            "raw" to 0,
+            "cracked" to 20,
+            "hatchling" to 60,
+            "soft" to 150,
+            "hard" to 300,
+            "sunny" to 500,
+            "golden" to 800,
+            "cosmic" to 1200,
+        )
 
         /** From your own earned achievements (these never go backwards) */
         fun mine(): EggikuAvatarProgress {
@@ -314,10 +399,12 @@ data class EggikuAvatarProgress(
                     key.startsWith("O:") -> badges += key.removePrefix("O:")
                 }
             }
-            return EggikuAvatarProgress(tiers, badges)
+            val xp = tiers.values.sum() * XP_PER_TIER + badges.size * XP_PER_BADGE
+            return EggikuAvatarProgress(tiers, badges, EggikuRankTree.sync(xp))
         }
 
-        fun from(profile: EggikuCompare.Profile) = EggikuAvatarProgress(profile.tiers, profile.badges.toSet())
+        fun from(profile: EggikuCompare.Profile) =
+            EggikuAvatarProgress(profile.tiers, profile.badges.toSet(), profile.tree)
     }
 }
 // KMK <--

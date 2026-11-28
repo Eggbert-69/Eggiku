@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import eu.kanade.tachiyomi.data.achievements.EggikuAchievements
@@ -50,8 +47,6 @@ fun EggikuAvatarMoreCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
             it.unlock.type != "free" && progress.isUnlocked(catalog, it) && "${it.slot}/${it.id}" !in seen
         }
     }
-    val rank = progress.rank(catalog)
-    val next = progress.nextRank(catalog)
 
     Surface(
         onClick = onClick,
@@ -90,24 +85,13 @@ fun EggikuAvatarMoreCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                 )
+                // KMK -->
                 Text(
-                    text = rankName(rank) + " · " + stringResource(KMR.strings.avatar_xp, progress.xp),
+                    text = eggikuRankTitle(progress, catalog),
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                if (next != null) {
-                    val from = rank?.takeIf { !it.secret }?.xp ?: 0
-                    val to = next.xp ?: 1
-                    val fraction = ((progress.xp - from).toFloat() / (to - from).coerceAtLeast(1)).coerceIn(0f, 1f)
-                    LinearProgressIndicator(
-                        progress = { fraction },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(6.dp),
-                        strokeCap = StrokeCap.Round,
-                        gapSize = 0.dp,
-                        drawStopIndicator = {},
-                    )
-                }
+                EggikuRankProgress(progress)
+                // KMK <--
                 Text(
                     text = stringResource(if (hasNew) KMR.strings.avatar_customize_new else KMR.strings.avatar_customize),
                     style = MaterialTheme.typography.labelMedium,

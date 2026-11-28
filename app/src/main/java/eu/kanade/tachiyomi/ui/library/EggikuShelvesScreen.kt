@@ -44,6 +44,7 @@ import eu.kanade.presentation.manga.components.MangaCover
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.data.shelves.EggikuShelfNotifier
 import eu.kanade.tachiyomi.data.shelves.EggikuShelves
+import eu.kanade.tachiyomi.data.shelves.EggikuUniverseSync
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.ui.manga.MangaScreen
 import eu.kanade.tachiyomi.util.system.toast
@@ -108,7 +109,10 @@ class EggikuShelvesScreen(private val startShelf: Int = 0) : Screen() {
                                     onClick = {
                                         scope.launch {
                                             context.toast(context.stringResource(KMR.strings.shelf_spinoffs_looking))
-                                            val count = EggikuShelfNotifier.scanForSpinoffs(context, force = true)
+                                            val count = EggikuShelfNotifier.scanForSpinoffs(context, force = true) +
+                                                // KMK -->
+                                                EggikuUniverseSync.run(context, force = true)
+                                            // KMK <--
                                             if (count == 0) context.toast(context.stringResource(KMR.strings.shelf_spinoffs_none_new))
                                         }
                                     },

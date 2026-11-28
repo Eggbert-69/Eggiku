@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -37,6 +36,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,6 +47,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +56,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
@@ -65,7 +67,8 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.avatar.EggikuAvatarImage
-import eu.kanade.presentation.avatar.rankName
+import eu.kanade.presentation.avatar.EggikuRankProgress
+import eu.kanade.presentation.avatar.eggikuRankTitle
 import eu.kanade.presentation.avatar.rememberEggikuAvatarCatalog
 import eu.kanade.presentation.avatar.rememberMyEggikuAvatar
 import eu.kanade.presentation.components.AppBar
@@ -93,6 +96,8 @@ import java.time.format.FormatStyle
 import tachiyomi.presentation.core.util.collectAsState as collectPrefAsState
 
 // KMK -->
+private enum class AchTab { LADDERS, BADGES, SECRET }
+
 /** Eggiku achievements: a ladder per stat with lots of small tiers, plus one-off and secret badges */
 class EggikuAchievementsScreen : Screen() {
 
@@ -103,6 +108,9 @@ class EggikuAchievementsScreen : Screen() {
         val scope = rememberCoroutineScope()
         val profileLayer = rememberGraphicsLayer()
         var comparing by remember { mutableStateOf(false) }
+        // KMK -->
+        var tab by rememberSaveable { mutableStateOf(AchTab.LADDERS) }
+        // KMK <--
         val data by produceState<Pair<EggikuAchievements.Facts, Map<String, LocalDate>>?>(null) {
             value = withIOContext {
                 // So a friend code shared from here carries your current best-rated series
@@ -169,27 +177,86 @@ class EggikuAchievementsScreen : Screen() {
                     }
                 }
                 item(span = { GridItemSpan(maxLineSpan) }, key = "avatar-button") {
-                    CustomizeAvatarButton { navigator.push(EggikuAvatarEditorScreen()) }
+                    // KMK -->
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            CustomizeAvatarButton { navigator.push(EggikuAvatarEditorScreen()) }
+                        }
+                        FilledTonalButton(
+                            onClick = { navigator.push(EggikuRankTreeScreen()) },
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Text("🌳 " + stringResource(KMR.strings.tree_title))
+                        }
+                    }
+                    // KMK <--
                 }
                 item(span = { GridItemSpan(maxLineSpan) }, key = "egg-hunt") {
                     EggikuEggHuntCard()
                 }
-                item(span = { GridItemSpan(maxLineSpan) }, key = "ladders-header") {
-                    Header(stringResource(KMR.strings.ach_ladders))
+                // KMK -->
+                val recent = earned.entries
+                    .filter { it.key.startsWith("O:") }
+                    .sortedByDescending { it.value }
+                    .mapNotNull { entry -> EggikuAchievements.oneOffs.firstOrNull { it.earnedKey == entry.key } }
+                    .take(4)
+                if (recent.isNotEmpty()) {
+                    item(span = { GridItemSpan(maxLineSpan) }, key = "recent-header") {
+                        Header(stringResource(KMR.strings.ach_recent))
+                    }
+                    items(recent, key = { "recent-" + it.key }) { badge ->
+                        BadgeCard(badge, earned[badge.earnedKey])
+                    }
                 }
-                items(
-                    EggikuAchievements.ladders,
-                    key = { it.key },
-                    span = { GridItemSpan(maxLineSpan) },
-                ) { ladder ->
-                    LadderCard(ladder, facts, earned)
+                item(span = { GridItemSpan(maxLineSpan) }, key = "tabs") {
+                    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                        AchTab.entries.forEachIndexed { index, option ->
+                            SegmentedButton(
+                                selected = tab == option,
+                                onClick = { tab = option },
+                                shape = SegmentedButtonDefaults.itemShape(index, AchTab.entries.size),
+                            ) {
+                                Text(
+                                    stringResource(
+                                        when (option) {
+                                            AchTab.LADDERS -> KMR.strings.ach_ladders
+                                            AchTab.BADGES -> KMR.strings.ach_badges
+                                            AchTab.SECRET -> KMR.strings.ach_tab_secret
+                                        },
+                                    ),
+                                )
+                            }
+                        }
+                    }
                 }
-                item(span = { GridItemSpan(maxLineSpan) }, key = "badges-header") {
-                    Header(stringResource(KMR.strings.ach_badges))
+                when (tab) {
+                    AchTab.LADDERS -> {
+                        // Closest to their next tier first, so the easy wins are on top
+                        val sorted = EggikuAchievements.ladders.sortedByDescending { ladder ->
+                            val tiers = ladder.tiersEarned(facts)
+                            val next = ladder.thresholds.getOrNull(tiers) ?: return@sortedByDescending -1f
+                            val previous = ladder.thresholds.getOrNull(tiers - 1) ?: 0L
+                            (ladder.value(facts) - previous).toFloat() / (next - previous).coerceAtLeast(1L)
+                        }
+                        item(span = { GridItemSpan(maxLineSpan) }, key = "ladders-header") {
+                            Header(stringResource(KMR.strings.ach_almost_there))
+                        }
+                        items(sorted, key = { it.key }, span = { GridItemSpan(maxLineSpan) }) { ladder ->
+                            LadderCard(ladder, facts, earned)
+                        }
+                    }
+                    AchTab.BADGES -> {
+                        items(EggikuAchievements.oneOffs.filterNot { it.secret }, key = { it.key }) { badge ->
+                            BadgeCard(badge, earned[badge.earnedKey])
+                        }
+                    }
+                    AchTab.SECRET -> {
+                        items(EggikuAchievements.oneOffs.filter { it.secret }, key = { it.key }) { badge ->
+                            BadgeCard(badge, earned[badge.earnedKey])
+                        }
+                    }
                 }
-                items(EggikuAchievements.oneOffs, key = { it.key }) { badge ->
-                    BadgeCard(badge, earned[badge.earnedKey])
-                }
+                // KMK <--
             }
             if (comparing) CompareDialog(facts) { comparing = false }
         }
@@ -319,8 +386,6 @@ class EggikuAchievementsScreen : Screen() {
             val catalog = rememberEggikuAvatarCatalog()
             val avatar = rememberMyEggikuAvatar()
             val progress = remember(earnedCount) { EggikuAvatarProgress.mine() }
-            val rank = progress.rank(catalog)
-            val next = progress.nextRank(catalog)
             val nickname = remember { EggikuCompare.nickname().get() }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 EggikuAvatarImage(
@@ -344,31 +409,15 @@ class EggikuAchievementsScreen : Screen() {
                         color = scheme.onPrimaryContainer,
                         maxLines = 1,
                     )
+                    // KMK -->
                     Text(
-                        text = rankName(rank) + " · " + stringResource(KMR.strings.avatar_xp, progress.xp),
+                        text = eggikuRankTitle(progress, catalog),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = scheme.onPrimaryContainer,
                     )
-                    if (next != null) {
-                        val from = rank?.takeIf { !it.secret }?.xp ?: 0
-                        val to = next.xp ?: 1
-                        val fraction = ((progress.xp - from).toFloat() / (to - from).coerceAtLeast(1)).coerceIn(0f, 1f)
-                        LinearProgressIndicator(
-                            progress = { fraction },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(6.dp),
-                            strokeCap = StrokeCap.Round,
-                            gapSize = 0.dp,
-                            drawStopIndicator = {},
-                        )
-                        Text(
-                            text = stringResource(KMR.strings.avatar_next_rank, (to - progress.xp).coerceAtLeast(0), next.name),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = scheme.onPrimaryContainer,
-                        )
-                    }
+                    EggikuRankProgress(progress)
+                    // KMK <--
                     Text(
                         text = stringResource(KMR.strings.ach_count, earnedCount, EggikuAchievements.totalCount),
                         style = MaterialTheme.typography.bodySmall,

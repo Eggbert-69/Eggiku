@@ -3,9 +3,11 @@ package eu.kanade.tachiyomi.ui.avatar
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +16,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -31,11 +32,14 @@ import androidx.compose.material.icons.outlined.Casino
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -56,7 +60,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,8 +71,10 @@ import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.StringResource
 import eu.kanade.presentation.avatar.EGGIKU_AVATAR_ASSETS
 import eu.kanade.presentation.avatar.EggikuAvatarImage
+import eu.kanade.presentation.avatar.EggikuRankProgress
+import eu.kanade.presentation.avatar.eggikuBranchColor
 import eu.kanade.presentation.avatar.eggikuColor
-import eu.kanade.presentation.avatar.rankName
+import eu.kanade.presentation.avatar.eggikuRankTitle
 import eu.kanade.presentation.avatar.rememberEggikuAvatarCatalog
 import eu.kanade.presentation.avatar.rememberMyEggikuAvatar
 import eu.kanade.presentation.components.AppBar
@@ -80,6 +85,8 @@ import eu.kanade.tachiyomi.data.avatar.EggikuAvatarCatalog
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatarCatalog.thumbnail
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatarProgress
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatars
+import eu.kanade.tachiyomi.data.avatar.EggikuRankTree
+import eu.kanade.tachiyomi.ui.stats.EggikuRankTreeScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import tachiyomi.core.common.i18n.stringResource
@@ -94,6 +101,15 @@ import tachiyomi.presentation.core.util.collectAsState as collectPrefAsState
 
 /** Tab id for picking the rank border (not a catalog slot) */
 private const val BORDER = "border"
+
+// KMK -->
+/** The editor's top-level groups of slots */
+private enum class SlotGroup(val title: StringResource, val slots: List<String>) {
+    EGG(KMR.strings.avatar_group_egg, listOf("body", "pattern", "eyes", "mouth", "cheeks", "antenna")),
+    WEAR(KMR.strings.avatar_group_wear, listOf("hat", "face", "neck", "ear", "back", "held")),
+    SCENE(KMR.strings.avatar_group_scene, listOf("background_pattern", "back_effect", "front_effect", BORDER)),
+}
+// KMK <--
 
 private fun <T> jiggle() = spring<T>(dampingRatio = 0.5f, stiffness = Spring.StiffnessMediumLow)
 
@@ -176,6 +192,31 @@ class EggikuAvatarEditorScreen : Screen() {
                     .padding(top = padding.calculateTopPadding()),
             ) {
                 PreviewHeader(saved, progress, catalog)
+                // KMK -->
+                Outfits(
+                    current = saved,
+                    onWear = { changeWithUndo(it, KMR.strings.avatar_outfit_worn, context) },
+                    onSaved = {
+                        scope.launch {
+                            snackbar.currentSnackbarData?.dismiss()
+                            snackbar.showSnackbar(context.stringResource(KMR.strings.avatar_outfit_saved))
+                        }
+                    },
+                )
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                ) {
+                    SlotGroup.entries.forEachIndexed { index, group ->
+                        SegmentedButton(
+                            selected = slot in group.slots,
+                            onClick = { if (slot !in group.slots) slot = group.slots.first() },
+                            shape = SegmentedButtonDefaults.itemShape(index, SlotGroup.entries.size),
+                        ) { Text(stringResource(group.title)) }
+                    }
+                }
+                // KMK <--
                 SlotTabs(
                     selected = slot,
                     hasNew = { s ->
@@ -232,7 +273,7 @@ class EggikuAvatarEditorScreen : Screen() {
             LockedDialog(
                 title = if (rank.secret) "???" else rank.name,
                 condition = rankCondition(rank),
-                progress = stringResource(KMR.strings.avatar_xp, progress.xp),
+                progress = eggikuRankTitle(progress, catalog),
                 onDismiss = { lockedRank = null },
             )
         }
@@ -244,63 +285,84 @@ class EggikuAvatarEditorScreen : Screen() {
         progress: EggikuAvatarProgress,
         catalog: EggikuAvatarCatalog.Catalog,
     ) {
+        val navigator = LocalNavigator.currentOrThrow
         val rank = progress.border(catalog, avatar)
-        val current = progress.rank(catalog)
-        val next = progress.nextRank(catalog)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            EggikuAvatarImage(avatar = avatar, size = 150.dp, border = rank, bounce = true)
+            EggikuAvatarImage(avatar = avatar, size = 140.dp, border = rank, bounce = true)
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
+                // KMK -->
                 Text(
-                    text = rankName(current),
+                    text = eggikuRankTitle(progress, catalog),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = eggikuColor(current?.accent, MaterialTheme.colorScheme.primary),
+                    color = eggikuBranchColor(progress.standing.branch, MaterialTheme.colorScheme.primary),
                 )
-                Text(stringResource(KMR.strings.avatar_xp, progress.xp), style = MaterialTheme.typography.bodyMedium)
-                if (next != null) {
-                    val from = current?.xp?.takeIf { current.secret.not() } ?: 0
-                    val to = next.xp ?: 1
-                    val fraction = ((progress.xp - from).toFloat() / (to - from).coerceAtLeast(1)).coerceIn(0f, 1f)
-                    val animated by animateFloatAsState(fraction, jiggle(), label = "xp")
-                    LinearProgressIndicator(
-                        progress = { animated },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp),
-                        strokeCap = StrokeCap.Round,
-                        gapSize = 0.dp,
-                        drawStopIndicator = {},
-                    )
-                    Text(
-                        text = stringResource(KMR.strings.avatar_next_rank, (to - progress.xp).coerceAtLeast(0), next.name),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                } else {
-                    Text(
-                        text = stringResource(KMR.strings.avatar_top_rank),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                EggikuRankProgress(progress)
+                FilledTonalButton(onClick = { navigator.push(EggikuRankTreeScreen()) }) {
+                    Text("🌳 " + stringResource(KMR.strings.tree_title))
                 }
-                Text(
-                    text = stringResource(KMR.strings.avatar_how_xp),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                // KMK <--
             }
         }
     }
+
+    // KMK -->
+    /** Three saved outfits: tap to wear one, hold to save what you have on now */
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    private fun Outfits(current: EggikuAvatar, onWear: (EggikuAvatar) -> Unit, onSaved: () -> Unit) {
+        val outfitsPref = remember { EggikuAvatars.outfitsPref() }
+        val raw by outfitsPref.collectPrefAsState()
+        val outfits = remember(raw) { EggikuAvatars.decodeOutfits(raw) }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(KMR.strings.avatar_outfits),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.weight(1f),
+            )
+            (0 until EggikuAvatars.OUTFIT_SLOTS).forEach { index ->
+                val outfit = outfits.getOrNull(index)
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
+                        .combinedClickable(
+                            onClick = { outfit?.let(onWear) },
+                            onLongClick = {
+                                EggikuAvatars.saveOutfit(index, current)
+                                onSaved()
+                            },
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (outfit != null) {
+                        EggikuAvatarImage(avatar = outfit, size = 52.dp)
+                    } else {
+                        Text("+", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+        }
+    }
+    // KMK <--
 
     @Composable
     private fun SlotTabs(selected: String, hasNew: (String) -> Boolean, onSelect: (String) -> Unit) {
@@ -308,7 +370,9 @@ class EggikuAvatarEditorScreen : Screen() {
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(EggikuAvatarCatalog.SLOTS + BORDER) { s ->
+            // KMK -->
+            items(SlotGroup.entries.first { selected in it.slots }.slots) { s ->
+                // KMK <--
                 val isSelected = s == selected
                 val scale by animateFloatAsState(if (isSelected) 1.06f else 1f, jiggle(), label = "tab")
                 Box {
@@ -341,7 +405,12 @@ class EggikuAvatarEditorScreen : Screen() {
         onLockedRank: (EggikuAvatarCatalog.Rank) -> Unit,
     ) {
         val parts = catalog.slot(slot).filter { !unlockedOnly || progress.isUnlocked(catalog, it) }
-        val (core, tropes) = parts.partition { !it.isTrope }
+        // KMK -->
+        val tropes = parts.filter { it.isTrope }
+        val treeParts = parts.filter { it.unlock.type == "tree" || it.unlock.type == "prestige" }
+        val starter = parts.filter { it.unlock.type == "free" && !it.isTrope }
+        val earnedParts = parts - tropes.toSet() - treeParts.toSet() - starter.toSet()
+        // KMK <--
         LazyVerticalGrid(
             columns = GridCells.Adaptive(76.dp),
             contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = bottomPadding + 16.dp),
@@ -358,7 +427,12 @@ class EggikuAvatarEditorScreen : Screen() {
                         EggikuAvatarImage(avatar.copy(border = null), size = 64.dp, border = progress.rank(catalog))
                     }
                 }
-                val ranks = catalog.ranks.filter { !unlockedOnly || progress.hasRank(catalog, it.id) }
+                // KMK -->
+                // One of each border look: the first rank of each tier, the gilded one and the secret one
+                val ranks = catalog.ranks
+                    .filter { it.node == null || it.node in setOf(1, 4, 7, 10) }
+                    .filter { !unlockedOnly || progress.hasRank(catalog, it.id) }
+                // KMK <--
                 items(ranks, key = { "rank-" + it.id }) { rank ->
                     val owned = progress.hasRank(catalog, rank.id)
                     Tile(
@@ -411,9 +485,30 @@ class EggikuAvatarEditorScreen : Screen() {
                     }
                 }
             }
-            items(core, key = { it.slot + it.id }) { part ->
+            // KMK -->
+            items(starter, key = { it.slot + it.id }) { part ->
                 PartTile(part, avatar, catalog, progress, seen, onPick, onLocked)
             }
+            if (earnedParts.isNotEmpty()) {
+                item(key = "earned-header", span = { GridItemSpan(maxLineSpan) }) {
+                    SectionHeader(stringResource(KMR.strings.avatar_section_achievements))
+                }
+                items(earnedParts, key = { it.slot + it.id }) { part ->
+                    PartTile(part, avatar, catalog, progress, seen, onPick, onLocked)
+                }
+            }
+            EggikuRankTree.Branch.entries.forEach { branch ->
+                val fromBranch = treeParts.filter { it.unlock.branch == branch.key }
+                if (fromBranch.isNotEmpty()) {
+                    item(key = "branch-header-" + branch.key, span = { GridItemSpan(maxLineSpan) }) {
+                        SectionHeader(branch.emoji + " " + stringResource(KMR.strings.avatar_section_branch, stringResource(branch.title)))
+                    }
+                    items(fromBranch, key = { it.slot + it.id }) { part ->
+                        PartTile(part, avatar, catalog, progress, seen, onPick, onLocked)
+                    }
+                }
+            }
+            // KMK <--
             if (tropes.isNotEmpty()) {
                 item(key = "tropes", span = { GridItemSpan(maxLineSpan) }) {
                     Text(
@@ -521,6 +616,17 @@ class EggikuAvatarEditorScreen : Screen() {
         }
     }
 
+    // KMK -->
+    @Composable
+    private fun SectionHeader(text: String) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(start = 4.dp, top = 8.dp),
+        )
+    }
+    // KMK <--
+
     @Composable
     private fun NewDot(modifier: Modifier = Modifier) {
         Box(
@@ -572,6 +678,29 @@ class EggikuAvatarEditorScreen : Screen() {
                 }
             }
             "rank" -> catalog.rank(unlock.rank)?.let { rankCondition(it) } ?: unlock.condition.orEmpty()
+            // KMK -->
+            "tree" -> {
+                val branch = EggikuRankTree.Branch.of(unlock.branch)
+                val node = unlock.node ?: 1
+                if (branch != null) {
+                    stringResource(
+                        KMR.strings.avatar_reach_tree,
+                        stringResource(EggikuRankTree.nodeNames.getValue(branch)[node - 1]),
+                        stringResource(branch.title),
+                    )
+                } else {
+                    unlock.condition.orEmpty()
+                }
+            }
+            "prestige" -> {
+                val branch = EggikuRankTree.Branch.of(unlock.branch)
+                if (branch != null) {
+                    stringResource(KMR.strings.avatar_prestige_tree, stringResource(branch.title), unlock.level ?: 1)
+                } else {
+                    unlock.condition.orEmpty()
+                }
+            }
+            // KMK <--
             else -> ""
         }
     }
@@ -580,7 +709,18 @@ class EggikuAvatarEditorScreen : Screen() {
     private fun rankCondition(rank: EggikuAvatarCatalog.Rank): String = if (rank.secret) {
         stringResource(KMR.strings.avatar_secret_rank)
     } else {
-        stringResource(KMR.strings.avatar_reach_rank, rank.name, rank.xp ?: 0)
+        // KMK -->
+        val branch = EggikuRankTree.Branch.of(rank.branch)
+        when {
+            branch != null && rank.node != null -> stringResource(
+                KMR.strings.avatar_reach_tree,
+                rank.name,
+                stringResource(branch.title),
+            )
+            branch != null -> stringResource(KMR.strings.avatar_prestige_tree, stringResource(branch.title), 1)
+            else -> rank.name
+        }
+        // KMK <--
     }
 
     @Composable

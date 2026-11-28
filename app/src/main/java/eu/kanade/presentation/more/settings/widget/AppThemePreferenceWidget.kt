@@ -1,9 +1,10 @@
 package eu.kanade.presentation.more.settings.widget
 
 import android.app.Activity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -132,10 +133,14 @@ private fun AppThemesList(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppThemePreviewItem(
     selected: Boolean,
     onClick: () -> Unit,
+    // KMK -->
+    onLongClick: (() -> Unit)? = null,
+    // KMK <--
 ) {
     Column(
         modifier = Modifier
@@ -153,7 +158,9 @@ fun AppThemePreviewItem(
             .padding(4.dp)
             .clip(RoundedCornerShape(13.dp))
             .background(MaterialTheme.colorScheme.background)
-            .clickable(onClick = onClick),
+            // KMK -->
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
+        // KMK <--
     ) {
         // App Bar
         Row(

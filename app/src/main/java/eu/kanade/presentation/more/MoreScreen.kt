@@ -22,7 +22,6 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.NewReleases
 import androidx.compose.material.icons.outlined.QueryStats
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -39,15 +38,19 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import eu.kanade.presentation.avatar.EggikuAchievementsMoreCard
 import eu.kanade.presentation.avatar.EggikuAvatarMoreCard
 import eu.kanade.presentation.more.settings.widget.SwitchPreferenceWidget
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
+import eu.kanade.presentation.util.toDurationString
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
+import eu.kanade.tachiyomi.data.stats.EggikuReadingLog
 import eu.kanade.tachiyomi.ui.avatar.EggikuAvatarEditorScreen
 import eu.kanade.tachiyomi.ui.more.DownloadQueueState
 import eu.kanade.tachiyomi.ui.more.EggikuUpdateScreen
+import eu.kanade.tachiyomi.ui.stats.EggikuAchievementsScreen
 import eu.kanade.tachiyomi.util.system.openInBrowser
 import exh.pref.DelegateSourcePreferences
 import exh.source.ExhPreferences
@@ -64,6 +67,7 @@ import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.util.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun MoreScreen(
@@ -107,6 +111,10 @@ fun MoreScreen(
             item {
                 val navigator = LocalNavigator.current
                 EggikuAvatarMoreCard(onClick = { navigator?.push(EggikuAvatarEditorScreen()) })
+            }
+            item {
+                val navigator = LocalNavigator.current
+                EggikuAchievementsMoreCard(onClick = { navigator?.push(EggikuAchievementsScreen()) })
             }
             // KMK <--
             item {
@@ -193,8 +201,18 @@ fun MoreScreen(
                 )
             }
             item {
+                // KMK -->
+                val weekSeconds = remember {
+                    EggikuReadingLog.sum(EggikuReadingLog.all(), EggikuReadingLog.weekStart(), EggikuReadingLog.today()).seconds
+                }
+                // KMK <--
                 TextPreferenceWidget(
                     title = stringResource(MR.strings.label_stats),
+                    // KMK -->
+                    subtitle = weekSeconds.takeIf { it >= 60 }?.let {
+                        stringResource(KMR.strings.more_stats_week, it.seconds.toDurationString(LocalContext.current, ""))
+                    },
+                    // KMK <--
                     icon = Icons.Outlined.QueryStats,
                     onPreferenceClick = onClickStats,
                 )
@@ -208,13 +226,9 @@ fun MoreScreen(
                 )
             }
             // KMK <--
-            item {
-                TextPreferenceWidget(
-                    title = stringResource(MR.strings.label_data_storage),
-                    icon = Icons.Outlined.Storage,
-                    onPreferenceClick = onClickDataAndStorage,
-                )
-            }
+            // KMK -->
+            // Eggiku: Data and storage lives in Settings (Backup and sync) now
+            // KMK <--
             // SY -->
             if (exhPreferences.isHentaiEnabled().get() || delegateSourcePreferences.delegateSources().get()) {
                 item {

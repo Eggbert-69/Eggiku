@@ -15,6 +15,7 @@ import eu.kanade.tachiyomi.data.eggikuupdate.EggikuUpdates
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.shelves.EggikuForYou
 import eu.kanade.tachiyomi.data.shelves.EggikuShelfNotifier
+import eu.kanade.tachiyomi.data.shelves.EggikuUniverseSync
 import eu.kanade.tachiyomi.ui.main.EggikuAppIcons
 import eu.kanade.tachiyomi.ui.main.EggikuOpen
 import eu.kanade.tachiyomi.ui.main.MainActivity
@@ -77,6 +78,9 @@ class EggikuStatsWorker(context: Context, params: WorkerParameters) : CoroutineW
             EggikuForYou.refreshMyTopTitles()
             EggikuAppIcons.applySeasonal(applicationContext)
             EggikuShelfNotifier.scanForSpinoffs(applicationContext)
+            // KMK -->
+            EggikuUniverseSync.run(applicationContext)
+            // KMK <--
         } catch (_: Exception) {
             // Extras; try again tomorrow
         }

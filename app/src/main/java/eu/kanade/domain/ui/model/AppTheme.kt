@@ -45,6 +45,19 @@ enum class AppTheme(val titleRes: StringResource?) {
     ONE_DARK(KMR.strings.theme_onedark),
     SOLARIZED(KMR.strings.theme_solarized),
 
+    // Eggiku themes, wave two
+    ESPRESSO(KMR.strings.theme_espresso),
+    INK_PAPER(KMR.strings.theme_inkpaper),
+    MATCHA_LATTE(KMR.strings.theme_matchalatte),
+    RAMEN_NIGHT(KMR.strings.theme_ramennight),
+    SAKURA_DRIFT(KMR.strings.theme_sakuradrift),
+    AURORA(KMR.strings.theme_aurora),
+    CAMPFIRE(KMR.strings.theme_campfire),
+    BUBBLE_TEA(KMR.strings.theme_bubbletea),
+    POCKET_PIXEL(KMR.strings.theme_pocketpixel),
+    FROSTBITE(KMR.strings.theme_frostbite),
+    THUNDERSTORM(KMR.strings.theme_thunderstorm),
+
     /** Hidden until unlocked: type "wyatt" in the settings search and launch the rocket */
     GLIB_GLORB(KMR.strings.theme_glibglorb),
 

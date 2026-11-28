@@ -3,7 +3,9 @@ package eu.kanade.tachiyomi.data.achievements
 import android.net.Uri
 import android.util.Base64
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatar
+import eu.kanade.tachiyomi.data.avatar.EggikuAvatarProgress
 import eu.kanade.tachiyomi.data.avatar.EggikuAvatars
+import eu.kanade.tachiyomi.data.avatar.EggikuRankTree
 import eu.kanade.tachiyomi.data.shelves.EggikuForYou
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -35,6 +37,10 @@ object EggikuCompare {
         val avatar: EggikuAvatar? = null,
         /** Their best-rated series, for "More like this" */
         val picks: List<String> = emptyList(),
+        // KMK -->
+        /** Their rank tree; left out by older versions */
+        val tree: EggikuRankTree.State? = null,
+        // KMK <--
     )
 
     private const val PREFIX = "EGG1-"
@@ -53,6 +59,9 @@ object EggikuCompare {
             total = EggikuAchievements.totalCount,
             avatar = EggikuAvatars.mine(),
             picks = EggikuForYou.myTopTitles(),
+            // KMK -->
+            tree = EggikuAvatarProgress.mine().treeState,
+            // KMK <--
         )
     }
 

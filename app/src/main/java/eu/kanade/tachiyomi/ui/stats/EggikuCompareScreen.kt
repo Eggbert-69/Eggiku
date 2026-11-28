@@ -26,7 +26,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.avatar.EggikuAvatarImage
 import eu.kanade.presentation.avatar.eggikuColor
-import eu.kanade.presentation.avatar.rankName
+import eu.kanade.presentation.avatar.eggikuRankTitle
 import eu.kanade.presentation.avatar.rememberEggikuAvatarCatalog
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.util.Screen
@@ -129,7 +129,9 @@ class EggikuCompareScreen(private val friend: EggikuCompare.Profile) : Screen() 
             EggikuAvatarImage(avatar = avatar, size = 104.dp, border = progress.border(catalog, avatar))
             Text(name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             Text(
-                text = rankName(rank) + " · " + stringResource(KMR.strings.avatar_xp, progress.xp),
+                // KMK -->
+                text = eggikuRankTitle(progress, catalog) + " · " + stringResource(KMR.strings.avatar_xp, progress.xp),
+                // KMK <--
                 style = MaterialTheme.typography.labelMedium,
                 color = eggikuColor(rank?.accent, MaterialTheme.colorScheme.onSurfaceVariant),
             )

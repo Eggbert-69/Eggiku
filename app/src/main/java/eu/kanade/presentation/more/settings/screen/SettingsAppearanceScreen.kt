@@ -2,7 +2,6 @@ package eu.kanade.presentation.more.settings.screen
 
 import android.app.Activity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
@@ -23,8 +22,7 @@ import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.screen.appearance.AppCustomThemeColorPickerScreen
 import eu.kanade.presentation.more.settings.screen.appearance.AppLanguageScreen
 import eu.kanade.presentation.more.settings.screen.appearance.EggikuThemeEditorScreen
-import eu.kanade.presentation.more.settings.widget.AppThemeModePreferenceWidget
-import eu.kanade.presentation.more.settings.widget.AppThemePreferenceWidget
+import eu.kanade.presentation.more.settings.screen.appearance.EggikuThemePickerScreen
 import eu.kanade.presentation.theme.EggikuFont
 import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.persistentListOf
@@ -81,30 +79,22 @@ object SettingsAppearanceScreen : SearchableSettings {
         val appTheme by appThemePref.collectAsState()
 
         val amoledPref = uiPreferences.themeDarkAmoled()
-        val amoled by amoledPref.collectAsState()
 
         return Preference.PreferenceGroup(
             title = stringResource(MR.strings.pref_category_theme),
             preferenceItems = persistentListOf(
-                Preference.PreferenceItem.CustomPreference(
+                // KMK -->
+                // The full picker (mode, mood filters, previews) lives on its own page
+                Preference.PreferenceItem.TextPreference(
                     title = stringResource(MR.strings.pref_app_theme),
-                ) {
-                    Column {
-                        AppThemeModePreferenceWidget(
-                            value = themeMode,
-                            onItemClick = {
-                                themeModePref.set(it)
-                                setAppCompatDelegateThemeMode(it)
-                            },
-                        )
-
-                        AppThemePreferenceWidget(
-                            value = appTheme,
-                            amoled = amoled,
-                            onItemClick = { appThemePref.set(it) },
-                        )
-                    }
-                },
+                    subtitle = stringResource(
+                        KMR.strings.theme_picker_entry_summary,
+                        appTheme.titleRes?.let { stringResource(it) } ?: appTheme.name,
+                        stringResource(themeModeLabel(themeMode)),
+                    ),
+                    onClick = { navigator.push(EggikuThemePickerScreen()) },
+                ),
+                // KMK <--
                 // KMK -->
                 Preference.PreferenceItem.TextPreference(
                     title = stringResource(KMR.strings.pref_custom_color),
@@ -438,3 +428,12 @@ private val DateFormats = listOf(
     "dd MMM yyyy",
     "MMM dd, yyyy",
 )
+
+// KMK -->
+internal fun themeModeLabel(mode: ThemeMode) = when (mode) {
+    ThemeMode.LIGHT -> MR.strings.theme_light
+    ThemeMode.DARK -> MR.strings.theme_dark
+    ThemeMode.SYSTEM -> MR.strings.theme_system
+    ThemeMode.SCHEDULED -> KMR.strings.theme_scheduled
+}
+// KMK <--

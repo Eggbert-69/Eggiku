@@ -100,4 +100,8 @@
         <item quantity="one">%d possible spin-off found</item>
         <item quantity="other">%d possible spin-offs found</item>
     </plurals>
+    <plurals name="universe_added_title">
+        <item quantity="one">Universe added %d series to your library</item>
+        <item quantity="other">Universe added %d series to your library</item>
+    </plurals>
 </resources>

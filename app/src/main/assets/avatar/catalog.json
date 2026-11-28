@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "canvas": {
     "width": 80,
     "height": 80,
@@ -3963,104 +3963,2130 @@
       },
       "usesOwnColours": true,
       "collection": "core"
+    },
+    {
+      "id": "shell-cap",
+      "name": "Shell cap",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/shell-cap.svg",
+        "png": "hat/shell-cap.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 1,
+        "condition": "Reach Egg"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "beak",
+      "name": "Little beak",
+      "slot": "face",
+      "layer": "face_item",
+      "files": {
+        "svg": "face/beak.svg",
+        "png": "face/beak.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 2,
+        "condition": "Reach Hatchling"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "feather-boa",
+      "name": "Feather boa",
+      "slot": "neck",
+      "layer": "neck_item",
+      "files": {
+        "svg": "neck/feather-boa.svg",
+        "png": "neck/feather-boa.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 3,
+        "condition": "Reach Chick"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "corn-cob",
+      "name": "Corn cob",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/corn-cob.svg",
+        "png": "held/corn-cob.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 4,
+        "condition": "Reach Pullet"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "chick-wings",
+      "name": "Chick wings",
+      "slot": "back",
+      "layer": "back_item",
+      "files": {
+        "svg": "back/chick-wings.svg",
+        "png": "back/chick-wings.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 5,
+        "condition": "Reach Spring Chicken"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "straw-hat",
+      "name": "Farm straw hat",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/straw-hat.svg",
+        "png": "hat/straw-hat.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 6,
+        "condition": "Reach Free Ranger"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "barn",
+      "name": "Red barn",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/barn.svg",
+        "png": "background_pattern/barn.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 7,
+        "condition": "Reach Barnyard Boss"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "rooster-comb",
+      "name": "Rooster comb",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/rooster-comb.svg",
+        "png": "hat/rooster-comb.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 8,
+        "condition": "Reach Rooster Royalty"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "golden-feathers",
+      "name": "Golden feathers",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "files": {
+        "svg": "front_effect/golden-feathers.svg",
+        "png": "front_effect/golden-feathers.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 9,
+        "condition": "Reach Golden Hen"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "sunrise-halo",
+      "name": "Sunrise halo",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "files": {
+        "svg": "back_effect/sunrise-halo.svg",
+        "png": "back_effect/sunrise-halo.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "chicken",
+        "node": 10,
+        "condition": "Reach Legendary Cluck"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "golden-comb-crown",
+      "name": "Golden comb crown",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/golden-comb-crown.svg",
+        "png": "hat/golden-comb-crown.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "chicken",
+        "level": 1,
+        "condition": "Rebirth the Chicken branch"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "gilded-egg",
+      "name": "Gilded egg",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/gilded-egg.svg",
+        "png": "held/gilded-egg.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "chicken",
+        "level": 2,
+        "condition": "Rebirth the Chicken branch 2 times"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "golden-coop",
+      "name": "Golden coop",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/golden-coop.svg",
+        "png": "background_pattern/golden-coop.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "chicken",
+        "level": 3,
+        "condition": "Rebirth the Chicken branch 3 times"
+      },
+      "collection": "tree-chicken"
+    },
+    {
+      "id": "reading-glasses",
+      "name": "Reading glasses",
+      "slot": "face",
+      "layer": "face_item",
+      "files": {
+        "svg": "face/reading-glasses.svg",
+        "png": "face/reading-glasses.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 1,
+        "condition": "Reach First Page"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "bookmark",
+      "name": "Ribbon bookmark",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/bookmark.svg",
+        "png": "held/bookmark.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 2,
+        "condition": "Reach Page Turner"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "book-hat",
+      "name": "Book hat",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/book-hat.svg",
+        "png": "hat/book-hat.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 3,
+        "condition": "Reach Chapter Chaser"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "striped-scarf",
+      "name": "Striped scarf",
+      "slot": "neck",
+      "layer": "neck_item",
+      "files": {
+        "svg": "neck/striped-scarf.svg",
+        "png": "neck/striped-scarf.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 4,
+        "condition": "Reach Bookworm"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "candle",
+      "name": "Reading candle",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/candle.svg",
+        "png": "held/candle.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 5,
+        "condition": "Reach Binge Reader"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "book-backpack",
+      "name": "Book backpack",
+      "slot": "back",
+      "layer": "back_item",
+      "files": {
+        "svg": "back/book-backpack.svg",
+        "png": "back/book-backpack.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 6,
+        "condition": "Reach Arc Master"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "library",
+      "name": "Cozy library",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/library.svg",
+        "png": "background_pattern/library.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 7,
+        "condition": "Reach Saga Keeper"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "librarian-hat",
+      "name": "Grand librarian hat",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/librarian-hat.svg",
+        "png": "hat/librarian-hat.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 8,
+        "condition": "Reach Grand Librarian"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "floating-pages",
+      "name": "Floating pages",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "files": {
+        "svg": "front_effect/floating-pages.svg",
+        "png": "front_effect/floating-pages.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 9,
+        "condition": "Reach Living Legend"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "book-ring",
+      "name": "Ring of books",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "files": {
+        "svg": "back_effect/book-ring.svg",
+        "png": "back_effect/book-ring.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "reader",
+        "node": 10,
+        "condition": "Reach Endless Reader"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "golden-laurel",
+      "name": "Golden laurel",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/golden-laurel.svg",
+        "png": "hat/golden-laurel.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "reader",
+        "level": 1,
+        "condition": "Rebirth the Reader branch"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "golden-quill",
+      "name": "Golden quill",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/golden-quill.svg",
+        "png": "held/golden-quill.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "reader",
+        "level": 2,
+        "condition": "Rebirth the Reader branch 2 times"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "starry-library",
+      "name": "Starry library",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/starry-library.svg",
+        "png": "background_pattern/starry-library.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "reader",
+        "level": 3,
+        "condition": "Rebirth the Reader branch 3 times"
+      },
+      "collection": "tree-reader"
+    },
+    {
+      "id": "stardust",
+      "name": "Stardust",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "files": {
+        "svg": "front_effect/stardust.svg",
+        "png": "front_effect/stardust.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 1,
+        "condition": "Reach Stardust"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "meteor",
+      "name": "Pocket meteor",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/meteor.svg",
+        "png": "held/meteor.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 2,
+        "condition": "Reach Meteor"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "comet-earrings",
+      "name": "Comet earrings",
+      "slot": "ear",
+      "layer": "ear_item",
+      "files": {
+        "svg": "ear/comet-earrings.svg",
+        "png": "ear/comet-earrings.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 3,
+        "condition": "Reach Comet"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "moon-tiara",
+      "name": "Moon tiara",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/moon-tiara.svg",
+        "png": "hat/moon-tiara.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 4,
+        "condition": "Reach Moon"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "planet-ring",
+      "name": "Planet ring",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "files": {
+        "svg": "back_effect/planet-ring.svg",
+        "png": "back_effect/planet-ring.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 5,
+        "condition": "Reach Planet"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "star-visor",
+      "name": "Star visor",
+      "slot": "face",
+      "layer": "face_item",
+      "files": {
+        "svg": "face/star-visor.svg",
+        "png": "face/star-visor.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 6,
+        "condition": "Reach Star"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "constellation-necklace",
+      "name": "Constellation necklace",
+      "slot": "neck",
+      "layer": "neck_item",
+      "files": {
+        "svg": "neck/constellation-necklace.svg",
+        "png": "neck/constellation-necklace.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 7,
+        "condition": "Reach Nova"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "nebula",
+      "name": "Nebula",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/nebula.svg",
+        "png": "background_pattern/nebula.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 8,
+        "condition": "Reach Nebula"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "bubble-helmet",
+      "name": "Bubble space helmet",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/bubble-helmet.svg",
+        "png": "hat/bubble-helmet.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 9,
+        "condition": "Reach Galaxy"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "galaxy-swirl",
+      "name": "Galaxy swirl",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "files": {
+        "svg": "back_effect/galaxy-swirl.svg",
+        "png": "back_effect/galaxy-swirl.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "cosmic",
+        "node": 10,
+        "condition": "Reach Quasar"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "star-crown",
+      "name": "Star crown",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/star-crown.svg",
+        "png": "hat/star-crown.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "cosmic",
+        "level": 1,
+        "condition": "Rebirth the Cosmic branch"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "tiny-ufo",
+      "name": "Tiny UFO",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/tiny-ufo.svg",
+        "png": "held/tiny-ufo.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "cosmic",
+        "level": 2,
+        "condition": "Rebirth the Cosmic branch 2 times"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "quasar",
+      "name": "Quasar burst",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/quasar.svg",
+        "png": "background_pattern/quasar.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "cosmic",
+        "level": 3,
+        "condition": "Rebirth the Cosmic branch 3 times"
+      },
+      "collection": "tree-cosmic"
+    },
+    {
+      "id": "tiny-bubbles",
+      "name": "Tiny bubbles",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "files": {
+        "svg": "front_effect/tiny-bubbles.svg",
+        "png": "front_effect/tiny-bubbles.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 1,
+        "condition": "Reach Plankton"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "shrimp",
+      "name": "Shrimp buddy",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/shrimp.svg",
+        "png": "held/shrimp.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 2,
+        "condition": "Reach Shrimp"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "pufferfish-hat",
+      "name": "Pufferfish hat",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/pufferfish-hat.svg",
+        "png": "hat/pufferfish-hat.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 3,
+        "condition": "Reach Pufferfish"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "snorkel-mask",
+      "name": "Snorkel mask",
+      "slot": "face",
+      "layer": "face_item",
+      "files": {
+        "svg": "face/snorkel-mask.svg",
+        "png": "face/snorkel-mask.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 4,
+        "condition": "Reach Octopus"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "manta-wings",
+      "name": "Manta wings",
+      "slot": "back",
+      "layer": "back_item",
+      "files": {
+        "svg": "back/manta-wings.svg",
+        "png": "back/manta-wings.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 5,
+        "condition": "Reach Manta"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "shark-fin",
+      "name": "Shark fin",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/shark-fin.svg",
+        "png": "hat/shark-fin.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 6,
+        "condition": "Reach Shark"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "pearl-necklace",
+      "name": "Pearl necklace",
+      "slot": "neck",
+      "layer": "neck_item",
+      "files": {
+        "svg": "neck/pearl-necklace.svg",
+        "png": "neck/pearl-necklace.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 7,
+        "condition": "Reach Orca"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "angler-lantern",
+      "name": "Anglerfish lantern",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/angler-lantern.svg",
+        "png": "hat/angler-lantern.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 8,
+        "condition": "Reach Anglerfish"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "kelp-deep",
+      "name": "Kelp forest",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/kelp-deep.svg",
+        "png": "background_pattern/kelp-deep.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 9,
+        "condition": "Reach Leviathan"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "kraken-tentacles",
+      "name": "Kraken tentacles",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "files": {
+        "svg": "back_effect/kraken-tentacles.svg",
+        "png": "back_effect/kraken-tentacles.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "deepsea",
+        "node": 10,
+        "condition": "Reach Kraken"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "coral-crown",
+      "name": "Coral crown",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/coral-crown.svg",
+        "png": "hat/coral-crown.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "deepsea",
+        "level": 1,
+        "condition": "Rebirth the Deep Sea branch"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "trident",
+      "name": "Golden trident",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/trident.svg",
+        "png": "held/trident.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "deepsea",
+        "level": 2,
+        "condition": "Rebirth the Deep Sea branch 2 times"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "glow-jellies",
+      "name": "Glowing jellyfish",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "files": {
+        "svg": "front_effect/glow-jellies.svg",
+        "png": "front_effect/glow-jellies.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "deepsea",
+        "level": 3,
+        "condition": "Rebirth the Deep Sea branch 3 times"
+      },
+      "collection": "tree-deepsea"
+    },
+    {
+      "id": "seed-sprout",
+      "name": "Little sprout",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/seed-sprout.svg",
+        "png": "hat/seed-sprout.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 1,
+        "condition": "Reach Seed"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "ear-flower",
+      "name": "Flower behind the ear",
+      "slot": "ear",
+      "layer": "ear_item",
+      "files": {
+        "svg": "ear/ear-flower.svg",
+        "png": "ear/ear-flower.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 2,
+        "condition": "Reach Sprout"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "watering-can",
+      "name": "Watering can",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/watering-can.svg",
+        "png": "held/watering-can.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 3,
+        "condition": "Reach Seedling"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "leaf-scarf",
+      "name": "Leaf scarf",
+      "slot": "neck",
+      "layer": "neck_item",
+      "files": {
+        "svg": "neck/leaf-scarf.svg",
+        "png": "neck/leaf-scarf.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 4,
+        "condition": "Reach Fern"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "bloom-crown",
+      "name": "Bloom crown",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/bloom-crown.svg",
+        "png": "hat/bloom-crown.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 5,
+        "condition": "Reach Bloom"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "ladybug",
+      "name": "Ladybug friend",
+      "slot": "face",
+      "layer": "face_item",
+      "files": {
+        "svg": "face/ladybug.svg",
+        "png": "face/ladybug.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 6,
+        "condition": "Reach Willow"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "oak-leaf-cape",
+      "name": "Oak leaf cape",
+      "slot": "back",
+      "layer": "back_item",
+      "files": {
+        "svg": "back/oak-leaf-cape.svg",
+        "png": "back/oak-leaf-cape.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 7,
+        "condition": "Reach Oak"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "garden-beds",
+      "name": "Garden beds",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/garden-beds.svg",
+        "png": "background_pattern/garden-beds.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 8,
+        "condition": "Reach Redwood"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "falling-petals",
+      "name": "Falling petals",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "files": {
+        "svg": "front_effect/falling-petals.svg",
+        "png": "front_effect/falling-petals.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 9,
+        "condition": "Reach World Tree"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "world-tree",
+      "name": "World tree",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "files": {
+        "svg": "back_effect/world-tree.svg",
+        "png": "back_effect/world-tree.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "garden",
+        "node": 10,
+        "condition": "Reach Eternal Grove"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "golden-blossom-crown",
+      "name": "Golden blossom crown",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/golden-blossom-crown.svg",
+        "png": "hat/golden-blossom-crown.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "garden",
+        "level": 1,
+        "condition": "Rebirth the Garden branch"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "bonsai",
+      "name": "Tiny bonsai",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/bonsai.svg",
+        "png": "held/bonsai.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "garden",
+        "level": 2,
+        "condition": "Rebirth the Garden branch 2 times"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "eternal-grove",
+      "name": "Eternal grove",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/eternal-grove.svg",
+        "png": "background_pattern/eternal-grove.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "garden",
+        "level": 3,
+        "condition": "Rebirth the Garden branch 3 times"
+      },
+      "collection": "tree-garden"
+    },
+    {
+      "id": "kasa",
+      "name": "Straw kasa",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/kasa.svg",
+        "png": "hat/kasa.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 1,
+        "condition": "Reach Wanderer"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "bokken",
+      "name": "Wooden bokken",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/bokken.svg",
+        "png": "held/bokken.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 2,
+        "condition": "Reach Ronin"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "victory-band",
+      "name": "Victory headband",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/victory-band.svg",
+        "png": "hat/victory-band.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 3,
+        "condition": "Reach Swordhand"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "steel-katana",
+      "name": "Steel katana",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/steel-katana.svg",
+        "png": "held/steel-katana.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 4,
+        "condition": "Reach Blade Dancer"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "kimono-collar",
+      "name": "Kimono collar",
+      "slot": "neck",
+      "layer": "neck_item",
+      "files": {
+        "svg": "neck/kimono-collar.svg",
+        "png": "neck/kimono-collar.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 5,
+        "condition": "Reach Duelist"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "back-sword",
+      "name": "Sword on the back",
+      "slot": "back",
+      "layer": "back_item",
+      "files": {
+        "svg": "back/back-sword.svg",
+        "png": "back/back-sword.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 6,
+        "condition": "Reach Bushi"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "menpo",
+      "name": "Menpo mask",
+      "slot": "face",
+      "layer": "face_item",
+      "files": {
+        "svg": "face/menpo.svg",
+        "png": "face/menpo.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 7,
+        "condition": "Reach Shogun's Guard"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "bamboo-dojo",
+      "name": "Bamboo dojo",
+      "slot": "background_pattern",
+      "layer": "background_pattern",
+      "files": {
+        "svg": "background_pattern/bamboo-dojo.svg",
+        "png": "background_pattern/bamboo-dojo.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 8,
+        "condition": "Reach Sword Saint"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "kabuto",
+      "name": "Kabuto helmet",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/kabuto.svg",
+        "png": "hat/kabuto.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 9,
+        "condition": "Reach Shogun"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "crimson-sun",
+      "name": "Crimson sun",
+      "slot": "back_effect",
+      "layer": "back_effect",
+      "files": {
+        "svg": "back_effect/crimson-sun.svg",
+        "png": "back_effect/crimson-sun.png"
+      },
+      "unlock": {
+        "type": "tree",
+        "branch": "samurai",
+        "node": 10,
+        "condition": "Reach Legend of the Blade"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "golden-kabuto",
+      "name": "Golden kabuto",
+      "slot": "hat",
+      "layer": "hat",
+      "files": {
+        "svg": "hat/golden-kabuto.svg",
+        "png": "hat/golden-kabuto.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "samurai",
+        "level": 1,
+        "condition": "Rebirth the Samurai branch"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "golden-katana",
+      "name": "Golden katana",
+      "slot": "held",
+      "layer": "held_item",
+      "files": {
+        "svg": "held/golden-katana.svg",
+        "png": "held/golden-katana.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "samurai",
+        "level": 2,
+        "condition": "Rebirth the Samurai branch 2 times"
+      },
+      "collection": "tree-samurai"
+    },
+    {
+      "id": "sakura-storm",
+      "name": "Sakura storm",
+      "slot": "front_effect",
+      "layer": "front_effect",
+      "files": {
+        "svg": "front_effect/sakura-storm.svg",
+        "png": "front_effect/sakura-storm.png"
+      },
+      "unlock": {
+        "type": "prestige",
+        "branch": "samurai",
+        "level": 3,
+        "condition": "Rebirth the Samurai branch 3 times"
+      },
+      "collection": "tree-samurai"
     }
   ],
   "ranks": [
     {
-      "id": "raw",
-      "name": "Raw Egg",
-      "xp": 0,
+      "id": "egg",
+      "name": "Fresh Egg",
       "secret": false,
-      "accent": "#B9B4C4",
+      "accent": "#B8A78C",
       "files": {
-        "svg": "rank_border/raw.svg",
-        "png": "rank_border/raw.png"
-      },
-      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+        "svg": "rank_border/egg-start.svg",
+        "png": "rank_border/egg-start.png"
+      }
     },
     {
-      "id": "cracked",
-      "name": "Cracked",
-      "xp": 20,
+      "id": "chicken_1",
+      "name": "Egg",
       "secret": false,
-      "accent": "#D9B98A",
+      "accent": "#C9861A",
       "files": {
-        "svg": "rank_border/cracked.svg",
-        "png": "rank_border/cracked.png"
+        "svg": "rank_border/chicken-0.svg",
+        "png": "rank_border/chicken-0.png"
       },
-      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+      "branch": "chicken",
+      "node": 1
     },
     {
-      "id": "hatchling",
+      "id": "chicken_2",
       "name": "Hatchling",
-      "xp": 60,
       "secret": false,
-      "accent": "#C98A4B",
+      "accent": "#C9861A",
       "files": {
-        "svg": "rank_border/hatchling.svg",
-        "png": "rank_border/hatchling.png"
+        "svg": "rank_border/chicken-0.svg",
+        "png": "rank_border/chicken-0.png"
       },
-      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+      "branch": "chicken",
+      "node": 2
     },
     {
-      "id": "soft",
-      "name": "Soft-Boiled",
-      "xp": 150,
+      "id": "chicken_3",
+      "name": "Chick",
       "secret": false,
-      "accent": "#A9B4C6",
+      "accent": "#C9861A",
       "files": {
-        "svg": "rank_border/soft.svg",
-        "png": "rank_border/soft.png"
+        "svg": "rank_border/chicken-0.svg",
+        "png": "rank_border/chicken-0.png"
       },
-      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+      "branch": "chicken",
+      "node": 3
     },
     {
-      "id": "hard",
-      "name": "Hard-Boiled",
-      "xp": 300,
+      "id": "chicken_4",
+      "name": "Pullet",
       "secret": false,
-      "accent": "#7FA6D9",
+      "accent": "#C9861A",
       "files": {
-        "svg": "rank_border/hard.svg",
-        "png": "rank_border/hard.png"
+        "svg": "rank_border/chicken-1.svg",
+        "png": "rank_border/chicken-1.png"
       },
-      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+      "branch": "chicken",
+      "node": 4
     },
     {
-      "id": "sunny",
-      "name": "Sunny-Side Up",
-      "xp": 500,
+      "id": "chicken_5",
+      "name": "Spring Chicken",
       "secret": false,
-      "accent": "#FFB020",
+      "accent": "#C9861A",
       "files": {
-        "svg": "rank_border/sunny.svg",
-        "png": "rank_border/sunny.png"
+        "svg": "rank_border/chicken-1.svg",
+        "png": "rank_border/chicken-1.png"
       },
-      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+      "branch": "chicken",
+      "node": 5
     },
     {
-      "id": "golden",
-      "name": "Golden Egg",
-      "xp": 800,
+      "id": "chicken_6",
+      "name": "Free Ranger",
       "secret": false,
-      "accent": "#F2B705",
+      "accent": "#C9861A",
       "files": {
-        "svg": "rank_border/golden.svg",
-        "png": "rank_border/golden.png"
+        "svg": "rank_border/chicken-1.svg",
+        "png": "rank_border/chicken-1.png"
       },
-      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+      "branch": "chicken",
+      "node": 6
     },
     {
-      "id": "cosmic",
-      "name": "Cosmic Egg",
-      "xp": 1200,
+      "id": "chicken_7",
+      "name": "Barnyard Boss",
       "secret": false,
-      "accent": "#8B6CFF",
+      "accent": "#C9861A",
       "files": {
-        "svg": "rank_border/cosmic.svg",
-        "png": "rank_border/cosmic.png"
+        "svg": "rank_border/chicken-2.svg",
+        "png": "rank_border/chicken-2.png"
       },
-      "placement": "120x120 canvas; the 80px avatar circle sits centred at (60,60), radius 40"
+      "branch": "chicken",
+      "node": 7
+    },
+    {
+      "id": "chicken_8",
+      "name": "Rooster Royalty",
+      "secret": false,
+      "accent": "#C9861A",
+      "files": {
+        "svg": "rank_border/chicken-2.svg",
+        "png": "rank_border/chicken-2.png"
+      },
+      "branch": "chicken",
+      "node": 8
+    },
+    {
+      "id": "chicken_9",
+      "name": "Golden Hen",
+      "secret": false,
+      "accent": "#C9861A",
+      "files": {
+        "svg": "rank_border/chicken-2.svg",
+        "png": "rank_border/chicken-2.png"
+      },
+      "branch": "chicken",
+      "node": 9
+    },
+    {
+      "id": "chicken_10",
+      "name": "Legendary Cluck",
+      "secret": false,
+      "accent": "#C9861A",
+      "files": {
+        "svg": "rank_border/chicken-3.svg",
+        "png": "rank_border/chicken-3.png"
+      },
+      "branch": "chicken",
+      "node": 10
+    },
+    {
+      "id": "chicken_gilded",
+      "name": "Gilded Legendary Cluck",
+      "secret": false,
+      "accent": "#B8860B",
+      "files": {
+        "svg": "rank_border/chicken-gilded.svg",
+        "png": "rank_border/chicken-gilded.png"
+      },
+      "branch": "chicken"
+    },
+    {
+      "id": "reader_1",
+      "name": "First Page",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-0.svg",
+        "png": "rank_border/reader-0.png"
+      },
+      "branch": "reader",
+      "node": 1
+    },
+    {
+      "id": "reader_2",
+      "name": "Page Turner",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-0.svg",
+        "png": "rank_border/reader-0.png"
+      },
+      "branch": "reader",
+      "node": 2
+    },
+    {
+      "id": "reader_3",
+      "name": "Chapter Chaser",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-0.svg",
+        "png": "rank_border/reader-0.png"
+      },
+      "branch": "reader",
+      "node": 3
+    },
+    {
+      "id": "reader_4",
+      "name": "Bookworm",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-1.svg",
+        "png": "rank_border/reader-1.png"
+      },
+      "branch": "reader",
+      "node": 4
+    },
+    {
+      "id": "reader_5",
+      "name": "Binge Reader",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-1.svg",
+        "png": "rank_border/reader-1.png"
+      },
+      "branch": "reader",
+      "node": 5
+    },
+    {
+      "id": "reader_6",
+      "name": "Arc Master",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-1.svg",
+        "png": "rank_border/reader-1.png"
+      },
+      "branch": "reader",
+      "node": 6
+    },
+    {
+      "id": "reader_7",
+      "name": "Saga Keeper",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-2.svg",
+        "png": "rank_border/reader-2.png"
+      },
+      "branch": "reader",
+      "node": 7
+    },
+    {
+      "id": "reader_8",
+      "name": "Grand Librarian",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-2.svg",
+        "png": "rank_border/reader-2.png"
+      },
+      "branch": "reader",
+      "node": 8
+    },
+    {
+      "id": "reader_9",
+      "name": "Living Legend",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-2.svg",
+        "png": "rank_border/reader-2.png"
+      },
+      "branch": "reader",
+      "node": 9
+    },
+    {
+      "id": "reader_10",
+      "name": "Endless Reader",
+      "secret": false,
+      "accent": "#3D6FD9",
+      "files": {
+        "svg": "rank_border/reader-3.svg",
+        "png": "rank_border/reader-3.png"
+      },
+      "branch": "reader",
+      "node": 10
+    },
+    {
+      "id": "reader_gilded",
+      "name": "Gilded Endless Reader",
+      "secret": false,
+      "accent": "#B8860B",
+      "files": {
+        "svg": "rank_border/reader-gilded.svg",
+        "png": "rank_border/reader-gilded.png"
+      },
+      "branch": "reader"
+    },
+    {
+      "id": "cosmic_1",
+      "name": "Stardust",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-0.svg",
+        "png": "rank_border/cosmic-0.png"
+      },
+      "branch": "cosmic",
+      "node": 1
+    },
+    {
+      "id": "cosmic_2",
+      "name": "Meteor",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-0.svg",
+        "png": "rank_border/cosmic-0.png"
+      },
+      "branch": "cosmic",
+      "node": 2
+    },
+    {
+      "id": "cosmic_3",
+      "name": "Comet",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-0.svg",
+        "png": "rank_border/cosmic-0.png"
+      },
+      "branch": "cosmic",
+      "node": 3
+    },
+    {
+      "id": "cosmic_4",
+      "name": "Moon",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-1.svg",
+        "png": "rank_border/cosmic-1.png"
+      },
+      "branch": "cosmic",
+      "node": 4
+    },
+    {
+      "id": "cosmic_5",
+      "name": "Planet",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-1.svg",
+        "png": "rank_border/cosmic-1.png"
+      },
+      "branch": "cosmic",
+      "node": 5
+    },
+    {
+      "id": "cosmic_6",
+      "name": "Star",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-1.svg",
+        "png": "rank_border/cosmic-1.png"
+      },
+      "branch": "cosmic",
+      "node": 6
+    },
+    {
+      "id": "cosmic_7",
+      "name": "Nova",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-2.svg",
+        "png": "rank_border/cosmic-2.png"
+      },
+      "branch": "cosmic",
+      "node": 7
+    },
+    {
+      "id": "cosmic_8",
+      "name": "Nebula",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-2.svg",
+        "png": "rank_border/cosmic-2.png"
+      },
+      "branch": "cosmic",
+      "node": 8
+    },
+    {
+      "id": "cosmic_9",
+      "name": "Galaxy",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-2.svg",
+        "png": "rank_border/cosmic-2.png"
+      },
+      "branch": "cosmic",
+      "node": 9
+    },
+    {
+      "id": "cosmic_10",
+      "name": "Quasar",
+      "secret": false,
+      "accent": "#5E35B1",
+      "files": {
+        "svg": "rank_border/cosmic-3.svg",
+        "png": "rank_border/cosmic-3.png"
+      },
+      "branch": "cosmic",
+      "node": 10
+    },
+    {
+      "id": "cosmic_gilded",
+      "name": "Gilded Quasar",
+      "secret": false,
+      "accent": "#B8860B",
+      "files": {
+        "svg": "rank_border/cosmic-gilded.svg",
+        "png": "rank_border/cosmic-gilded.png"
+      },
+      "branch": "cosmic"
+    },
+    {
+      "id": "deepsea_1",
+      "name": "Plankton",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-0.svg",
+        "png": "rank_border/deepsea-0.png"
+      },
+      "branch": "deepsea",
+      "node": 1
+    },
+    {
+      "id": "deepsea_2",
+      "name": "Shrimp",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-0.svg",
+        "png": "rank_border/deepsea-0.png"
+      },
+      "branch": "deepsea",
+      "node": 2
+    },
+    {
+      "id": "deepsea_3",
+      "name": "Pufferfish",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-0.svg",
+        "png": "rank_border/deepsea-0.png"
+      },
+      "branch": "deepsea",
+      "node": 3
+    },
+    {
+      "id": "deepsea_4",
+      "name": "Octopus",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-1.svg",
+        "png": "rank_border/deepsea-1.png"
+      },
+      "branch": "deepsea",
+      "node": 4
+    },
+    {
+      "id": "deepsea_5",
+      "name": "Manta",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-1.svg",
+        "png": "rank_border/deepsea-1.png"
+      },
+      "branch": "deepsea",
+      "node": 5
+    },
+    {
+      "id": "deepsea_6",
+      "name": "Shark",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-1.svg",
+        "png": "rank_border/deepsea-1.png"
+      },
+      "branch": "deepsea",
+      "node": 6
+    },
+    {
+      "id": "deepsea_7",
+      "name": "Orca",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-2.svg",
+        "png": "rank_border/deepsea-2.png"
+      },
+      "branch": "deepsea",
+      "node": 7
+    },
+    {
+      "id": "deepsea_8",
+      "name": "Anglerfish",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-2.svg",
+        "png": "rank_border/deepsea-2.png"
+      },
+      "branch": "deepsea",
+      "node": 8
+    },
+    {
+      "id": "deepsea_9",
+      "name": "Leviathan",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-2.svg",
+        "png": "rank_border/deepsea-2.png"
+      },
+      "branch": "deepsea",
+      "node": 9
+    },
+    {
+      "id": "deepsea_10",
+      "name": "Kraken",
+      "secret": false,
+      "accent": "#00838F",
+      "files": {
+        "svg": "rank_border/deepsea-3.svg",
+        "png": "rank_border/deepsea-3.png"
+      },
+      "branch": "deepsea",
+      "node": 10
+    },
+    {
+      "id": "deepsea_gilded",
+      "name": "Gilded Kraken",
+      "secret": false,
+      "accent": "#B8860B",
+      "files": {
+        "svg": "rank_border/deepsea-gilded.svg",
+        "png": "rank_border/deepsea-gilded.png"
+      },
+      "branch": "deepsea"
+    },
+    {
+      "id": "garden_1",
+      "name": "Seed",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-0.svg",
+        "png": "rank_border/garden-0.png"
+      },
+      "branch": "garden",
+      "node": 1
+    },
+    {
+      "id": "garden_2",
+      "name": "Sprout",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-0.svg",
+        "png": "rank_border/garden-0.png"
+      },
+      "branch": "garden",
+      "node": 2
+    },
+    {
+      "id": "garden_3",
+      "name": "Seedling",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-0.svg",
+        "png": "rank_border/garden-0.png"
+      },
+      "branch": "garden",
+      "node": 3
+    },
+    {
+      "id": "garden_4",
+      "name": "Fern",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-1.svg",
+        "png": "rank_border/garden-1.png"
+      },
+      "branch": "garden",
+      "node": 4
+    },
+    {
+      "id": "garden_5",
+      "name": "Bloom",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-1.svg",
+        "png": "rank_border/garden-1.png"
+      },
+      "branch": "garden",
+      "node": 5
+    },
+    {
+      "id": "garden_6",
+      "name": "Willow",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-1.svg",
+        "png": "rank_border/garden-1.png"
+      },
+      "branch": "garden",
+      "node": 6
+    },
+    {
+      "id": "garden_7",
+      "name": "Oak",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-2.svg",
+        "png": "rank_border/garden-2.png"
+      },
+      "branch": "garden",
+      "node": 7
+    },
+    {
+      "id": "garden_8",
+      "name": "Redwood",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-2.svg",
+        "png": "rank_border/garden-2.png"
+      },
+      "branch": "garden",
+      "node": 8
+    },
+    {
+      "id": "garden_9",
+      "name": "World Tree",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-2.svg",
+        "png": "rank_border/garden-2.png"
+      },
+      "branch": "garden",
+      "node": 9
+    },
+    {
+      "id": "garden_10",
+      "name": "Eternal Grove",
+      "secret": false,
+      "accent": "#2E7D32",
+      "files": {
+        "svg": "rank_border/garden-3.svg",
+        "png": "rank_border/garden-3.png"
+      },
+      "branch": "garden",
+      "node": 10
+    },
+    {
+      "id": "garden_gilded",
+      "name": "Gilded Eternal Grove",
+      "secret": false,
+      "accent": "#B8860B",
+      "files": {
+        "svg": "rank_border/garden-gilded.svg",
+        "png": "rank_border/garden-gilded.png"
+      },
+      "branch": "garden"
+    },
+    {
+      "id": "samurai_1",
+      "name": "Wanderer",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-0.svg",
+        "png": "rank_border/samurai-0.png"
+      },
+      "branch": "samurai",
+      "node": 1
+    },
+    {
+      "id": "samurai_2",
+      "name": "Ronin",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-0.svg",
+        "png": "rank_border/samurai-0.png"
+      },
+      "branch": "samurai",
+      "node": 2
+    },
+    {
+      "id": "samurai_3",
+      "name": "Swordhand",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-0.svg",
+        "png": "rank_border/samurai-0.png"
+      },
+      "branch": "samurai",
+      "node": 3
+    },
+    {
+      "id": "samurai_4",
+      "name": "Blade Dancer",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-1.svg",
+        "png": "rank_border/samurai-1.png"
+      },
+      "branch": "samurai",
+      "node": 4
+    },
+    {
+      "id": "samurai_5",
+      "name": "Duelist",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-1.svg",
+        "png": "rank_border/samurai-1.png"
+      },
+      "branch": "samurai",
+      "node": 5
+    },
+    {
+      "id": "samurai_6",
+      "name": "Bushi",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-1.svg",
+        "png": "rank_border/samurai-1.png"
+      },
+      "branch": "samurai",
+      "node": 6
+    },
+    {
+      "id": "samurai_7",
+      "name": "Shogun's Guard",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-2.svg",
+        "png": "rank_border/samurai-2.png"
+      },
+      "branch": "samurai",
+      "node": 7
+    },
+    {
+      "id": "samurai_8",
+      "name": "Sword Saint",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-2.svg",
+        "png": "rank_border/samurai-2.png"
+      },
+      "branch": "samurai",
+      "node": 8
+    },
+    {
+      "id": "samurai_9",
+      "name": "Shogun",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-2.svg",
+        "png": "rank_border/samurai-2.png"
+      },
+      "branch": "samurai",
+      "node": 9
+    },
+    {
+      "id": "samurai_10",
+      "name": "Legend of the Blade",
+      "secret": false,
+      "accent": "#8E1F17",
+      "files": {
+        "svg": "rank_border/samurai-3.svg",
+        "png": "rank_border/samurai-3.png"
+      },
+      "branch": "samurai",
+      "node": 10
+    },
+    {
+      "id": "samurai_gilded",
+      "name": "Gilded Legend of the Blade",
+      "secret": false,
+      "accent": "#B8860B",
+      "files": {
+        "svg": "rank_border/samurai-gilded.svg",
+        "png": "rank_border/samurai-gilded.png"
+      },
+      "branch": "samurai"
     },
     {
       "id": "glorb",
@@ -4121,8 +6147,7 @@
     "#3A1F2E"
   ],
   "rankRules": {
-    "xp": "10 XP per achievement ladder tier earned + 25 XP per one-off badge earned (same data as EggikuCompare.Profile)",
-    "secret": "Glib Glorb unlocks when EggikuAchievements.Facts.glibGlorb is true, whatever the XP",
-    "maxXpToday": "about 2,000 with every current tier and badge"
+    "points": "1 egg point per 40 XP; points go into the active rank tree branch, 3 steps per rank, 10 ranks per branch",
+    "secret": "Glib Glorb unlocks when EggikuAchievements.Facts.glibGlorb is true, whatever the XP"
   }
 }

@@ -1,16 +1,29 @@
 package eu.kanade.presentation.more.settings.screen
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.more.settings.Preference
+import eu.kanade.presentation.more.settings.PreferenceScaffold
 import eu.kanade.presentation.theme.EggikuFont
+import eu.kanade.presentation.util.LocalBackPress
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuChapterTranslator
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuGemini
 import eu.kanade.tachiyomi.ui.reader.eggiku.EggikuTranslate
@@ -46,6 +59,64 @@ object SettingsReaderScreen : SearchableSettings {
     @ReadOnlyComposable
     @Composable
     override fun getTitleRes() = MR.strings.pref_category_reader
+
+    // KMK -->
+    private enum class Tab { GENERAL, PAGED, WEBTOON }
+
+    /** Reader settings split into General, Paged and Webtoon tabs (search still sees all of them) */
+    @Composable
+    override fun Content() {
+        val handleBack = LocalBackPress.current
+        var tab by rememberSaveable { mutableStateOf(Tab.GENERAL) }
+        val pagedTitle = stringResource(MR.strings.pager_viewer)
+        val webtoonTitles = setOf(
+            stringResource(MR.strings.webtoon_viewer),
+            stringResource(MR.strings.vertical_plus_viewer),
+        )
+        PreferenceScaffold(
+            titleRes = getTitleRes(),
+            onBackPressed = if (handleBack != null) handleBack::invoke else null,
+            itemsProvider = {
+                val all = getPreferences()
+                val shown = all.filter { pref ->
+                    val title = (pref as? Preference.PreferenceGroup)?.title
+                    when (tab) {
+                        Tab.PAGED -> title == pagedTitle
+                        Tab.WEBTOON -> title in webtoonTitles
+                        Tab.GENERAL -> title != pagedTitle && title !in webtoonTitles
+                    }
+                }
+                listOf<Preference>(
+                    Preference.PreferenceItem.CustomPreference(title = "") {
+                        SingleChoiceSegmentedButtonRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                        ) {
+                            Tab.entries.forEachIndexed { index, option ->
+                                SegmentedButton(
+                                    selected = tab == option,
+                                    onClick = { tab = option },
+                                    shape = SegmentedButtonDefaults.itemShape(index, Tab.entries.size),
+                                ) {
+                                    Text(
+                                        stringResource(
+                                            when (option) {
+                                                Tab.GENERAL -> KMR.strings.reader_tab_general
+                                                Tab.PAGED -> KMR.strings.reader_tab_paged
+                                                Tab.WEBTOON -> KMR.strings.reader_tab_webtoon
+                                            },
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                    },
+                ) + shown
+            },
+        )
+    }
+    // KMK <--
 
     @Composable
     override fun getPreferences(): List<Preference> {
