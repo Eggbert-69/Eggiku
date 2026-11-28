@@ -1375,4 +1375,19 @@
     <string name="avatar_section_branch">%1$s branch</string>
     <string name="avatar_reach_tree">Reach %1$s in the %2$s branch of the rank tree</string>
     <string name="avatar_prestige_tree">Rebirth the %1$s branch (prestige ★%2$d)</string>
+    <string name="tree_how">Every %1$d XP gives you an egg point. Points go into the branch you\'re on, 3 steps per rank. Each rank unlocks an avatar reward. Finish a branch to rebirth it for a prestige star and gilded rewards.</string>
+    <string name="tree_choose_title">Start the %1$s branch?</string>
+    <string name="tree_choose_text">You\'ll stay on this branch until you finish it. Then you can rebirth it or pick another one.</string>
+    <string name="tree_start">Start this branch</string>
+    <string name="tree_continue">Continue this branch</string>
+    <string name="tree_rebirth_title">Rebirth %1$s?</string>
+    <string name="tree_rebirth_text">The branch starts over and you get a prestige star plus its gilded reward. Everything you\'ve unlocked stays yours.</string>
+    <string name="tree_rebirth">Rebirth</string>
+    <string name="tree_node_info">Rank %1$d · %2$d steps. Unlocks:</string>
+    <string name="tree_status_finished">Finished</string>
+    <string name="tree_status_active">On this branch · %1$d of %2$d steps</string>
+    <string name="tree_status_paused">%1$d of %2$d steps</string>
+    <string name="tree_status_new">Not started</string>
+    <string name="tree_prestige_rewards">Prestige rewards</string>
+    <string name="tree_locked_until">Finish your current branch to switch</string>
 </resources>
